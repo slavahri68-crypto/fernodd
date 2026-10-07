@@ -5,21 +5,25 @@ import fetch from 'node-fetch';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
-import { Issuer, generators } from 'openid-client';
 import { initPresence, getPresence, getAllPresence, getPresenceStats } from './presence.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 
 app.use(express.json());
-app.use(express.static(__dirname));
+
+const IS_RENDER = !!process.env.RENDER;
+if (!IS_RENDER) {
+  app.use(express.static(__dirname));
+}
 
 /* ============ CORS ============ */
 const ALLOWED_ORIGINS = [
   'https://fernodd.netlify.app',
   'http://localhost:3000',
   'http://localhost:5500',
-  'http://127.0.0.1:5500'
+  'http://127.0.0.1:5500',
+  'http://localhost:10000'
 ];
 app.use((req, res, next) => {
   const origin = req.headers.origin;
@@ -33,6 +37,7 @@ app.use((req, res, next) => {
   next();
 });
 
+/* ============ ENV ============ */
 const {
   STEAM_API_KEY,
   STEAM_REALM = 'http://localhost:3000',
@@ -53,9 +58,27 @@ const {
   ROLE_CHIEF_MODERATOR,
   FRONTEND_URL = 'http://localhost:3000',
   JWT_SECRET,
-  PORT = 3000,
+  PORT = process.env.PORT || 3000,
   DISCORD_WEBHOOK_URL
 } = process.env;
+
+/* ============ СТАРТОВАЯ ДИАГНОСТИКА ============ */
+console.log('========================================');
+console.log('  FERNODD API STARTUP');
+console.log('========================================');
+console.log('PORT:                     ', PORT);
+console.log('IS_RENDER:                ', IS_RENDER);
+console.log('STEAM_API_KEY:            ', STEAM_API_KEY ? '✅ задан' : '❌ НЕ ЗАДАН');
+console.log('STEAM_REALM:              ', STEAM_REALM);
+console.log('STEAM_RETURN_URL:         ', STEAM_RETURN_URL);
+console.log('FRONTEND_URL:             ', FRONTEND_URL);
+console.log('OWNER_STEAM_ID:           ', OWNER_STEAM_ID || '❌ не задан');
+console.log('JWT_SECRET:               ', JWT_SECRET ? '✅ задан' : '❌ НЕ ЗАДАН');
+console.log('DISCORD_BOT_TOKEN:        ', DISCORD_BOT_TOKEN ? '✅ задан' : '❌ не задан');
+console.log('DISCORD_GUILD_ID:         ', DISCORD_GUILD_ID || '❌ не задан');
+console.log('DISCORD_APPLY_CHANNEL_ID: ', DISCORD_APPLY_CHANNEL_ID || '❌ не задан');
+console.log('DISCORD_WEBHOOK_URL:      ', DISCORD_WEBHOOK_URL ? '✅ задан' : '❌ не задан');
+console.log('========================================\n');
 
 const ADMIN_ROLES = [ROLE_CURATOR, ROLE_WATCHER, ROLE_HEADADMIN].filter(Boolean);
 const MODERATOR_ROLES = [ROLE_MODERATOR, ROLE_SENIOR_MODERATOR, ROLE_CHIEF_MODERATOR].filter(Boolean);
@@ -166,6 +189,7 @@ function canCreateRequest(u) { return isCurator(u) || isWatcherOrAbove(u); }
 async function applyStatusToDiscord(messageId, newStatus) {
   const channelId = DISCORD_APPLY_CHANNEL_ID;
   const botToken = DISCORD_BOT_TOKEN;
+  if (!channelId || !botToken) throw new Error('discord_not_configured');
   setOverride(messageId, newStatus);
   for (const emoji of ['✅', '❌']) {
     try {
@@ -231,46 +255,78 @@ async function getApplicationStatus(messageId) {
   } catch { return 'unknown'; }
 }
 
-/* ============ STEAM OPENID ============ */
-let steamIssuer = null;
-async function getSteamIssuer() {
-  if (steamIssuer) return steamIssuer;
-  steamIssuer = await Issuer.discover('https://steamcommunity.com/openid');
-  return steamIssuer;
-}
-async function getSteamClient() {
-  const issuer = await getSteamIssuer();
-  return new issuer.Client({
-    client_id: STEAM_API_KEY,
-    redirect_uris: [STEAM_RETURN_URL],
-    response_types: ['id_token'],
-  });
-}
+/* ================================================================
+   STEAM OPENID 2.0 — БЕЗ БИБЛИОТЕК
+   ================================================================ */
 
-app.get('/auth/steam', async (req, res) => {
-  try {
-    const client = await getSteamClient();
-    const state = generators.state();
-    const nonce = generators.nonce();
-    const url = client.authorizationUrl({ scope: 'openid', state, nonce });
-    res.redirect(url);
-  } catch (e) {
-    console.error('[steam auth]', e);
-    res.redirect(`${FRONTEND_URL}/?error=steam_init`);
+const STEAM_OPENID_URL = 'https://steamcommunity.com/openid/login';
+
+app.get('/auth/steam', (req, res) => {
+  console.log('[steam auth] Старт авторизации');
+  console.log('[steam auth] STEAM_API_KEY:', STEAM_API_KEY ? 'задан' : 'НЕ ЗАДАН');
+  console.log('[steam auth] STEAM_REALM:', STEAM_REALM);
+  console.log('[steam auth] STEAM_RETURN_URL:', STEAM_RETURN_URL);
+
+  if (!STEAM_API_KEY) {
+    console.error('[steam auth] ❌ STEAM_API_KEY не задан!');
+    return res.redirect(`${FRONTEND_URL}/?error=steam_no_key`);
   }
+
+  const params = new URLSearchParams({
+    'openid.ns': 'http://specs.openid.net/auth/2.0',
+    'openid.mode': 'checkid_setup',
+    'openid.return_to': STEAM_RETURN_URL,
+    'openid.realm': STEAM_REALM,
+    'openid.identity': 'http://specs.openid.net/auth/2.0/identifier_select',
+    'openid.claimed_id': 'http://specs.openid.net/auth/2.0/identifier_select',
+  });
+
+  const redirectUrl = `${STEAM_OPENID_URL}?${params.toString()}`;
+  console.log('[steam auth] ✅ Редирект на Steam:', redirectUrl);
+  res.redirect(redirectUrl);
 });
 
 app.get('/auth/steam/callback', async (req, res) => {
-  try {
-    const client = await getSteamClient();
-    const params = client.callbackParams(req);
-    const tokenSet = await client.callback(STEAM_RETURN_URL, params, {
-      state: params.state,
-      nonce: params.nonce,
-    });
-    const claims = tokenSet.claims();
-    const steamId = claims.sub;
+  console.log('[steam callback] Получен callback');
+  console.log('[steam callback] Query keys:', Object.keys(req.query).join(', '));
 
+  try {
+    const claimedId = req.query['openid.claimed_id'];
+    if (!claimedId) {
+      console.error('[steam callback] ❌ Нет openid.claimed_id');
+      return res.redirect(`${FRONTEND_URL}/?error=steam_no_claimed_id`);
+    }
+
+    const match = String(claimedId).match(/\/id\/(\d+)$/);
+    if (!match) {
+      console.error('[steam callback] ❌ Не удалось извлечь Steam ID из', claimedId);
+      return res.redirect(`${FRONTEND_URL}/?error=steam_bad_claimed_id`);
+    }
+
+    const steamId = match[1];
+    console.log('[steam callback] ✅ Steam ID:', steamId);
+
+    /* Валидация подписи */
+    const validationParams = new URLSearchParams();
+    for (const [key, value] of Object.entries(req.query)) {
+      validationParams.append(key, value);
+    }
+    validationParams.set('openid.mode', 'check_authentication');
+
+    const validationRes = await fetch(STEAM_OPENID_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: validationParams.toString(),
+    });
+    const validationText = await validationRes.text();
+
+    if (!validationText.includes('is_valid:true')) {
+      console.error('[steam callback] ❌ Подпись невалидна:', validationText);
+      return res.redirect(`${FRONTEND_URL}/?error=steam_invalid_signature`);
+    }
+    console.log('[steam callback] ✅ Подпись валидна');
+
+    /* Профиль */
     let profile = { steamid: steamId, personaname: 'Steam User', avatar: '' };
     try {
       const r = await fetch(
@@ -287,8 +343,12 @@ app.get('/auth/steam/callback', async (req, res) => {
           realname: p.realname || '',
         };
       }
-    } catch (e) { console.error('[steam profile]', e); }
+      console.log('[steam callback] ✅ Профиль:', profile.personaname);
+    } catch (e) {
+      console.error('[steam profile]', e);
+    }
 
+    /* Права */
     const isOwner = profile.steamid === OWNER_STEAM_ID;
     const isAdmin = isOwner || ADMIN_STEAM_LIST.includes(profile.steamid);
     let isHeadAdmin = isOwner;
@@ -315,7 +375,9 @@ app.get('/auth/steam/callback', async (req, res) => {
             roleNames = allRoles.filter(r => userRoles.includes(r.id)).map(r => r.name);
           }
         }
-      } catch (e) { console.error('[steam discord link]', e); }
+      } catch (e) {
+        console.error('[steam discord link]', e);
+      }
     }
 
     const jwtToken = jwt.sign({
@@ -331,9 +393,11 @@ app.get('/auth/steam/callback', async (req, res) => {
       provider: 'steam',
     }, JWT_SECRET, { expiresIn: '7d' });
 
+    console.log('[steam callback] ✅ Редирект на фронт с токеном');
     res.redirect(`${FRONTEND_URL}/?token=${encodeURIComponent(jwtToken)}`);
   } catch (e) {
-    console.error('[steam callback]', e);
+    console.error('[steam callback] ❌ Ошибка:', e.message);
+    console.error('[steam callback] Stack:', e.stack);
     res.redirect(`${FRONTEND_URL}/?error=steam_callback`);
   }
 });
@@ -467,6 +531,7 @@ app.post('/api/apply', async (req, res) => {
   const { age, experience, online, motivation } = req.body || {};
   if (!age || !experience || !online || !motivation)
     return res.status(400).json({ error: 'missing_fields' });
+  if (!DISCORD_WEBHOOK_URL) return res.status(500).json({ error: 'webhook_not_configured' });
 
   const discordMention = payload.discordId ? `<@${payload.discordId}>` : '—';
   const steamLink = payload.profileUrl || `https://steamcommunity.com/profiles/${payload.steamId}`;
@@ -1020,5 +1085,7 @@ app.get('/api/health', (req, res) => {
 initPresence();
 
 app.listen(PORT, () => {
-  console.log(`\n✅ Fernodd API запущен: http://localhost:${PORT}\n`);
+  console.log(`\n✅ Fernodd API запущен: http://localhost:${PORT}`);
+  console.log(`✅ Steam auth:      ${STEAM_REALM}/auth/steam`);
+  console.log(`✅ Steam callback:  ${STEAM_RETURN_URL}\n`);
 });
