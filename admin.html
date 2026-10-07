@@ -1,0 +1,2503 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fernodd — Панель управления</title>
+<link rel="icon" type="image/png" href="/logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/config.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body > .auth-widget { display: none !important; }
+
+  :root {
+    --nav-w: 260px;
+    --nav-w-min: 76px;
+  }
+
+  .admin-shell {
+    display: grid;
+    grid-template-columns: var(--nav-w) 1fr;
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+    transition: grid-template-columns 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .admin-shell.compact { grid-template-columns: var(--nav-w-min) 1fr; }
+
+  .nav-rail {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: var(--nav-w);
+    background: linear-gradient(180deg, #0a0a0a, #060606);
+    border-right: 1px solid var(--border);
+    padding: 22px 14px;
+    display: flex;
+    flex-direction: column;
+    z-index: 50;
+    transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    overflow: hidden;
+  }
+  .admin-shell.compact .nav-rail { width: var(--nav-w-min); padding: 22px 10px; }
+
+  .rail-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 8px 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .rail-brand img {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    object-fit: contain;
+    flex-shrink: 0;
+    background: rgba(225,6,0,0.08);
+    border: 1px solid rgba(225,6,0,0.3);
+    padding: 4px;
+  }
+  .rail-brand-text {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900;
+    font-size: 17px;
+    letter-spacing: -0.6px;
+    background: linear-gradient(135deg, #fff 20%, var(--red) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    white-space: nowrap;
+  }
+  .rail-brand-sub {
+    font-size: 8px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    font-weight: 700;
+    margin-top: 1px;
+    white-space: nowrap;
+  }
+  .rail-brand-info {
+    overflow: hidden;
+    transition: opacity 0.25s, width 0.25s;
+  }
+  .admin-shell.compact .rail-brand-info { opacity: 0; width: 0; }
+  .admin-shell.compact .rail-brand { justify-content: center; }
+
+  .rail-toggle {
+    position: absolute;
+    right: -11px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    background: #0e0e0e;
+    border: 1px solid var(--border-bright);
+    border-radius: 50%;
+    color: var(--text-dim);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    z-index: 60;
+    transition: all 0.3s;
+  }
+  .rail-toggle:hover {
+    color: var(--red);
+    border-color: var(--red);
+    transform: translateY(-50%) scale(1.15);
+  }
+
+  .rail-group {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    font-weight: 700;
+    padding: 14px 12px 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    opacity: 0.6;
+  }
+  .admin-shell.compact .rail-group { opacity: 0; height: 6px; padding: 3px; }
+
+  .rail-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 13px;
+    border-radius: 11px;
+    color: var(--text-dim);
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    border: 1px solid transparent;
+    margin-bottom: 3px;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+    position: relative;
+    white-space: nowrap;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+  }
+  .rail-item:hover {
+    color: var(--text);
+    background: rgba(255,255,255,0.04);
+    border-color: rgba(225,6,0,0.2);
+    transform: translateX(3px);
+  }
+  .admin-shell.compact .rail-item {
+    justify-content: center;
+    padding: 11px 8px;
+  }
+  .rail-item.active {
+    color: #fff;
+    background: linear-gradient(135deg, rgba(225,6,0,0.22), rgba(139,0,0,0.08));
+    border-color: rgba(225,6,0,0.4);
+    box-shadow: 0 6px 24px rgba(225,6,0,0.25);
+  }
+  .rail-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 22%;
+    bottom: 22%;
+    width: 3px;
+    background: var(--red);
+    border-radius: 0 3px 3px 0;
+    box-shadow: 0 0 14px var(--red);
+  }
+  .rail-item-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .rail-item-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .rail-item-label { white-space: nowrap; }
+  .admin-shell.compact .rail-item-label { display: none; }
+  .admin-shell.compact .rail-item:hover .rail-item-label {
+    display: inline-block;
+    position: absolute;
+    left: calc(100% + 8px);
+    background: #0e0e0e;
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border-bright);
+    font-size: 13px;
+    z-index: 100;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+    color: #fff;
+  }
+  .rail-badge {
+    margin-left: auto;
+    padding: 2px 9px;
+    background: rgba(225,6,0,0.2);
+    border: 1px solid rgba(225,6,0,0.5);
+    border-radius: 100px;
+    font-size: 10px;
+    color: var(--red);
+    font-weight: 700;
+  }
+  .admin-shell.compact .rail-badge { display: none; }
+
+  .rail-foot {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .rail-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: rgba(74,222,128,0.06);
+    border: 1px solid rgba(74,222,128,0.2);
+    border-radius: 10px;
+    font-size: 11px;
+    color: #4ade80;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .rail-status .dot {
+    width: 7px;
+    height: 7px;
+    background: #4ade80;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #4ade80;
+    animation: blink 1.5s infinite;
+    flex-shrink: 0;
+  }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .admin-shell.compact .rail-status { justify-content: center; padding: 10px; }
+  .admin-shell.compact .rail-status span:not(.dot) { display: none; }
+
+  .admin-main {
+    grid-column: 2;
+    min-height: 100vh;
+    padding: 24px 36px 100px;
+    position: relative;
+  }
+
+  .admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 14px 22px;
+    background: rgba(10,10,10,0.85);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    backdrop-filter: blur(20px);
+  }
+  .crumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+  .crumbs .sep { opacity: 0.3; font-size: 11px; }
+  .crumbs span:last-child { color: var(--text); font-weight: 700; }
+
+  .header-center {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .clock-pill {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 0.5px;
+    padding: 6px 14px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border-bright);
+    border-radius: 100px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .clock-pill .pulse {
+    width: 6px;
+    height: 6px;
+    background: var(--red);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--red);
+    animation: blink 1s infinite;
+  }
+  .online-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: rgba(74,222,128,0.08);
+    border: 1px solid rgba(74,222,128,0.25);
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #4ade80;
+    white-space: nowrap;
+  }
+  .online-pill .dot {
+    width: 6px;
+    height: 6px;
+    background: #4ade80;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #4ade80;
+    animation: blink 1.5s infinite;
+  }
+  .online-pill .count { color: #fff; font-family: 'Unbounded', sans-serif; }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .icon-btn {
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border-bright);
+    border-radius: 11px;
+    color: var(--text-dim);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    position: relative;
+  }
+  .icon-btn:hover {
+    color: var(--red);
+    border-color: var(--red);
+    background: rgba(225,6,0,0.08);
+    transform: translateY(-2px);
+  }
+  .icon-btn svg {
+    width: 17px;
+    height: 17px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .icon-btn .notif {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    background: var(--red);
+    border-radius: 50%;
+    border: 2px solid #0a0a0a;
+    box-shadow: 0 0 8px var(--red);
+  }
+
+  .admin-section {
+    display: none;
+    animation: fadeUp 0.4s;
+  }
+  .admin-section.active { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .sec-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 22px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .sec-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: -1.2px;
+    color: #fff;
+  }
+  .sec-title span {
+    color: var(--red);
+    text-shadow: 0 0 30px rgba(225,6,0,0.4);
+  }
+  .sec-sub {
+    color: var(--text-dim);
+    font-size: 13.5px;
+    margin-top: 5px;
+    line-height: 1.5;
+  }
+
+  .hero-block {
+    background: linear-gradient(135deg, rgba(225,6,0,0.14) 0%, rgba(14,14,14,0.7) 50%, rgba(139,0,0,0.08) 100%);
+    border: 1px solid rgba(225,6,0,0.3);
+    border-radius: 24px;
+    padding: 34px 38px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-block::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 440px;
+    height: 440px;
+    background: radial-gradient(circle, rgba(225,6,0,0.3), transparent 70%);
+    pointer-events: none;
+    animation: floatGlow 8s ease-in-out infinite;
+  }
+  @keyframes floatGlow {
+    0%,100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.1); }
+  }
+  .hero-block h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(24px, 3.5vw, 38px);
+    font-weight: 900;
+    letter-spacing: -1.5px;
+    margin-bottom: 10px;
+    position: relative;
+    color: #fff;
+    line-height: 1.1;
+  }
+  .hero-block h1 span {
+    color: var(--red);
+    text-shadow: 0 0 30px rgba(225,6,0,0.6);
+  }
+  .hero-block p {
+    color: var(--text-dim);
+    font-size: 14.5px;
+    position: relative;
+    max-width: 600px;
+    line-height: 1.6;
+  }
+  .hero-chips {
+    margin-top: 18px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    position: relative;
+  }
+  .hero-chip {
+    padding: 5px 14px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border-bright);
+    border-radius: 100px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .hero-chip.red {
+    background: rgba(225,6,0,0.15);
+    border-color: rgba(225,6,0,0.5);
+    color: var(--red);
+  }
+
+  .uptime-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
+    background: rgba(74,222,128,0.06);
+    border: 1px solid rgba(74,222,128,0.25);
+    border-radius: 14px;
+    margin-bottom: 22px;
+  }
+  .uptime-dot {
+    width: 10px;
+    height: 10px;
+    background: #4ade80;
+    border-radius: 50%;
+    box-shadow: 0 0 16px #4ade80;
+    animation: pulse 1.8s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  @keyframes pulse {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.25); }
+  }
+  .uptime-text {
+    font-size: 12.5px;
+    color: #4ade80;
+    font-weight: 600;
+  }
+  .uptime-text b {
+    color: #fff;
+    font-family: 'Unbounded', sans-serif;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .stat-tile {
+    background: linear-gradient(145deg, var(--bg-card), rgba(14,14,14,0.5));
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 22px 22px 18px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    cursor: pointer;
+  }
+  .stat-tile::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--tile-color, var(--red));
+    box-shadow: 0 0 20px var(--tile-color, var(--red));
+    opacity: 0.7;
+  }
+  .stat-tile:hover {
+    transform: translateY(-6px);
+    border-color: var(--tile-color, var(--red));
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  }
+  .stat-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border-bright);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 14px;
+    color: var(--tile-color, var(--red));
+  }
+  .stat-value {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 34px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 6px;
+    letter-spacing: -2px;
+    color: #fff;
+  }
+  .stat-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+  }
+
+  .tabs-row {
+    display: inline-flex;
+    gap: 4px;
+    margin-bottom: 20px;
+    padding: 5px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border-bright);
+    border-radius: 13px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tabs-row::-webkit-scrollbar { height: 4px; }
+  .tabs-row::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+  .tab-pill {
+    padding: 8px 15px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    color: var(--text-dim);
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 12.5px;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .tab-pill:hover {
+    color: var(--text);
+    background: rgba(255,255,255,0.04);
+  }
+  .tab-pill.active {
+    color: #fff;
+    background: linear-gradient(135deg, rgba(225,6,0,0.25), rgba(139,0,0,0.15));
+    border-color: rgba(225,6,0,0.5);
+  }
+  .tab-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 8px;
+    min-width: 22px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border-bright);
+    border-radius: 100px;
+    font-size: 10px;
+    color: var(--text-dim);
+    font-weight: 700;
+    font-family: 'Unbounded', sans-serif;
+    line-height: 1;
+  }
+  .tab-pill.active .tab-count {
+    background: rgba(225,6,0,0.25);
+    border-color: rgba(225,6,0,0.6);
+    color: #fff;
+  }
+
+  .search-wrap {
+    flex: 1;
+    min-width: 220px;
+    position: relative;
+    margin-bottom: 18px;
+  }
+  .search-wrap input {
+    width: 100%;
+    padding: 12px 16px 12px 42px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-bright);
+    border-radius: 12px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 13.5px;
+    outline: none;
+  }
+  .search-wrap input:focus {
+    border-color: var(--red);
+    box-shadow: 0 0 0 4px rgba(225,6,0,0.12);
+  }
+  .search-wrap input::placeholder { color: #555; }
+  .search-wrap::before {
+    content: '🔍';
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    opacity: 0.5;
+  }
+
+  .cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .app-card {
+    background: linear-gradient(145deg, var(--bg-card), rgba(14,14,14,0.5));
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 22px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    transition: all 0.35s;
+    position: relative;
+  }
+  .app-card:hover {
+    border-color: rgba(225,6,0,0.5);
+    transform: translateX(5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+  }
+  .app-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    border: 2px solid var(--red);
+    flex-shrink: 0;
+    object-fit: cover;
+  }
+  .app-body { flex: 1; min-width: 0; }
+  .app-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .app-name {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700;
+    font-size: 14.5px;
+    color: #fff;
+  }
+  .app-date { font-size: 11.5px; color: var(--text-dim); }
+  .app-row {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    font-size: 12.5px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+  .app-row b { color: var(--text); }
+  .app-text {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 12.5px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin-top: 6px;
+  }
+  .app-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+
+  .status-pill {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .status-pill.pending  { background: rgba(251,191,36,0.15); color: #fbbf24; }
+  .status-pill.approved { background: rgba(74,222,128,0.15); color: #4ade80; }
+  .status-pill.rejected { background: rgba(239,68,68,0.15); color: #ef4444; }
+
+  .btn-action {
+    padding: 9px 15px;
+    border-radius: 10px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 12.5px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-action:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-action.green {
+    background: rgba(74,222,128,0.12);
+    color: #4ade80;
+    border-color: rgba(74,222,128,0.4);
+  }
+  .btn-action.green:hover:not(:disabled) { background: rgba(74,222,128,0.25); }
+  .btn-action.red {
+    background: rgba(239,68,68,0.12);
+    color: #ef4444;
+    border-color: rgba(239,68,68,0.4);
+  }
+  .btn-action.red:hover:not(:disabled) { background: rgba(239,68,68,0.25); }
+  .btn-action.blue {
+    background: rgba(59,130,246,0.12);
+    color: #60a5fa;
+    border-color: rgba(59,130,246,0.4);
+  }
+  .btn-action.blue:hover:not(:disabled) { background: rgba(59,130,246,0.25); }
+  .btn-action.ghost {
+    background: rgba(255,255,255,0.04);
+    color: var(--text);
+    border-color: var(--border-bright);
+  }
+  .btn-action.ghost:hover:not(:disabled) {
+    border-color: var(--red);
+    background: rgba(225,6,0,0.08);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-dim);
+    font-size: 13.5px;
+  }
+  .empty-state .ico {
+    font-size: 48px;
+    margin-bottom: 12px;
+    opacity: 0.35;
+  }
+  .loading-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 50px 20px;
+    gap: 10px;
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+  .spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border-bright);
+    border-top-color: var(--red);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .skeleton {
+    background: linear-gradient(90deg, var(--bg-card) 25%, rgba(255,255,255,0.04) 50%, var(--bg-card) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 16px;
+    height: 90px;
+    margin-bottom: 12px;
+  }
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  .staff-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+  }
+  .staff-tile {
+    background: linear-gradient(145deg, var(--bg-card), rgba(14,14,14,0.5));
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--role-color, var(--red));
+    border-radius: 16px;
+    padding: 18px 20px;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    transition: all 0.35s;
+    cursor: pointer;
+  }
+  .staff-tile:hover {
+    transform: translateY(-5px);
+    border-color: var(--role-color, var(--red));
+    box-shadow: 0 18px 45px rgba(0,0,0,0.5);
+  }
+  .staff-avatar-wrap { position: relative; flex-shrink: 0; }
+  .staff-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    border: 2px solid var(--role-color, var(--red));
+    object-fit: cover;
+  }
+  .staff-presence {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 3px solid var(--bg-card);
+    z-index: 2;
+    box-shadow: 0 0 10px currentColor;
+  }
+  .staff-presence.online  { background: #4ade80; color: #4ade80; }
+  .staff-presence.idle    { background: #fbbf24; color: #fbbf24; }
+  .staff-presence.dnd     { background: #ef4444; color: #ef4444; }
+  .staff-presence.offline { background: #6b7280; color: #6b7280; box-shadow: none; }
+  .staff-info { flex: 1; min-width: 0; }
+  .staff-info h3 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 14px;
+    color: #fff;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .staff-role {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .staff-sub-roles {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .staff-sub-roles span {
+    font-size: 9.5px;
+    color: var(--text-dim);
+    background: rgba(255,255,255,0.05);
+    padding: 2px 7px;
+    border-radius: 6px;
+  }
+
+  .settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 12px;
+  }
+  .setting-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+  }
+  .setting-card:hover { border-color: rgba(225,6,0,0.3); }
+  .setting-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .setting-value {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 12.5px;
+    word-break: break-all;
+    color: #fff;
+  }
+  .setting-value.ok { color: #4ade80; }
+  .setting-value.err { color: var(--red); }
+
+  .chat-box {
+    background: #0a0a0a;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 22px;
+    max-height: 62vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .chat-box::-webkit-scrollbar { width: 8px; }
+  .chat-box::-webkit-scrollbar-thumb {
+    background: linear-gradient(var(--red), var(--red-dark));
+    border-radius: 4px;
+  }
+  .msg {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .msg-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    border: 2px solid var(--red);
+    flex-shrink: 0;
+    object-fit: cover;
+  }
+  .msg-body {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    flex: 1;
+    min-width: 0;
+  }
+  .msg-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .msg-name {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700;
+    font-size: 12.5px;
+    color: #fff;
+  }
+  .msg-date { font-size: 10.5px; color: var(--text-dim); }
+  .msg-text {
+    font-size: 13.5px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .msg-attach {
+    max-width: 300px;
+    max-height: 300px;
+    border-radius: 10px;
+    margin-top: 8px;
+    border: 1px solid var(--border);
+  }
+
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.visible { display: flex; }
+  .modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border-bright);
+    border-radius: 20px;
+    padding: 28px;
+    max-width: 500px;
+    width: 100%;
+    animation: modalIn 0.35s;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.94) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .modal h3 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 19px;
+    margin-bottom: 8px;
+    color: #fff;
+  }
+  .modal p {
+    color: var(--text-dim);
+    font-size: 13.5px;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+  .modal-radio {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .modal-radio:hover { border-color: rgba(225,6,0,0.5); }
+  .modal-radio.selected {
+    border-color: var(--red);
+    background: rgba(225,6,0,0.08);
+  }
+  .modal-radio input { accent-color: var(--red); }
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    justify-content: flex-end;
+  }
+
+  .toast-wrap {
+    position: fixed;
+    bottom: 26px;
+    right: 26px;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+    max-width: 400px;
+  }
+  .toast {
+    background: rgba(14,14,14,0.97);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-bright);
+    border-left: 4px solid var(--red);
+    border-radius: 12px;
+    padding: 14px 20px;
+    min-width: 260px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+    pointer-events: auto;
+    animation: toastIn 0.4s;
+    font-size: 13.5px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .toast.success { border-left-color: #4ade80; }
+  .toast.error { border-left-color: var(--red); }
+  .toast.info { border-left-color: #60a5fa; }
+  .toast.fade { animation: toastOut 0.3s ease forwards; }
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateX(40px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes toastOut {
+    to { opacity: 0; transform: translateX(40px); }
+  }
+
+  .denied {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+    text-align: center;
+    gap: 18px;
+  }
+  .denied-icon {
+    font-size: 70px;
+    filter: drop-shadow(0 0 30px rgba(225,6,0,0.5));
+  }
+  .denied h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(30px, 4.5vw, 50px);
+    color: var(--red);
+    letter-spacing: -2px;
+  }
+  .denied p {
+    color: var(--text-dim);
+    max-width: 480px;
+    line-height: 1.7;
+    font-size: 14px;
+  }
+
+  @media (max-width: 900px) {
+    .admin-shell { grid-template-columns: 1fr; }
+    .nav-rail {
+      transform: translateX(-100%);
+      transition: transform 0.35s;
+      width: var(--nav-w) !important;
+    }
+    .nav-rail.open { transform: translateX(0); }
+    .admin-main { grid-column: 1; padding: 20px 16px 80px; }
+    .mobile-menu-btn { display: flex !important; }
+    .rail-toggle { display: none; }
+  }
+  .mobile-menu-btn {
+    display: none;
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    width: 44px;
+    height: 44px;
+    background: rgba(10,10,10,0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-bright);
+    border-radius: 12px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 100;
+    color: var(--text);
+    font-size: 19px;
+  }
+  .mobile-menu-btn:hover { border-color: var(--red); color: var(--red); }
+
+  @media (max-width: 600px) {
+    .header-center { display: none; }
+    .sec-title { font-size: 22px; }
+    .hero-block { padding: 24px 20px; }
+    .stat-value { font-size: 28px; }
+    .stat-tile { padding: 18px; }
+    .toast-wrap { right: 14px; left: 14px; bottom: 14px; }
+    .toast { min-width: auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-layer">
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+  <div class="bg-glow-3"></div>
+  <div class="bg-grid"></div>
+  <div class="particles" id="particles"></div>
+</div>
+
+<button class="mobile-menu-btn" onclick="document.querySelector('.nav-rail').classList.toggle('open')">☰</button>
+
+<div class="auth-widget" id="authWidget"></div>
+
+<div class="denied" id="deniedBlock" style="display:none;">
+  <div class="denied-icon">🔒</div>
+  <h1>Доступ запрещён</h1>
+  <p>Эта страница доступна только персоналу проекта Fernodd.</p>
+  <a class="btn-action ghost" href="/index.html" style="padding: 12px 24px; font-size: 13px; text-decoration: none;">← На главную</a>
+</div>
+
+<div class="admin-shell" id="adminShell" style="display:none;">
+
+  <aside class="nav-rail" id="navRail">
+    <div class="rail-brand">
+      <img src="/logo.png" alt="Fernodd">
+      <div class="rail-brand-info">
+        <div class="rail-brand-text">Fernodd</div>
+        <div class="rail-brand-sub">Control Center</div>
+      </div>
+      <button class="rail-toggle" id="railToggle" title="Свернуть">◀</button>
+    </div>
+
+    <div class="rail-group">Обзор</div>
+    <button class="rail-item active" data-section="dashboard" onclick="showSection('dashboard')">
+      <span class="rail-item-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg></span>
+      <span class="rail-item-label">Дашборд</span>
+    </button>
+    <button class="rail-item" data-section="analytics" onclick="showSection('analytics')">
+      <span class="rail-item-icon"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+      <span class="rail-item-label">Аналитика</span>
+    </button>
+
+    <div class="rail-group">Модерация</div>
+    <button class="rail-item" data-section="applications" onclick="showSection('applications')">
+      <span class="rail-item-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
+      <span class="rail-item-label">Заявки</span>
+      <span class="rail-badge" id="badgeApps">0</span>
+    </button>
+    <button class="rail-item" data-section="complaints" onclick="showSection('complaints')">
+      <span class="rail-item-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+      <span class="rail-item-label">Жалобы</span>
+      <span class="rail-badge" id="badgeTickets">0</span>
+    </button>
+
+    <div class="rail-group">Команда</div>
+    <button class="rail-item" data-section="staff" onclick="showSection('staff')">
+      <span class="rail-item-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+      <span class="rail-item-label">Персонал</span>
+    </button>
+
+    <div class="rail-group">Логи</div>
+    <button class="rail-item" data-section="journal" id="journalLink" onclick="showSection('journal')">
+      <span class="rail-item-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+      <span class="rail-item-label">История заявок</span>
+    </button>
+    <button class="rail-item" data-section="logs" id="logsLink" onclick="showSection('logs')">
+      <span class="rail-item-icon"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+      <span class="rail-item-label">Логи Discord</span>
+    </button>
+
+    <div class="rail-group">Аккаунт</div>
+    <button class="rail-item" onclick="window.location.href='/profile.html'">
+      <span class="rail-item-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg></span>
+      <span class="rail-item-label">Мой профиль</span>
+    </button>
+
+    <div class="rail-group">Система</div>
+    <button class="rail-item" data-section="settings" id="settingsLink" onclick="showSection('settings')">
+      <span class="rail-item-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+      <span class="rail-item-label">Настройки</span>
+    </button>
+    <button class="rail-item" data-section="monitor" onclick="showSection('monitor')">
+      <span class="rail-item-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>
+      <span class="rail-item-label">Мониторинг</span>
+    </button>
+
+    <div class="rail-foot">
+      <div class="rail-status">
+        <span class="dot"></span>
+        <span>Система онлайн</span>
+      </div>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-header">
+      <div class="crumbs">
+        <span>Fernodd</span>
+        <span class="sep">/</span>
+        <span>Панель</span>
+        <span class="sep">/</span>
+        <span id="crumbCurrent">Дашборд</span>
+      </div>
+
+      <div class="header-center">
+        <div class="clock-pill">
+          <span class="pulse"></span>
+          <span id="liveClock">00:00:00</span>
+        </div>
+        <div class="online-pill">
+          <span class="dot"></span>
+          <span>Онлайн: <span class="count" id="onlineCount">—</span> / <span id="onlineTotal">—</span></span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="icon-btn" onclick="showToast('Уведомлений нет', 'info')" title="Уведомления">
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif"></span>
+        </button>
+        <button class="icon-btn" onclick="logoutUser()" title="Выйти">
+          <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <section class="admin-section active" id="section-dashboard">
+      <div class="hero-block">
+        <h1>Добро пожаловать, <span id="welcomeName">—</span> 👋</h1>
+        <p>Это панель управления проектом Fernodd. Управляйте заявками, отслеживайте тикеты и контролируйте команду.</p>
+        <div class="hero-chips" id="welcomeRoles"></div>
+      </div>
+
+      <div class="uptime-bar">
+        <span class="uptime-dot"></span>
+        <span class="uptime-text">Система работает стабильно · Uptime: <b id="uptimeValue">—</b></span>
+      </div>
+
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-tile" style="--tile-color: #fbbf24;" onclick="showSection('applications')">
+          <div class="stat-icon">📋</div>
+          <div class="stat-value" id="statAppsPending">0</div>
+          <div class="stat-label">Заявок в ожидании</div>
+        </div>
+        <div class="stat-tile" style="--tile-color: #4ade80;" onclick="showSection('applications')">
+          <div class="stat-icon">✓</div>
+          <div class="stat-value" id="statAppsApproved">0</div>
+          <div class="stat-label">Одобрено</div>
+        </div>
+        <div class="stat-tile" style="--tile-color: #ef4444;" onclick="showSection('applications')">
+          <div class="stat-icon">✕</div>
+          <div class="stat-value" id="statAppsRejected">0</div>
+          <div class="stat-label">Отклонено</div>
+        </div>
+        <div class="stat-tile" style="--tile-color: #60a5fa;" onclick="showSection('complaints')">
+          <div class="stat-icon">💬</div>
+          <div class="stat-value" id="statTicketsOpen">0</div>
+          <div class="stat-label">Открытых тикетов</div>
+        </div>
+        <div class="stat-tile" style="--tile-color: #a855f7;" onclick="showSection('staff')">
+          <div class="stat-icon">👥</div>
+          <div class="stat-value" id="statStaff">0</div>
+          <div class="stat-label">Персонала</div>
+        </div>
+        <div class="stat-tile" style="--tile-color: #ec4899;" onclick="showSection('applications')">
+          <div class="stat-icon">↻</div>
+          <div class="stat-value" id="statRequests">0</div>
+          <div class="stat-label">Активных запросов</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="admin-section" id="section-applications">
+      <div class="sec-header">
+        <div>
+          <h2 class="sec-title">Заявки <span>игроков</span></h2>
+          <p class="sec-sub" id="appsSubtitle">Управляйте заявками на модератора</p>
+        </div>
+      </div>
+      <div class="tabs-row" id="appsTabs"></div>
+      <div class="search-wrap">
+        <input type="text" id="appsSearch" placeholder="Поиск по нику, Steam или Discord..." oninput="renderAppsTab()">
+      </div>
+      <div class="cards-list" id="appsList"></div>
+    </section>
+
+    <section class="admin-section" id="section-complaints">
+      <div class="sec-header">
+        <div>
+          <h2 class="sec-title">Жалобы <span>игроков</span></h2>
+          <p class="sec-sub">Открытые и закрытые тикеты</p>
+        </div>
+      </div>
+      <div class="tabs-row" id="ticketsTabs"></div>
+      <div class="cards-list" id="ticketsList"></div>
+      <div id="ticketDetail" style="display:none;">
+        <button class="btn-action ghost" onclick="closeTicketDetail()" style="margin-bottom: 14px;">← Назад к тикетам</button>
+        <div id="ticketDetailHeader"></div>
+        <div class="chat-box" id="ticketChat"></div>
+      </div>
+    </section>
+
+    <section class="admin-section" id="section-staff">
+      <div class="sec-header">
+        <div>
+          <h2 class="sec-title">Персонал <span>сервера</span></h2>
+          <p class="sec-sub">Администрация и модераторы</p>
+        </div>
+        <div class="online-pill">
+          <span class="dot"></span>
+          <span>В сети: <span class="count" id="staffOnlineCount">—</span> / <span id="staffTotalCount">—</span></span>
+        </div>
+      </div>
+      <div class="tabs-row" id="staffTabs"></div>
+      <div class="staff-grid" id="staffGrid"></div>
+    </section>
+
+    <section class="admin-section" id="section-analytics">
+      <div class="sec-header">
+        <div>
+          <h2 class="sec-title">Аналитика <span>проекта</span></h2>
+          <p class="sec-sub">Графики и статистика</p>
+        </div>
+        <button class="btn-action ghost" onclick="loadAnalytics()">↻ Обновить</button>
+      </div>
+      <div id="analyticsContent"></div>
+    </section>
+
+    <section class="admin-section" id="section-journal">
+      <div class="sec-header">
+        <div>
+          <h2 class="sec-title">История <span>заявок</span></h2>
+          <p class="sec-sub">Кто и когда изменял заявки</p>
+        </div>
+      </div>
+      <div class="tabs-row" id="journalTabs"></div>
+      <div class="cards-list" id="journalList"></div>
+    </section>
+
+    <section class="admin-section" id="section-logs">
+      <div class="sec-header">
+        <div>
+          <h2 class="sec-title">Логи <span>Discord</span></h2>
+          <p class="sec-sub">Последние 50 записей</p>
+        </div>
+      </div>
+      <div class="cards-list" id="logsList"></div>
+    </section>
+
+    <section class="admin-section" id="section-settings">
+      <div class="sec-header">
+        <div>
+          <h2 class="sec-title">Настройки <span>проекта</span></h2>
+          <p class="sec-sub">Конфигурация сервера</p>
+        </div>
+      </div>
+      <div class="settings-grid" id="settingsGrid"></div>
+    </section>
+
+    <section class="admin-section" id="section-monitor">
+      <div class="sec-header">
+        <div>
+          <h2 class="sec-title">Мониторинг <span>системы</span></h2>
+          <p class="sec-sub">Статус API и сервисов</p>
+        </div>
+        <button class="btn-action ghost" onclick="loadMonitor()">↻ Обновить</button>
+      </div>
+      <div class="settings-grid" id="monitorGrid">
+        <div class="loading-state"><div class="spinner"></div> Загрузка...</div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div class="modal-overlay" id="changeModal">
+  <div class="modal">
+    <h3 id="changeModalTitle">Изменить статус</h3>
+    <p id="changeModalDesc">Выберите новый статус.</p>
+    <label class="modal-radio" data-val="approved">
+      <input type="radio" name="newStatus" value="approved">
+      <span>✓ Одобрить</span>
+    </label>
+    <label class="modal-radio" data-val="rejected">
+      <input type="radio" name="newStatus" value="rejected">
+      <span>✕ Отклонить</span>
+    </label>
+    <label class="modal-radio" data-val="pending">
+      <input type="radio" name="newStatus" value="pending">
+      <span>🕒 Вернуть на рассмотрение</span>
+    </label>
+    <div class="modal-actions">
+      <button class="btn-action ghost" onclick="closeChangeModal()">Отмена</button>
+      <button class="btn-action green" id="changeModalConfirm" disabled onclick="submitChange()">Применить</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <h3>Удалить заявку?</h3>
+    <p id="deleteModalDesc">Заявка будет навсегда удалена.</p>
+    <div class="modal-actions">
+      <button class="btn-action ghost" onclick="closeDeleteModal()">Отмена</button>
+      <button class="btn-action red" id="deleteModalConfirm" onclick="submitDelete()">🗑 Удалить</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script src="/js/common.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+let isAuthorized = false;
+let currentSection = 'dashboard';
+let appsData = { pending: [], approved: [], rejected: [], changes: [], deletes: [] };
+let appsTab = 'pending';
+let staffData = { administrators: [], moderators: [] };
+let staffTab = 'administrators';
+let ticketsData = { open: [], closed: [] };
+let ticketsTab = 'open';
+let currentTicketId = null;
+let ticketPollTimer = null;
+let lastMessagesJSON = '';
+let journalData = [];
+let journalTab = 'change';
+let changeTarget = { id: null, currentStatus: null, newStatus: null };
+let deleteTarget = null;
+let badgePollTimer = null;
+let presencePollTimer = null;
+let analyticsPollTimer = null;
+let uptimeSyncTimer = null;
+let uptimeTickTimer = null;
+let uptimeBase = 0;
+let uptimeSyncAt = 0;
+
+function getAuthToken() { return localStorage.getItem('fernodd_token') || ''; }
+
+async function api(path, options = {}) {
+  const base = window.API_BASE || '';
+  const r = await fetch(base + path, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + getAuthToken(),
+      ...(options.headers || {})
+    }
+  });
+  const text = await r.text();
+  let data;
+  try { data = JSON.parse(text); } catch { data = { error: text }; }
+  if (!r.ok) throw new Error((data.error || 'error') + ' — ' + (data.details || ''));
+  return data;
+}
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function showToast(text, type = 'info', ms = 3200) {
+  const wrap = document.getElementById('toastWrap');
+  if (!wrap) return;
+  const icons = { success: '✓', error: '✕', info: 'ℹ' };
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.innerHTML = `<span style="font-weight:900;">${icons[type] || 'ℹ'}</span><span>${escapeHtml(text)}</span>`;
+  wrap.appendChild(el);
+  setTimeout(() => {
+    el.classList.add('fade');
+    setTimeout(() => el.remove(), 300);
+  }, ms);
+}
+
+function animateValue(el, target, duration = 800) {
+  if (!el) return;
+  const start = parseInt(el.textContent) || 0;
+  if (start === target) return;
+  const startTime = performance.now();
+  function update(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(start + (target - start) * eased);
+    if (progress < 1) requestAnimationFrame(update);
+    else el.textContent = target;
+  }
+  requestAnimationFrame(update);
+}
+
+function startClock() {
+  const el = document.getElementById('liveClock');
+  if (!el) return;
+  function tick() {
+    const d = new Date();
+    el.textContent = d.toLocaleTimeString('ru-RU');
+  }
+  tick();
+  setInterval(tick, 1000);
+}
+
+async function loadUptime() {
+  try {
+    const r = await fetch((window.API_BASE || '') + '/api/health');
+    if (r.ok) {
+      const d = await r.json();
+      uptimeBase = Math.floor(d.uptime || 0);
+      uptimeSyncAt = Date.now();
+      renderUptime();
+      if (uptimeTickTimer) clearInterval(uptimeTickTimer);
+      uptimeTickTimer = setInterval(renderUptime, 1000);
+    }
+  } catch {}
+}
+function renderUptime() {
+  const el = document.getElementById('uptimeValue');
+  if (!el) return;
+  const elapsed = Math.floor((Date.now() - uptimeSyncAt) / 1000);
+  const s = uptimeBase + elapsed;
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+  el.textContent = `${h}ч ${m}м ${sec}с`;
+}
+
+function isHeadAdminOrOwner() {
+  const u = window.currentUser;
+  return !!(u && (u.isHeadAdmin || u.isOwner));
+}
+function isWatcherOrAbove() {
+  const u = window.currentUser;
+  if (!u) return false;
+  if (u.isHeadAdmin || u.isOwner) return true;
+  return (u.roles || []).some(r => r === 'Следящий');
+}
+function isCurator() {
+  const u = window.currentUser;
+  if (!u) return false;
+  return (u.roles || []).some(r => r === 'Куратор');
+}
+function canChangeDirectly() { return isWatcherOrAbove(); }
+function canDeleteDirectly() { return isWatcherOrAbove(); }
+function canCreateRequest() { return isCurator() || isWatcherOrAbove(); }
+function canApproveRequests() { return isWatcherOrAbove(); }
+
+function applyAuth(user) {
+  isAuthorized = !!(user && user.isAdmin);
+  if (!isAuthorized) {
+    document.getElementById('deniedBlock').style.display = 'flex';
+    document.getElementById('adminShell').style.display = 'none';
+    return;
+  }
+  document.getElementById('deniedBlock').style.display = 'none';
+  document.getElementById('adminShell').style.display = 'grid';
+
+  document.getElementById('welcomeName').textContent = user.global_name || user.username;
+  document.getElementById('welcomeRoles').innerHTML = (user.roles || [])
+    .map(r => `<span class="hero-chip ${r === 'Следящий' || r === 'Куратор' ? 'red' : ''}">${escapeHtml(r)}</span>`)
+    .join('') || `<span class="hero-chip red">Steam</span>`;
+
+  document.getElementById('settingsLink').style.display = user.isOwner ? 'flex' : 'none';
+  document.getElementById('logsLink').style.display = isHeadAdminOrOwner() ? 'flex' : 'none';
+  document.getElementById('journalLink').style.display = isWatcherOrAbove() ? 'flex' : 'none';
+
+  const appsSub = document.getElementById('appsSubtitle');
+  if (appsSub) {
+    appsSub.textContent = isWatcherOrAbove()
+      ? 'Одобряйте, отклоняйте и управляйте заявками'
+      : 'Просматривайте заявки и запрашивайте изменения';
+  }
+
+  const hash = window.location.hash.replace('#', '');
+  const ALLOWED = ['dashboard','analytics','applications','complaints','staff','journal','logs','settings','monitor'];
+  let initial = ALLOWED.includes(hash) ? hash : 'dashboard';
+  if (initial === 'settings' && !user.isOwner) initial = 'dashboard';
+  if (initial === 'logs' && !isHeadAdminOrOwner()) initial = 'dashboard';
+  if (initial === 'journal' && !isWatcherOrAbove()) initial = 'dashboard';
+
+  loadDashboardStats();
+  loadUptime();
+  loadPresence();
+  showSection(initial);
+
+  if (badgePollTimer) clearInterval(badgePollTimer);
+  badgePollTimer = setInterval(() => { if (isAuthorized) loadDashboardStats(); }, 30000);
+  if (presencePollTimer) clearInterval(presencePollTimer);
+  presencePollTimer = setInterval(() => { if (isAuthorized) loadPresence(); }, 15000);
+  if (uptimeSyncTimer) clearInterval(uptimeSyncTimer);
+  uptimeSyncTimer = setInterval(loadUptime, 60000);
+  if (analyticsPollTimer) clearInterval(analyticsPollTimer);
+  analyticsPollTimer = setInterval(() => {
+    if (currentSection === 'analytics') loadAnalytics();
+  }, 30000);
+}
+
+window.addEventListener('auth:changed', (e) => applyAuth(e.detail.user));
+
+setTimeout(() => {
+  if (!isAuthorized && document.getElementById('adminShell').style.display === 'none') {
+    document.getElementById('deniedBlock').style.display = 'flex';
+  }
+}, 2000);
+
+async function loadPresence() {
+  try {
+    const stats = await api('/api/presence');
+    const el = document.getElementById('onlineCount');
+    const elT = document.getElementById('onlineTotal');
+    if (el) el.textContent = stats.online;
+    if (elT) elT.textContent = stats.total;
+  } catch (e) {}
+}
+
+const SECTION_TITLES = {
+  dashboard: 'Дашборд', analytics: 'Аналитика', applications: 'Заявки',
+  complaints: 'Жалобы', staff: 'Персонал', journal: 'История заявок',
+  logs: 'Логи Discord', settings: 'Настройки', monitor: 'Мониторинг'
+};
+
+function showSection(name) {
+  if (!isAuthorized) return;
+  if (name === 'settings' && !(window.currentUser && window.currentUser.isOwner)) {
+    showToast('Раздел доступен только владельцу.', 'error'); return;
+  }
+  if (name === 'logs' && !isHeadAdminOrOwner()) {
+    showToast('Раздел доступен только главной администрации.', 'error'); return;
+  }
+  if (name === 'journal' && !isWatcherOrAbove()) {
+    showToast('Раздел доступен следящим и главной администрации.', 'error'); return;
+  }
+  currentSection = name;
+  document.querySelectorAll('.rail-item').forEach(l => {
+    l.classList.toggle('active', l.dataset.section === name);
+  });
+  document.getElementById('crumbCurrent').textContent = SECTION_TITLES[name] || name;
+  document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('section-' + name);
+  if (target) target.classList.add('active');
+  document.querySelector('.nav-rail').classList.remove('open');
+  const loaders = {
+    dashboard: loadDashboardStats, analytics: loadAnalytics, applications: loadApplications,
+    complaints: loadComplaints, staff: loadStaff, journal: loadJournal,
+    logs: loadLogs, settings: loadSettings, monitor: loadMonitor
+  };
+  if (loaders[name]) loaders[name]();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (history.replaceState) history.replaceState(null, '', '#' + name);
+}
+
+async function loadDashboardStats() {
+  try {
+    const [apps, tickets, staff] = await Promise.all([
+      api('/api/applications').catch(() => ({ applications: [] })),
+      api('/api/tickets').catch(() => ({ open: [], closed: [] })),
+      api('/api/staff').catch(() => ({ administrators: [], moderators: [] }))
+    ]);
+    const all = apps.applications || [];
+    const pending = all.filter(a => a.status === 'pending').length;
+    const approved = all.filter(a => a.status === 'approved').length;
+    const rejected = all.filter(a => a.status === 'rejected').length;
+    animateValue(document.getElementById('statAppsPending'), pending);
+    animateValue(document.getElementById('statAppsApproved'), approved);
+    animateValue(document.getElementById('statAppsRejected'), rejected);
+    animateValue(document.getElementById('statTicketsOpen'), (tickets.open || []).length);
+    animateValue(document.getElementById('statStaff'),
+      (staff.administrators || []).length + (staff.moderators || []).length);
+    const bApps = document.getElementById('badgeApps');
+    bApps.textContent = pending;
+    const bTickets = document.getElementById('badgeTickets');
+    bTickets.textContent = (tickets.open || []).length;
+    if (canApproveRequests()) {
+      try {
+        const [changes, deletes] = await Promise.all([
+          api('/api/change-requests').catch(() => ({ requests: [] })),
+          api('/api/delete-requests').catch(() => ({ requests: [] }))
+        ]);
+        const total = (changes.requests || []).length + (deletes.requests || []).length;
+        animateValue(document.getElementById('statRequests'), total);
+      } catch {}
+    }
+  } catch (e) { console.error('[dashboard]', e); }
+}
+
+async function loadApplications() {
+  const list = document.getElementById('appsList');
+  list.innerHTML = '<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>';
+  try {
+    const data = await api('/api/applications');
+    const all = data.applications || [];
+    appsData.pending = all.filter(a => a.status === 'pending');
+    appsData.approved = all.filter(a => a.status === 'approved');
+    appsData.rejected = all.filter(a => a.status === 'rejected');
+    if (canApproveRequests()) {
+      try { appsData.changes = (await api('/api/change-requests')).requests || []; } catch { appsData.changes = []; }
+      try { appsData.deletes = (await api('/api/delete-requests')).requests || []; } catch { appsData.deletes = []; }
+    }
+    renderAppsTabs();
+    renderAppsTab();
+  } catch (e) {
+    list.innerHTML = `<div class="empty-state"><div class="ico">⚠️</div>Ошибка: ${escapeHtml(e.message)}</div>`;
+  }
+}
+
+function renderAppsTabs() {
+  const tabs = document.getElementById('appsTabs');
+  const showRequests = canApproveRequests();
+  tabs.innerHTML = `
+    <button class="tab-pill ${appsTab === 'pending' ? 'active' : ''}" onclick="switchAppsTab('pending')">
+      🕒 <span class="tab-label">Ожидание</span> <span class="tab-count">${appsData.pending.length}</span>
+    </button>
+    <button class="tab-pill ${appsTab === 'approved' ? 'active' : ''}" onclick="switchAppsTab('approved')">
+      ✓ <span class="tab-label">Одобрено</span> <span class="tab-count">${appsData.approved.length}</span>
+    </button>
+    <button class="tab-pill ${appsTab === 'rejected' ? 'active' : ''}" onclick="switchAppsTab('rejected')">
+      ✕ <span class="tab-label">Отклонено</span> <span class="tab-count">${appsData.rejected.length}</span>
+    </button>
+    ${showRequests ? `
+      <button class="tab-pill ${appsTab === 'changes' ? 'active' : ''}" onclick="switchAppsTab('changes')">
+        ↻ <span class="tab-label">Изменения</span> <span class="tab-count">${appsData.changes.length}</span>
+      </button>
+      <button class="tab-pill ${appsTab === 'deletes' ? 'active' : ''}" onclick="switchAppsTab('deletes')">
+        🗑 <span class="tab-label">Удаления</span> <span class="tab-count">${appsData.deletes.length}</span>
+      </button>
+    ` : ''}
+  `;
+}
+
+function switchAppsTab(name) {
+  if ((name === 'changes' || name === 'deletes') && !canApproveRequests()) {
+    showToast('Раздел доступен только следящим.', 'error'); return;
+  }
+  appsTab = name;
+  renderAppsTabs();
+  renderAppsTab();
+}
+
+function renderAppsTab() {
+  const el = document.getElementById('appsList');
+  if (!el) return;
+  const search = (document.getElementById('appsSearch')?.value || '').toLowerCase().trim();
+  if (appsTab === 'changes') return renderChangeRequests(el, search);
+  if (appsTab === 'deletes') return renderDeleteRequests(el, search);
+  let list = appsData[appsTab] || [];
+  if (search) {
+    list = list.filter(a =>
+      (a.discord || '').toLowerCase().includes(search) ||
+      (a.authorName || '').toLowerCase().includes(search) ||
+      (a.steam || '').toLowerCase().includes(search)
+    );
+  }
+  if (!list.length) {
+    const labels = { pending: 'Заявок на рассмотрении нет.', approved: 'Одобренных заявок нет.', rejected: 'Отклонённых заявок нет.' };
+    el.innerHTML = `<div class="empty-state"><div class="ico">📭</div>${labels[appsTab]}</div>`;
+    return;
+  }
+  const canDirect = canChangeDirectly();
+  const canRequest = canCreateRequest();
+  el.innerHTML = list.map(a => {
+    const date = new Date(a.date).toLocaleString('ru-RU');
+    const statusLabel = a.status === 'approved' ? 'Одобрено' : a.status === 'rejected' ? 'Отклонено' : 'На рассмотрении';
+    const borderColor = a.status === 'approved' ? '#4ade80' : a.status === 'rejected' ? '#ef4444' : '#fbbf24';
+    let actions = '';
+    if (a.status === 'pending') {
+      if (canDirect) {
+        actions = `
+          <div class="app-actions">
+            <button class="btn-action green" onclick="setAppStatus('${a.id}','approve',this)">✓ Одобрить</button>
+            <button class="btn-action red" onclick="setAppStatus('${a.id}','reject',this)">✕ Отклонить</button>
+          </div>`;
+      } else {
+        actions = `<div class="app-actions"><span style="font-size:12px; color:var(--text-dim); align-self:center;">🕒 Ожидает решения следящего</span></div>`;
+      }
+    } else {
+      const reqBadges = [];
+      if (a.hasChangeRequest) reqBadges.push('<span class="status-pill pending">↻ Запрос изменения</span>');
+      if (a.hasDeleteRequest) reqBadges.push('<span class="status-pill rejected">🗑 Запрос удаления</span>');
+      const buttons = [];
+      if (canDirect) {
+        buttons.push(`<button class="btn-action blue" onclick="openChangeModal('${a.id}', '${a.status}')">↻ Изменить</button>`);
+        buttons.push(`<button class="btn-action red" onclick="openDeleteModal('${a.id}')">🗑 Удалить</button>`);
+      } else if (canRequest) {
+        buttons.push(`<button class="btn-action blue" onclick="openChangeModal('${a.id}', '${a.status}')">↻ Запросить</button>`);
+        buttons.push(`<button class="btn-action red" onclick="openDeleteModal('${a.id}')">🗑 Запросить</button>`);
+      }
+      actions = `
+        ${reqBadges.length ? `<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">${reqBadges.join('')}</div>` : ''}
+        ${buttons.length ? `<div class="app-actions">${buttons.join('')}</div>` : ''}
+      `;
+    }
+    return `
+      <div class="app-card" style="border-left:4px solid ${borderColor};">
+        <img class="app-avatar" src="${a.avatar}" alt="">
+        <div class="app-body">
+          <div class="app-head">
+            <div><span class="app-name">${escapeHtml(a.discord || a.steam || a.authorName)}</span> <span class="status-pill ${a.status}">${statusLabel}</span></div>
+            <span class="app-date">${date}</span>
+          </div>
+          <div class="app-row">
+            <span>Возраст: <b>${escapeHtml(a.age || '—')}</b></span>
+            <span>Онлайн: <b>${escapeHtml(a.online || '—')}</b></span>
+            <span>Опыт: <b>${escapeHtml(a.experience || '—')}</b></span>
+          </div>
+          <div class="app-text">${escapeHtml(a.motivation || '—')}</div>
+          ${actions}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+async function setAppStatus(id, action, btn) {
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    await api(`/api/applications/${id}/${action}`, { method: 'POST' });
+    showToast(action === 'approve' ? '✓ Заявка одобрена.' : '✕ Заявка отклонена.', 'success');
+    await loadApplications();
+    await loadDashboardStats();
+  } catch (e) {
+    btn.disabled = false; btn.textContent = 'Ошибка';
+    showToast(e.message, 'error');
+  }
+}
+
+function renderChangeRequests(el, search) {
+  let list = appsData.changes || [];
+  if (search) list = list.filter(r => {
+    const app = r.application || {};
+    return (((app.discord || '') + ' ' + (app.steam || '')).toLowerCase()).includes(search);
+  });
+  if (!list.length) {
+    el.innerHTML = '<div class="empty-state"><div class="ico">✓</div>Запросов на изменение нет.</div>';
+    return;
+  }
+  const statusLabels = { approved: 'Одобрить', rejected: 'Отклонить', pending: 'Вернуть' };
+  el.innerHTML = list.map(r => {
+    const date = new Date(r.createdAt).toLocaleString('ru-RU');
+    const app = r.application || {};
+    return `
+      <div class="app-card" style="border-left:4px solid #60a5fa;">
+        <img class="app-avatar" src="${r.requestedByAvatar}" alt="">
+        <div class="app-body">
+          <div class="app-head">
+            <div><span class="status-pill pending">↻ ИЗМЕНЕНИЕ</span> <span class="app-name">${escapeHtml(app.discord || app.steam || '—')}</span></div>
+            <span class="app-date">${date}</span>
+          </div>
+          <div class="app-row">
+            <span>Запросил: <b>${escapeHtml(r.requestedByName)}</b></span>
+            <span>Новый статус: <b>${statusLabels[r.newStatus] || r.newStatus}</b></span>
+          </div>
+          ${app.motivation ? `<div class="app-text">${escapeHtml(app.motivation)}</div>` : ''}
+          <div class="app-actions">
+            <button class="btn-action green" onclick="approveChange('${r.id}', this)">✓ Подтвердить</button>
+            <button class="btn-action red" onclick="rejectChange('${r.id}', this)">✕ Отклонить</button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+async function approveChange(id, btn) {
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    await api(`/api/change-requests/${id}/approve`, { method: 'POST' });
+    showToast('Изменение подтверждено.', 'success');
+    await loadApplications();
+  } catch (e) { btn.disabled = false; btn.textContent = 'Ошибка'; showToast(e.message, 'error'); }
+}
+async function rejectChange(id, btn) {
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    await api(`/api/change-requests/${id}/reject`, { method: 'POST' });
+    showToast('Запрос отклонён.', 'info');
+    await loadApplications();
+  } catch (e) { btn.disabled = false; btn.textContent = 'Ошибка'; showToast(e.message, 'error'); }
+}
+
+function renderDeleteRequests(el, search) {
+  let list = appsData.deletes || [];
+  if (search) list = list.filter(r => {
+    const app = r.application || {};
+    return (((app.discord || '') + ' ' + (app.steam || '')).toLowerCase()).includes(search);
+  });
+  if (!list.length) {
+    el.innerHTML = '<div class="empty-state"><div class="ico">✓</div>Запросов на удаление нет.</div>';
+    return;
+  }
+  el.innerHTML = list.map(r => {
+    const date = new Date(r.createdAt).toLocaleString('ru-RU');
+    const app = r.application || {};
+    return `
+      <div class="app-card" style="border-left:4px solid var(--red);">
+        <img class="app-avatar" src="${r.requestedByAvatar}" alt="">
+        <div class="app-body">
+          <div class="app-head">
+            <div><span class="status-pill rejected">🗑 УДАЛЕНИЕ</span> <span class="app-name">${escapeHtml(app.discord || app.steam || '—')}</span></div>
+            <span class="app-date">${date}</span>
+          </div>
+          <div class="app-row">
+            <span>Запросил: <b>${escapeHtml(r.requestedByName)}</b></span>
+          </div>
+          ${app.motivation ? `<div class="app-text">${escapeHtml(app.motivation)}</div>` : ''}
+          <div class="app-actions">
+            <button class="btn-action green" onclick="approveDelete('${r.id}', this)">✓ Подтвердить</button>
+            <button class="btn-action red" onclick="rejectDelete('${r.id}', this)">✕ Отклонить</button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+async function approveDelete(id, btn) {
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    await api(`/api/delete-requests/${id}/approve`, { method: 'POST' });
+    showToast('Заявка удалена.', 'success');
+    await loadApplications();
+  } catch (e) { btn.disabled = false; btn.textContent = 'Ошибка'; showToast(e.message, 'error'); }
+}
+async function rejectDelete(id, btn) {
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    await api(`/api/delete-requests/${id}/reject`, { method: 'POST' });
+    showToast('Запрос отклонён.', 'info');
+    await loadApplications();
+  } catch (e) { btn.disabled = false; btn.textContent = 'Ошибка'; showToast(e.message, 'error'); }
+}
+
+function openChangeModal(id, currentStatus) {
+  changeTarget = { id, currentStatus, newStatus: null };
+  const canDirect = canChangeDirectly();
+  document.getElementById('changeModalTitle').textContent = canDirect ? 'Изменить статус' : 'Запросить изменение';
+  document.getElementById('changeModalDesc').textContent = canDirect ? 'Изменение применится сразу.' : 'Запрос уйдёт следящему.';
+  document.querySelectorAll('input[name="newStatus"]').forEach(r => r.checked = false);
+  document.querySelectorAll('.modal-radio').forEach(r => r.classList.remove('selected'));
+  const btn = document.getElementById('changeModalConfirm');
+  btn.disabled = true;
+  btn.textContent = canDirect ? 'Применить' : 'Отправить';
+  document.getElementById('changeModal').classList.add('visible');
+}
+function closeChangeModal() {
+  document.getElementById('changeModal').classList.remove('visible');
+  changeTarget = { id: null, currentStatus: null, newStatus: null };
+}
+document.querySelectorAll('input[name="newStatus"]').forEach(radio => {
+  radio.addEventListener('change', (e) => {
+    changeTarget.newStatus = e.target.value;
+    document.querySelectorAll('.modal-radio').forEach(l => l.classList.remove('selected'));
+    e.target.closest('.modal-radio').classList.add('selected');
+    document.getElementById('changeModalConfirm').disabled = false;
+  });
+});
+async function submitChange() {
+  if (!changeTarget.id || !changeTarget.newStatus) return;
+  const btn = document.getElementById('changeModalConfirm');
+  btn.disabled = true; btn.textContent = '...';
+  const targetId = changeTarget.id;
+  const targetStatus = changeTarget.newStatus;
+  const canDirect = canChangeDirectly();
+  closeChangeModal();
+  try {
+    if (canDirect) {
+      await api(`/api/applications/${targetId}/change`, { method: 'POST', body: JSON.stringify({ newStatus: targetStatus }) });
+      showToast('✓ Статус изменён.', 'success');
+    } else {
+      await api('/api/change-requests', { method: 'POST', body: JSON.stringify({ applicationId: targetId, newStatus: targetStatus }) });
+      showToast('→ Запрос отправлен.', 'success');
+    }
+  } catch (e) { showToast('Ошибка: ' + e.message, 'error'); }
+  finally { try { await loadApplications(); } catch {} }
+}
+
+function openDeleteModal(id) {
+  deleteTarget = id;
+  const canDirect = canDeleteDirectly();
+  document.getElementById('deleteModalDesc').innerHTML = canDirect
+    ? 'Заявка будет <b>навсегда удалена</b>. Действие необратимо.'
+    : 'Запрос на удаление уйдёт на подтверждение.';
+  const btn = document.getElementById('deleteModalConfirm');
+  btn.disabled = false;
+  btn.textContent = canDirect ? '🗑 Удалить' : '🗑 Отправить запрос';
+  document.getElementById('deleteModal').classList.add('visible');
+}
+function closeDeleteModal() {
+  document.getElementById('deleteModal').classList.remove('visible');
+  deleteTarget = null;
+}
+async function submitDelete() {
+  if (!deleteTarget) return;
+  const btn = document.getElementById('deleteModalConfirm');
+  btn.disabled = true; btn.textContent = '...';
+  const targetId = deleteTarget;
+  const canDirect = canDeleteDirectly();
+  closeDeleteModal();
+  try {
+    if (canDirect) {
+      await api(`/api/applications/${targetId}`, { method: 'DELETE' });
+      showToast('🗑 Заявка удалена.', 'success');
+    } else {
+      await api('/api/delete-requests', { method: 'POST', body: JSON.stringify({ applicationId: targetId }) });
+      showToast('→ Запрос отправлен.', 'success');
+    }
+  } catch (e) { showToast('Ошибка: ' + e.message, 'error'); }
+  finally { try { await loadApplications(); } catch {} }
+}
+
+async function loadStaff() {
+  const grid = document.getElementById('staffGrid');
+  grid.innerHTML = '<div class="skeleton" style="height:88px;"></div><div class="skeleton" style="height:88px;"></div>';
+  try {
+    const [data] = await Promise.all([api('/api/staff'), loadPresence()]);
+    staffData.administrators = data.administrators || [];
+    staffData.moderators = data.moderators || [];
+    renderStaffTabs();
+    renderStaffGrid();
+    updateStaffOnlineCount();
+  } catch (e) {
+    grid.innerHTML = `<div class="empty-state"><div class="ico">⚠️</div>Ошибка: ${escapeHtml(e.message)}</div>`;
+  }
+}
+function updateStaffOnlineCount() {
+  const all = [...staffData.administrators, ...staffData.moderators];
+  const online = all.filter(s => s.presence && s.presence.status === 'online').length;
+  const idle = all.filter(s => s.presence && s.presence.status === 'idle').length;
+  const dnd = all.filter(s => s.presence && s.presence.status === 'dnd').length;
+  const el = document.getElementById('staffOnlineCount');
+  const totalEl = document.getElementById('staffTotalCount');
+  if (el) el.textContent = online + idle + dnd;
+  if (totalEl) totalEl.textContent = all.length;
+}
+function renderStaffTabs() {
+  document.getElementById('staffTabs').innerHTML = `
+    <button class="tab-pill ${staffTab === 'administrators' ? 'active' : ''}" onclick="switchStaffTab('administrators')">
+      👑 <span class="tab-label">Администрация</span> <span class="tab-count">${staffData.administrators.length}</span>
+    </button>
+    <button class="tab-pill ${staffTab === 'moderators' ? 'active' : ''}" onclick="switchStaffTab('moderators')">
+      🛡️ <span class="tab-label">Модераторы</span> <span class="tab-count">${staffData.moderators.length}</span>
+    </button>
+  `;
+}
+function switchStaffTab(name) { staffTab = name; renderStaffTabs(); renderStaffGrid(); }
+function renderStaffGrid() {
+  const grid = document.getElementById('staffGrid');
+  const list = staffData[staffTab] || [];
+  if (!list.length) {
+    grid.innerHTML = '<div class="empty-state"><div class="ico">👥</div>Нет участников.</div>';
+    return;
+  }
+  grid.innerHTML = list.map(s => {
+    const status = (s.presence && s.presence.status) || 'offline';
+    const statusText = { online: 'В сети', idle: 'Неактивен', dnd: 'Не беспокоить', offline: 'Не в сети' }[status] || 'Не в сети';
+    return `
+      <div class="staff-tile" style="--role-color:${s.topRoleColor};" onclick="window.location.href='/profile.html?id=${s.id}'">
+        <div class="staff-avatar-wrap">
+          <img class="staff-avatar" src="${s.avatar}" alt="">
+          <span class="staff-presence ${status}" title="${statusText}"></span>
+        </div>
+        <div class="staff-info">
+          <h3>${escapeHtml(s.nickname || s.global_name || s.username)}</h3>
+          <span class="staff-role" style="background:${s.topRoleColor}22;color:${s.topRoleColor};border:1px solid ${s.topRoleColor}66;">${escapeHtml(s.topRole)}</span>
+          <div class="staff-sub-roles">
+            ${(s.roles || []).slice(1, 3).map(r => `<span>${escapeHtml(r)}</span>`).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function loadComplaints() {
+  const list = document.getElementById('ticketsList');
+  list.innerHTML = '<div class="skeleton"></div><div class="skeleton"></div>';
+  document.getElementById('ticketDetail').style.display = 'none';
+  list.style.display = 'flex';
+  document.getElementById('ticketsTabs').style.display = 'flex';
+  try {
+    const data = await api('/api/tickets');
+    ticketsData.open = data.open || [];
+    ticketsData.closed = data.closed || [];
+    renderTicketsTabs();
+    renderTicketsList();
+  } catch (e) {
+    list.innerHTML = `<div class="empty-state"><div class="ico">⚠️</div>Ошибка: ${escapeHtml(e.message)}</div>`;
+  }
+}
+function renderTicketsTabs() {
+  document.getElementById('ticketsTabs').innerHTML = `
+    <button class="tab-pill ${ticketsTab === 'open' ? 'active' : ''}" onclick="switchTicketsTab('open')">
+      🟢 <span class="tab-label">Открытые</span> <span class="tab-count">${ticketsData.open.length}</span>
+    </button>
+    <button class="tab-pill ${ticketsTab === 'closed' ? 'active' : ''}" onclick="switchTicketsTab('closed')">
+      🔒 <span class="tab-label">Закрытые</span> <span class="tab-count">${ticketsData.closed.length}</span>
+    </button>
+  `;
+}
+function switchTicketsTab(name) { ticketsTab = name; renderTicketsTabs(); renderTicketsList(); }
+function renderTicketsList() {
+  const el = document.getElementById('ticketsList');
+  const list = ticketsData[ticketsTab] || [];
+  if (!list.length) {
+    el.innerHTML = `<div class="empty-state"><div class="ico">📭</div>${ticketsTab === 'open' ? 'Открытых' : 'Закрытых'} тикетов нет.</div>`;
+    return;
+  }
+  el.innerHTML = list.map(t => {
+    const date = t.lastDate ? new Date(t.lastDate).toLocaleString('ru-RU') : '—';
+    const preview = t.preview || '(нет сообщений)';
+    const openIcon = ticketsTab === 'closed' ? '🔒' : '🟢';
+    const safeName = (t.name || '').replace(/'/g, "\\'");
+    return `
+      <div class="app-card" style="border-left:4px solid ${ticketsTab === 'closed' ? '#6b7280' : '#4ade80'};cursor:pointer;" onclick="openTicket('${t.id}', '${safeName}')">
+        <div class="app-body">
+          <div class="app-head">
+            <span class="app-name">${openIcon} #${escapeHtml(t.name)}</span>
+            <span class="app-date">${date}</span>
+          </div>
+          ${t.lastAuthor ? `<div class="app-row"><span>Последний: <b>${escapeHtml(t.lastAuthor)}</b></span></div>` : ''}
+          <div class="app-text">${escapeHtml(preview)}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+async function openTicket(id, name) {
+  currentTicketId = id;
+  lastMessagesJSON = '';
+  document.getElementById('ticketsTabs').style.display = 'none';
+  document.getElementById('ticketsList').style.display = 'none';
+  document.getElementById('ticketDetail').style.display = 'block';
+  document.getElementById('ticketDetailHeader').innerHTML = `
+    <h3 style="font-family:'Unbounded';font-size:18px;margin-bottom:12px;">#${escapeHtml(name)}</h3>
+  `;
+  document.getElementById('ticketChat').innerHTML = '<div class="loading-state"><div class="spinner"></div> Загрузка...</div>';
+  await loadTicketMessages();
+  if (ticketPollTimer) clearInterval(ticketPollTimer);
+  ticketPollTimer = setInterval(loadTicketMessages, 5000);
+}
+function closeTicketDetail() {
+  if (ticketPollTimer) { clearInterval(ticketPollTimer); ticketPollTimer = null; }
+  currentTicketId = null;
+  document.getElementById('ticketDetail').style.display = 'none';
+  document.getElementById('ticketsTabs').style.display = 'flex';
+  document.getElementById('ticketsList').style.display = 'flex';
+}
+async function loadTicketMessages() {
+  if (!currentTicketId) return;
+  try {
+    const data = await api(`/api/tickets/${currentTicketId}/messages`);
+    const json = JSON.stringify(data.messages);
+    if (json === lastMessagesJSON) return;
+    lastMessagesJSON = json;
+    const el = document.getElementById('ticketChat');
+    if (!data.messages.length) {
+      el.innerHTML = '<div class="empty-state">Сообщений нет.</div>';
+      return;
+    }
+    el.innerHTML = data.messages.map(m => {
+      const time = new Date(m.date).toLocaleString('ru-RU');
+      const body = m.content || m.embedDescription || '';
+      const atts = (m.attachments || []).map(a => {
+        if ((a.type || '').startsWith('image/')) return `<img src="${a.url}" class="msg-attach" alt="">`;
+        return `<a href="${a.url}" target="_blank" class="btn-action ghost" style="margin-top:8px;">📎 Вложение</a>`;
+      }).join('');
+      return `
+        <div class="msg">
+          <img class="msg-avatar" src="${m.avatar}" alt="">
+          <div class="msg-body">
+            <div class="msg-head">
+              <span class="msg-name">${escapeHtml(m.authorName)}${m.authorBot ? ' 🤖' : ''}</span>
+              <span class="msg-date">${time}</span>
+            </div>
+            ${body ? `<div class="msg-text">${escapeHtml(body)}</div>` : ''}
+            ${atts}
+          </div>
+        </div>`;
+    }).join('');
+    el.scrollTop = el.scrollHeight;
+  } catch (e) {
+    document.getElementById('ticketChat').innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${escapeHtml(e.message)}</div>`;
+  }
+}
+
+async function loadAnalytics() {
+  const el = document.getElementById('analyticsContent');
+  el.innerHTML = '<div class="loading-state"><div class="spinner"></div> Загрузка...</div>';
+  try {
+    const [apps, hist] = await Promise.all([
+      api('/api/applications').catch(() => ({ applications: [] })),
+      api('/api/applications-history').catch(() => ({ history: [] }))
+    ]);
+    const all = apps.applications || [];
+    const pending = all.filter(a => a.status === 'pending').length;
+    const approved = all.filter(a => a.status === 'approved').length;
+    const rejected = all.filter(a => a.status === 'rejected').length;
+    const total = all.length;
+    el.innerHTML = `
+      <div class="stats-grid">
+        <div class="stat-tile" style="--tile-color:#fbbf24;">
+          <div class="stat-icon">🕒</div>
+          <div class="stat-value">${pending}</div>
+          <div class="stat-label">Ожидание</div>
+        </div>
+        <div class="stat-tile" style="--tile-color:#4ade80;">
+          <div class="stat-icon">✓</div>
+          <div class="stat-value">${approved}</div>
+          <div class="stat-label">Одобрено</div>
+        </div>
+        <div class="stat-tile" style="--tile-color:#ef4444;">
+          <div class="stat-icon">✕</div>
+          <div class="stat-value">${rejected}</div>
+          <div class="stat-label">Отклонено</div>
+        </div>
+        <div class="stat-tile" style="--tile-color:#60a5fa;">
+          <div class="stat-icon">📊</div>
+          <div class="stat-value">${total}</div>
+          <div class="stat-label">Всего</div>
+        </div>
+      </div>
+      <div class="app-card" style="flex-direction:column;">
+        <h3 style="font-family:'Unbounded';font-size:15px;margin-bottom:14px;">История действий</h3>
+        ${(hist.history || []).slice(0, 15).map(h => `
+          <div style="padding:10px 0; border-bottom:1px solid var(--border); font-size:12.5px; color:var(--text-dim);">
+            <b style="color:#fff;">${escapeHtml(h.performedByName)}</b> — 
+            ${h.action === 'change' ? 'изменил статус' : 'удалил заявку'} 
+            <b>${escapeHtml(h.applicationOwner || '—')}</b>
+            <span style="float:right; font-size:11px;">${new Date(h.performedAt).toLocaleString('ru-RU')}</span>
+          </div>
+        `).join('') || '<div class="empty-state">Нет данных</div>'}
+      </div>
+    `;
+  } catch (e) {
+    el.innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${escapeHtml(e.message)}</div>`;
+  }
+}
+
+async function loadJournal() {
+  const list = document.getElementById('journalList');
+  list.innerHTML = '<div class="skeleton"></div><div class="skeleton"></div>';
+  try {
+    const data = await api('/api/applications-history');
+    journalData = data.history || [];
+    renderJournalTabs();
+    renderJournalList();
+  } catch (e) {
+    list.innerHTML = `<div class="empty-state"><div class="ico">⚠️</div>Ошибка: ${escapeHtml(e.message)}</div>`;
+  }
+}
+function renderJournalTabs() {
+  const changes = journalData.filter(h => h.action === 'change');
+  const deletes = journalData.filter(h => h.action === 'delete');
+  document.getElementById('journalTabs').innerHTML = `
+    <button class="tab-pill ${journalTab === 'change' ? 'active' : ''}" onclick="switchJournalTab('change')">
+      ↻ <span class="tab-label">Изменения</span> <span class="tab-count">${changes.length}</span>
+    </button>
+    <button class="tab-pill ${journalTab === 'delete' ? 'active' : ''}" onclick="switchJournalTab('delete')">
+      🗑 <span class="tab-label">Удаления</span> <span class="tab-count">${deletes.length}</span>
+    </button>
+  `;
+}
+function switchJournalTab(name) { journalTab = name; renderJournalTabs(); renderJournalList(); }
+function renderJournalList() {
+  const el = document.getElementById('journalList');
+  const list = journalData.filter(h => h.action === journalTab);
+  if (!list.length) {
+    el.innerHTML = `<div class="empty-state"><div class="ico">📭</div>История пуста.</div>`;
+    return;
+  }
+  const statusNames = { approved: 'Одобрено', rejected: 'Отклонено', pending: 'На рассмотрении', unknown: '—' };
+  el.innerHTML = list.map(h => {
+    const date = new Date(h.performedAt).toLocaleString('ru-RU');
+    if (h.action === 'change') {
+      return `
+        <div class="app-card" style="border-left:4px solid #60a5fa;">
+          <img class="app-avatar" src="${h.performedByAvatar}" alt="">
+          <div class="app-body">
+            <div class="app-head">
+              <div><span class="app-name">${escapeHtml(h.performedByName)}</span> <span class="status-pill pending" style="background:rgba(59,130,246,0.15);color:#60a5fa;">↻ Изменил</span></div>
+              <span class="app-date">${date}</span>
+            </div>
+            <div class="app-row">
+              <span>Заявка: <b>${escapeHtml(h.applicationOwner)}</b></span>
+              <span>${statusNames[h.oldStatus] || h.oldStatus} → <b>${statusNames[h.newStatus] || h.newStatus}</b></span>
+            </div>
+          </div>
+        </div>`;
+    } else {
+      return `
+        <div class="app-card" style="border-left:4px solid var(--red);">
+          <img class="app-avatar" src="${h.performedByAvatar}" alt="">
+          <div class="app-body">
+            <div class="app-head">
+              <div><span class="app-name">${escapeHtml(h.performedByName)}</span> <span class="status-pill rejected">🗑 Удалил</span></div>
+              <span class="app-date">${date}</span>
+            </div>
+            <div class="app-row">
+              <span>Заявка: <b>${escapeHtml(h.applicationOwner)}</b></span>
+              <span>Был статус: <b>${statusNames[h.oldStatus] || h.oldStatus}</b></span>
+            </div>
+          </div>
+        </div>`;
+    }
+  }).join('');
+}
+
+async function loadLogs() {
+  const list = document.getElementById('logsList');
+  list.innerHTML = '<div class="skeleton"></div><div class="skeleton"></div>';
+  try {
+    const data = await api('/api/logs');
+    const logs = data.logs || [];
+    if (!logs.length) {
+      list.innerHTML = '<div class="empty-state"><div class="ico">📭</div>Записей нет.</div>';
+      return;
+    }
+    list.innerHTML = logs.map(l => {
+      const date = new Date(l.date).toLocaleString('ru-RU');
+      return `
+        <div class="app-card">
+          <img class="app-avatar" src="${l.avatar}" alt="">
+          <div class="app-body">
+            <div class="app-head">
+              <span class="app-name">${escapeHtml(l.authorName)}</span>
+              <span class="app-date">${date}</span>
+            </div>
+            ${l.content ? `<div style="font-size:13.5px;line-height:1.6;margin-bottom:8px;white-space:pre-wrap;">${escapeHtml(l.content)}</div>` : ''}
+            ${l.embedTitle ? `<div style="font-family:'Unbounded';font-weight:700;font-size:14px;color:var(--red);margin-bottom:6px;">${escapeHtml(l.embedTitle)}</div>` : ''}
+            ${l.embedDescription ? `<div style="font-size:13px;line-height:1.6;color:var(--text-dim);white-space:pre-wrap;">${escapeHtml(l.embedDescription)}</div>` : ''}
+          </div>
+        </div>`;
+    }).join('');
+  } catch (e) {
+    list.innerHTML = `<div class="empty-state"><div class="ico">⚠️</div>Ошибка: ${escapeHtml(e.message)}</div>`;
+  }
+}
+
+async function loadSettings() {
+  const grid = document.getElementById('settingsGrid');
+  grid.innerHTML = '<div class="skeleton"></div><div class="skeleton"></div>';
+  try {
+    const data = await api('/api/settings');
+    const s = data.settings || {};
+    grid.innerHTML = `
+      <div class="setting-card"><div class="setting-label">Discord сервер</div><div class="setting-value">${escapeHtml(s.guildId)}</div></div>
+      <div class="setting-card"><div class="setting-label">Канал заявок</div><div class="setting-value">${escapeHtml(s.applyChannel)}</div></div>
+      <div class="setting-card"><div class="setting-label">Канал логов</div><div class="setting-value">${escapeHtml(s.logsChannel)}</div></div>
+      <div class="setting-card"><div class="setting-label">Категория открытых</div><div class="setting-value">${escapeHtml(s.openTicketsCategory)}</div></div>
+      <div class="setting-card"><div class="setting-label">Категория закрытых</div><div class="setting-value">${escapeHtml(s.closedTicketsCategory)}</div></div>
+      <div class="setting-card"><div class="setting-label">Роли админов</div><div class="setting-value">${(s.adminRoles || []).join('<br>') || '—'}</div></div>
+      <div class="setting-card"><div class="setting-label">Роли модераторов</div><div class="setting-value">${(s.moderatorRoles || []).join('<br>') || '—'}</div></div>
+      <div class="setting-card"><div class="setting-label">Owner Steam ID</div><div class="setting-value">${escapeHtml(s.ownerSteamId || '—')}</div></div>
+      <div class="setting-card"><div class="setting-label">Статус бота</div><div class="setting-value ${s.botConnected ? 'ok' : 'err'}">${s.botConnected ? '✅ Подключён' : '❌ Не подключён'}</div></div>
+      <div class="setting-card"><div class="setting-label">Frontend URL</div><div class="setting-value">${escapeHtml(s.frontendUrl || '—')}</div></div>
+    `;
+  } catch (e) {
+    grid.innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${escapeHtml(e.message)}</div>`;
+  }
+}
+
+async function loadMonitor() {
+  const grid = document.getElementById('monitorGrid');
+  grid.innerHTML = '<div class="loading-state"><div class="spinner"></div> Проверка...</div>';
+  const start = performance.now();
+  let apiStatus = 'err', apiText = 'Недоступен', ping = '—';
+  try {
+    await api('/api/me');
+    ping = Math.round(performance.now() - start) + ' ms';
+    apiStatus = 'ok';
+    apiText = 'Работает';
+  } catch (e) { apiText = 'Ошибка'; }
+  let presenceStatus = 'err', presenceText = 'Не подключён';
+  try {
+    const p = await api('/api/presence');
+    if (p.ready) {
+      presenceStatus = 'ok';
+      presenceText = `Активен · ${p.online + p.idle + p.dnd}/${p.total} онлайн`;
+    }
+  } catch {}
+  grid.innerHTML = `
+    <div class="setting-card"><div class="setting-label">API сервер</div><div class="setting-value ${apiStatus}">${apiStatus === 'ok' ? '✅' : '❌'} ${apiText}</div></div>
+    <div class="setting-card"><div class="setting-label">Ping API</div><div class="setting-value">${ping}</div></div>
+    <div class="setting-card"><div class="setting-label">Presence Gateway</div><div class="setting-value ${presenceStatus}">${presenceStatus === 'ok' ? '✅' : '❌'} ${presenceText}</div></div>
+    <div class="setting-card"><div class="setting-label">Клиент</div><div class="setting-value">${navigator.userAgent.includes('Mobile') ? '📱 Мобильный' : '💻 Десктоп'}</div></div>
+    <div class="setting-card"><div class="setting-label">Экран</div><div class="setting-value">${window.screen.width} × ${window.screen.height}</div></div>
+    <div class="setting-card"><div class="setting-label">Время загрузки</div><div class="setting-value">${Math.round(performance.now())} ms</div></div>
+  `;
+}
+
+document.getElementById('railToggle')?.addEventListener('click', () => {
+  const shell = document.getElementById('adminShell');
+  shell.classList.toggle('compact');
+  const btn = document.getElementById('railToggle');
+  btn.textContent = shell.classList.contains('compact') ? '▶' : '◀';
+});
+
+function logoutUser() {
+  localStorage.removeItem('fernodd_token');
+  showToast('Вы вышли из системы', 'info');
+  setTimeout(() => location.reload(), 800);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  startClock();
+  if (window.currentUser) applyAuth(window.currentUser);
+});
+
+window.addEventListener('hashchange', () => {
+  const hash = window.location.hash.replace('#', '');
+  if (hash && SECTION_TITLES[hash] && hash !== currentSection) {
+    showSection(hash);
+  }
+});
+</script>
+</body>
+</html>

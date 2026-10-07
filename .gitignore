@@ -1,0 +1,7 @@
+node_modules/
+.env
+*.log
+requests.json
+requests-history.json
+applications-override.json
+steam-discord-links.json
