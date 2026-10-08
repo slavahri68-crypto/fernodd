@@ -13,11 +13,33 @@
   .ref-page { min-height: 100vh; padding: 80px 24px 140px; position: relative; z-index: 1; }
   .ref-container { max-width: 1100px; margin: 0 auto; }
 
+  .my-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  .my-header-left { display: flex; align-items: center; gap: 12px; }
+  .my-header-balance { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-bright); border-radius: 100px; font-family: 'Unbounded', sans-serif; font-size: 13px; color: #fff; font-weight: 700; }
+  .my-header-right { display: flex; align-items: center; gap: 10px; }
+
+  .profile-avatar-btn { position: relative; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); border-radius: 100px; transition: all 0.3s; }
+  .profile-avatar-btn:hover { border-color: var(--red); }
+  .profile-avatar-btn img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+  .profile-avatar-btn .chev { width: 14px; height: 14px; color: var(--text-dim); transition: transform 0.3s; }
+  .profile-avatar-btn.open .chev { transform: rotate(180deg); }
+
+  .my-menu { position: absolute; top: calc(100% + 12px); right: 0; width: 320px; background: #0e0e0e; border: 1px solid var(--border-bright); border-radius: 18px; padding: 12px; box-shadow: 0 25px 70px rgba(0,0,0,0.9); opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-10px) scale(0.96); transform-origin: top right; transition: opacity 0.25s, transform 0.25s, visibility 0s linear 0.25s; z-index: 600; }
+  .profile-avatar-btn.open .my-menu { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0) scale(1); transition: opacity 0.25s, transform 0.25s, visibility 0s; }
+  .my-menu-head { display: flex; align-items: center; gap: 12px; padding: 10px 12px; min-width: 0; }
+  .my-menu-avatar { width: 52px; height: 52px; border-radius: 12px; border: 2px solid var(--red); object-fit: cover; flex-shrink: 0; }
+  .my-menu-name { font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 15px; color: #fff; margin-bottom: 3px; white-space: normal; overflow-wrap: anywhere; word-break: break-word; line-height: 1.2; max-width: 100%; }
+  .my-menu-balance { font-size: 12px; color: var(--text-dim); }
+  .my-menu-divider { height: 1px; background: var(--border); margin: 10px 8px; }
+  .my-menu-item { display: flex; align-items: center; gap: 14px; padding: 11px 14px; border-radius: 10px; color: var(--text-dim); font-size: 14px; font-weight: 500; text-decoration: none; transition: all 0.2s; }
+  .my-menu-item:hover { background: rgba(225,6,0,0.12); color: #fff; transform: translateX(3px); }
+  .my-menu-item.active { background: rgba(225,6,0,0.15); color: #fff; }
+  .my-menu-icon { width: 22px; text-align: center; font-size: 16px; }
+
   .ref-page-title { font-family: 'Unbounded', sans-serif; font-size: clamp(28px, 5vw, 42px); font-weight: 900; letter-spacing: -1.5px; color: #fff; margin-bottom: 24px; }
 
   .ref-block { background: #0e0e0e; border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; margin-bottom: 16px; }
 
-  /* Как это работает */
   .how-info { display: flex; gap: 18px; align-items: flex-start; }
   .how-icon { width: 48px; height: 48px; border-radius: 12px; background: rgba(96,165,250,0.12); border: 1px solid rgba(96,165,250,0.4); display: flex; align-items: center; justify-content: center; font-size: 22px; color: #60a5fa; flex-shrink: 0; }
   .how-icon svg { width: 24px; height: 24px; fill: currentColor; }
@@ -29,7 +51,6 @@
   .how-chip.gold  { background: rgba(251,191,36,0.15); color: #fbbf24; }
   .how-chip.green { background: rgba(74,222,128,0.15); color: #4ade80; }
 
-  /* Статистика */
   .ref-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px; }
   .ref-stat-card { background: #0e0e0e; border: 1px solid var(--border); border-radius: 14px; padding: 18px 22px; }
   .ref-stat-value { font-family: 'Unbounded', sans-serif; font-size: 26px; font-weight: 900; color: #fff; line-height: 1; letter-spacing: -1px; margin-bottom: 6px; }
@@ -37,7 +58,6 @@
   .ref-stat-value.green { color: #4ade80; }
   .ref-stat-label { font-size: 11px; color: var(--text-dim); font-weight: 500; }
 
-  /* Код + Активация */
   .ref-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
   @media (max-width: 700px) { .ref-two-col { grid-template-columns: 1fr; } }
 
@@ -58,7 +78,6 @@
   .ref-activate-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(59,130,246,0.5); }
   .ref-activate-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-  /* Мои рефералы */
   .ref-block-title { font-family: 'Unbounded', sans-serif; font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 16px; }
   .my-refs-list { display: flex; flex-direction: column; gap: 8px; }
   .my-ref-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 10px; }
@@ -68,7 +87,6 @@
   .empty-refs { text-align: center; padding: 40px 20px; color: var(--text-dim); font-size: 13px; }
   .empty-refs .ico { font-size: 40px; margin-bottom: 10px; opacity: 0.4; }
 
-  /* Топ-5 */
   .top-table { width: 100%; border-collapse: collapse; }
   .top-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-dim); font-weight: 700; padding: 10px 12px; border-bottom: 1px solid var(--border); }
   .top-table th:last-child, .top-table td:last-child { text-align: right; }
@@ -83,23 +101,6 @@
   .top-count { font-family: 'Unbounded', sans-serif; font-weight: 700; }
   .top-count-blue { color: #3b82f6; }
   .top-count-red { color: var(--red); }
-
-  /* Меню профиля */
-  .profile-avatar-btn { position: absolute; top: 20px; right: 24px; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); border-radius: 100px; z-index: 500; }
-  .profile-avatar-btn img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-  .profile-avatar-btn .chev { width: 14px; height: 14px; color: var(--text-dim); transition: transform 0.3s; }
-  .profile-avatar-btn.open .chev { transform: rotate(180deg); }
-  .my-menu { position: absolute; top: calc(100% + 12px); right: 0; width: 320px; background: #0e0e0e; border: 1px solid var(--border-bright); border-radius: 18px; padding: 12px; box-shadow: 0 25px 70px rgba(0,0,0,0.9); opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-10px) scale(0.96); transform-origin: top right; transition: opacity 0.25s, transform 0.25s, visibility 0s linear 0.25s; z-index: 600; }
-  .profile-avatar-btn.open .my-menu { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0) scale(1); transition: opacity 0.25s, transform 0.25s, visibility 0s; }
-  .my-menu-head { display: flex; align-items: center; gap: 12px; padding: 10px 12px; }
-  .my-menu-avatar { width: 52px; height: 52px; border-radius: 12px; border: 2px solid var(--red); object-fit: cover; }
-  .my-menu-name { font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 15px; color: #fff; margin-bottom: 3px; }
-  .my-menu-balance { font-size: 12px; color: var(--text-dim); }
-  .my-menu-divider { height: 1px; background: var(--border); margin: 10px 8px; }
-  .my-menu-item { display: flex; align-items: center; gap: 14px; padding: 11px 14px; border-radius: 10px; color: var(--text-dim); font-size: 14px; font-weight: 500; text-decoration: none; transition: all 0.2s; }
-  .my-menu-item:hover { background: rgba(225,6,0,0.12); color: #fff; transform: translateX(3px); }
-  .my-menu-item.active { background: rgba(225,6,0,0.15); color: #fff; }
-  .my-menu-icon { width: 22px; text-align: center; font-size: 16px; }
 
   @media (max-width: 600px) {
     .ref-page { padding: 70px 12px 120px; }
@@ -123,17 +124,23 @@
 
 <div class="auth-widget" id="authWidget"></div>
 
-<div class="profile-avatar-btn" id="profileAvatarBtn" onclick="toggleProfileMenu(event)">
-  <img id="headerAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
-  <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-  <div id="profileMenuContent"></div>
-</div>
-
 <main class="ref-page">
   <div class="ref-container">
+    <div class="my-header">
+      <div class="my-header-left">
+        <div class="my-header-balance"><span id="headerBalance">0 ₽</span></div>
+      </div>
+      <div class="my-header-right">
+        <div class="profile-avatar-btn" id="profileAvatarBtn" onclick="toggleProfileMenu(event)">
+          <img id="headerAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          <div id="profileMenuContent"></div>
+        </div>
+      </div>
+    </div>
+
     <h1 class="ref-page-title">Реферальная система</h1>
 
-    <!-- Как это работает -->
     <div class="ref-block">
       <div class="how-info">
         <div class="how-icon">
@@ -142,26 +149,22 @@
         <div style="flex:1;">
           <div class="how-info-title">Как это работает?</div>
           <div class="how-desc">
-            Приглашай друзей по своему коду. За каждого, кто наберёт 10 часов, ты получишь 100₽ + 500 койнов, а также 10% от каждого его пополнения баланса. Друг получит 35₽, 500 койнов и VIP+ на 7 дней.
+            Приглашай друзей по своему коду. За каждого, кто наберёт 10 часов, ты получишь 100₽, а также 10% от каждого его пополнения баланса. Друг получит 50₽.
           </div>
           <div class="how-chips">
             <span class="how-chip red">+100 ₽</span>
-            <span class="how-chip gold">+500 койнов</span>
             <span class="how-chip green">+10% с пополнений</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Статистика -->
     <div class="ref-stats-grid" id="refStatsGrid">
       <div class="ref-stat-card"><div class="ref-stat-value">0</div><div class="ref-stat-label">Рефералов</div></div>
       <div class="ref-stat-card"><div class="ref-stat-value">0 ₽</div><div class="ref-stat-label">Заработано рублей</div></div>
-      <div class="ref-stat-card"><div class="ref-stat-value gold">0 к</div><div class="ref-stat-label">Заработано койнов</div></div>
       <div class="ref-stat-card"><div class="ref-stat-value green">0 ₽</div><div class="ref-stat-label">Кэшбэк с пополнений</div></div>
     </div>
 
-    <!-- Код + Активация -->
     <div class="ref-two-col">
       <div class="ref-code-card">
         <div class="ref-code-head">
@@ -189,7 +192,7 @@
           </div>
           <div>
             <div class="ref-code-title">Активировать код</div>
-            <div class="ref-code-sub">Введи реферальный код друга, который тебя пригласил</div>
+            <div class="ref-code-sub">Введи реферальный код друга</div>
           </div>
         </div>
         <input class="ref-activate-input" id="activateInput" placeholder="Введи реферальный код..." oninput="checkActivateBtn()">
@@ -197,7 +200,6 @@
       </div>
     </div>
 
-    <!-- Мои рефералы -->
     <div class="ref-block">
       <div class="ref-block-title">Мои рефералы</div>
       <div class="my-refs-list" id="myRefsList">
@@ -208,7 +210,6 @@
       </div>
     </div>
 
-    <!-- Топ 5 -->
     <div class="ref-block">
       <div class="ref-block-title">Топ 5 рефералов</div>
       <table class="top-table">
@@ -233,14 +234,14 @@
   <a class="nav-btn" href="/rules.html"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Правила</span></a>
   <a class="nav-btn" href="/roles.html"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Роли</span></a>
   <a class="nav-btn" href="/apply.html"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>Заявка</span></a>
-  <a class="nav-btn" href="/profile.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg><span>Профиль</span></a>
+  <a class="nav-btn active" href="/profile.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg><span>Профиль</span></a>
 </nav>
 
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script src="/js/common.js"></script>
-<script src="/js/auth.js"></script>
 <script src="/js/my-profile.js"></script>
+<script src="/js/auth.js"></script>
 <script>
 window.addEventListener('auth:changed', async (e) => {
   const user = e.detail.user;
@@ -249,6 +250,7 @@ window.addEventListener('auth:changed', async (e) => {
     return;
   }
   document.getElementById('headerAvatar').src = user.avatar || '';
+  document.getElementById('headerBalance').textContent = `${user.balance || 0} ₽`;
   document.getElementById('profileMenuContent').innerHTML = renderProfileMenu('referrals');
   loadMyReferrals();
   loadTopReferrals();
@@ -257,18 +259,14 @@ window.addEventListener('auth:changed', async (e) => {
 async function loadMyReferrals() {
   try {
     const data = await api('/api/referrals/my');
-
     document.getElementById('myRefCode').value = data.code || '...';
-
     const invited = data.invited || [];
     const earned = data.earned || 0;
-    const earnedK = data.earnedK || 0;
     const cashback = data.cashback || 0;
 
     document.getElementById('refStatsGrid').innerHTML = `
       <div class="ref-stat-card"><div class="ref-stat-value">${invited.length}</div><div class="ref-stat-label">Рефералов</div></div>
       <div class="ref-stat-card"><div class="ref-stat-value">${earned} ₽</div><div class="ref-stat-label">Заработано рублей</div></div>
-      <div class="ref-stat-card"><div class="ref-stat-value gold">${earnedK} к</div><div class="ref-stat-label">Заработано койнов</div></div>
       <div class="ref-stat-card"><div class="ref-stat-value green">${cashback} ₽</div><div class="ref-stat-label">Кэшбэк с пополнений</div></div>
     `;
 
@@ -288,9 +286,7 @@ async function loadMyReferrals() {
         </div>
       `).join('');
     }
-  } catch (e) {
-    console.error('[referrals]', e);
-  }
+  } catch (e) { console.error('[referrals]', e); }
 }
 
 async function loadTopReferrals() {

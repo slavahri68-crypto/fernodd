@@ -18,23 +18,17 @@
   .my-header-balance { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-bright); border-radius: 100px; font-family: 'Unbounded', sans-serif; font-size: 13px; color: #fff; font-weight: 700; }
   .my-header-right { display: flex; align-items: center; gap: 10px; }
 
-  .icon-badge { position: relative; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; }
-  .icon-badge:hover { border-color: var(--red); }
-  .icon-badge svg { width: 18px; height: 18px; fill: currentColor; color: var(--text-dim); }
-  .icon-badge .badge { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 5px; background: var(--red); color: #fff; border-radius: 100px; font-size: 10px; font-weight: 900; display: flex; align-items: center; justify-content: center; border: 2px solid var(--bg); }
-
   .profile-avatar-btn { position: relative; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); border-radius: 100px; transition: all 0.3s; }
   .profile-avatar-btn:hover { border-color: var(--red); }
   .profile-avatar-btn img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
   .profile-avatar-btn .chev { width: 14px; height: 14px; color: var(--text-dim); transition: transform 0.3s; }
   .profile-avatar-btn.open .chev { transform: rotate(180deg); }
 
-  /* Меню */
   .my-menu { position: absolute; top: calc(100% + 12px); right: 0; width: 320px; background: #0e0e0e; border: 1px solid var(--border-bright); border-radius: 18px; padding: 12px; box-shadow: 0 25px 70px rgba(0,0,0,0.9); opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-10px) scale(0.96); transform-origin: top right; transition: opacity 0.25s, transform 0.25s, visibility 0s linear 0.25s; z-index: 600; }
   .profile-avatar-btn.open .my-menu { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0) scale(1); transition: opacity 0.25s, transform 0.25s, visibility 0s; }
-  .my-menu-head { display: flex; align-items: center; gap: 12px; padding: 10px 12px; }
-  .my-menu-avatar { width: 52px; height: 52px; border-radius: 12px; border: 2px solid var(--red); object-fit: cover; }
-  .my-menu-name { font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 15px; color: #fff; margin-bottom: 3px; }
+  .my-menu-head { display: flex; align-items: center; gap: 12px; padding: 10px 12px; min-width: 0; }
+  .my-menu-avatar { width: 52px; height: 52px; border-radius: 12px; border: 2px solid var(--red); object-fit: cover; flex-shrink: 0; }
+  .my-menu-name { font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 15px; color: #fff; margin-bottom: 3px; white-space: normal; overflow-wrap: anywhere; word-break: break-word; line-height: 1.2; max-width: 100%; }
   .my-menu-balance { font-size: 12px; color: var(--text-dim); }
   .my-menu-divider { height: 1px; background: var(--border); margin: 10px 8px; }
   .my-menu-item { display: flex; align-items: center; gap: 14px; padding: 11px 14px; border-radius: 10px; color: var(--text-dim); font-size: 14px; font-weight: 500; text-decoration: none; transition: all 0.2s; }
@@ -61,11 +55,9 @@
   .steam-status.dnd     { background: #ef4444; }
   .steam-status.offline { background: #898989; }
 
-  .steam-name-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
-  .steam-name { font-family: 'Unbounded', sans-serif; font-size: 26px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
+  .steam-name-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; min-width: 0; }
+  .steam-name { font-family: 'Unbounded', sans-serif; font-size: 26px; font-weight: 700; color: #fff; letter-spacing: -0.5px; word-break: break-word; overflow-wrap: anywhere; line-height: 1.15; max-width: 100%; }
   .steam-badge { width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(135deg, #fbbf24, #d97706); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; }
-  .steam-fire { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; background: rgba(225,6,0,0.15); border: 1px solid rgba(225,6,0,0.4); border-radius: 100px; font-size: 12px; font-weight: 700; color: var(--red); }
-  .steam-tag { display: inline-flex; padding: 3px 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-bright); border-radius: 100px; font-size: 11px; font-weight: 600; color: var(--text-dim); }
   .steam-role-badge { display: inline-flex; padding: 5px 14px; background: rgba(96,165,250,0.12); border: 1px solid rgba(96,165,250,0.5); border-radius: 100px; font-family: 'Unbounded', sans-serif; font-size: 12px; font-weight: 700; color: #60a5fa; margin-bottom: 8px; }
   .steam-status-text { font-size: 13px; color: var(--text-dim); margin-bottom: 14px; }
   .steam-status-text b { color: #57cbde; }
@@ -85,8 +77,8 @@
     .steam-cover-text { font-size: 50px; }
     .steam-body { padding: 0 16px 20px; text-align: center; }
     .steam-avatar-wrap { margin-left: auto; margin-right: auto; width: 110px; height: 110px; margin-top: -55px; }
-    .steam-name-row { justify-content: center; }
-    .steam-name { font-size: 22px; }
+    .steam-name-row { justify-content: center; text-align: center; }
+    .steam-name { font-size: 20px; }
     .steam-role-badge { margin: 0 auto 8px; }
     .steam-actions { justify-content: center; }
     .my-page { padding: 70px 12px 120px; }
@@ -114,11 +106,9 @@
   <div class="my-container">
     <div class="my-header">
       <div class="my-header-left">
-        <div class="my-header-balance"><span style="color:#fbbf24;">🔥</span> <span id="headerBalance">0 ₽</span></div>
-        <div class="my-header-balance" style="border-color:rgba(251,191,36,0.3);"><span style="color:#fbbf24;">🪙</span> <span id="headerCoins">0</span></div>
+        <div class="my-header-balance"><span id="headerBalance">0 ₽</span></div>
       </div>
       <div class="my-header-right">
-        <div class="icon-badge"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">9+</span></div>
         <div class="profile-avatar-btn" id="profileAvatarBtn" onclick="toggleProfileMenu(event)">
           <img id="headerAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
@@ -163,8 +153,8 @@
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script src="/js/common.js"></script>
-<script src="/js/auth.js"></script>
 <script src="/js/my-profile.js"></script>
+<script src="/js/auth.js"></script>
 <script>
 let targetUserId = null;
 
@@ -176,7 +166,6 @@ window.addEventListener('auth:changed', (e) => {
   }
   document.getElementById('headerAvatar').src = user.avatar || '';
   document.getElementById('headerBalance').textContent = `${user.balance || 0} ₽`;
-  document.getElementById('headerCoins').textContent = `${user.coins || 0}`;
   document.getElementById('profileMenuContent').innerHTML = renderProfileMenu('profile');
   const params = new URLSearchParams(window.location.search);
   targetUserId = params.get('id') || user.steamId || user.id;
@@ -206,7 +195,6 @@ function renderSteamCard(user) {
   document.getElementById('steamAvatar').src = avatar;
   document.getElementById('steamStatus').className = 'steam-status ' + status;
 
-  /* Фон */
   if (user.backgroundUrl) {
     const cover = document.getElementById('steamCover');
     cover.style.background = `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('${user.backgroundUrl}') center/cover`;
@@ -215,14 +203,22 @@ function renderSteamCard(user) {
 
   const topRole = user.topRole || (user.roles || [])[0];
   const ROLE_COLORS = {
-    'Главная администрация': '#5b8dd9', 'Владелец': '#e10600', 'Разработчик': '#4ade80',
-    'Следящий': '#fbbf24', 'Куратор': '#fcd34d', 'Модератор': '#3b82f6', 'Игрок': '#a855f7',
+    'Главная администрация': '#e10600',
+    'Владелец': '#e10600',
+    'Разработчик': '#e10600',
+    'Следящий': '#e10600',
+    'Куратор': '#e10600',
+    'Поддержка': '#e10600',
+    'Медиа': '#e10600',
+    'Главный модератор': '#22d3ee',
+    'Старший модератор': '#4ade80',
+    'Модератор': '#3b82f6',
+    'Игрок': '#a855f7',
   };
   const roleColor = ROLE_COLORS[topRole] || '#60a5fa';
   const steamLink = user.profileUrl || (user.steamId ? `https://steamcommunity.com/profiles/${user.steamId}` : '#');
   document.getElementById('steamLinkBtn').href = steamLink;
 
-  const idTag = user.id ? '#' + String(user.id).slice(-4) : '';
   const desc = user.description || 'Is it worth it?';
 
   let socialLinks = '';
@@ -234,8 +230,6 @@ function renderSteamCard(user) {
     <div class="steam-name-row">
       <div class="steam-name">${escapeHtml(name)}</div>
       ${user.isOwner ? '<div class="steam-badge">👑</div>' : ''}
-      <div class="steam-fire">🔥 ${user.coins || 0}</div>
-      ${idTag ? `<div class="steam-tag">${idTag}</div>` : ''}
     </div>
     <div class="steam-status-text">
       <b>${statusText}</b> · ${escapeHtml(desc)}

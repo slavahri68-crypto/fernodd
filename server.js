@@ -90,7 +90,7 @@ const STAFF_ROLE_NAMES_ALL = [
 
 const SHOP_ITEMS = [
   { id: 'moderator',        name: 'Модератор',          price: 5000,  roleName: 'модератор',        color: '#3b82f6', icon: '🛡️' },
-  { id: 'senior_moderator', name: 'Старший модератор',  price: 15000, roleName: 'старший модератор', color: '#10b981', icon: '⚔️' },
+  { id: 'senior_moderator', name: 'Старший модератор',  price: 15000, roleName: 'старший модератор', color: '#4ade80', icon: '⚔️' },
   { id: 'chief_moderator',  name: 'Главный модератор',  price: 30000, roleName: 'главный модератор', color: '#22d3ee', icon: '👑' },
 ];
 
@@ -125,6 +125,7 @@ async function ensureIndexes() {
     await mongoDb.collection('transactions').createIndex({ userId: 1, createdAt: -1 });
     await mongoDb.collection('referrals').createIndex({ referrerId: 1 });
     await mongoDb.collection('referrals').createIndex({ invitedId: 1 });
+    await mongoDb.collection('pendingRoles').createIndex({ userId: 1 }, { unique: true });
     console.log('[mongo] ✅ Индексы готовы');
   } catch (e) {
     console.error('[mongo]', e.message);
@@ -170,6 +171,24 @@ async function setLink(steamId, discordId) {
 async function delLink(steamId) {
   if (!mongoDb) return;
   await mongoDb.collection('links').deleteOne({ steamId });
+}
+
+async function setPendingRole(userId, roleName) {
+  if (!mongoDb) return;
+  await mongoDb.collection('pendingRoles').updateOne(
+    { userId },
+    { $set: { roleName, updatedAt: new Date().toISOString() } },
+    { upsert: true }
+  );
+}
+async function getPendingRole(userId) {
+  if (!mongoDb) return null;
+  const doc = await mongoDb.collection('pendingRoles').findOne({ userId });
+  return doc?.roleName || null;
+}
+async function clearPendingRole(userId) {
+  if (!mongoDb) return;
+  await mongoDb.collection('pendingRoles').deleteOne({ userId });
 }
 
 async function loadHistory() {
@@ -490,6 +509,21 @@ app.get('/auth/discord/callback', async (req, res) => {
 
     await setLink(user.steamId, discordUser.id);
 
+    // ★ Pending role sync
+    try {
+      const pending = await getPendingRole(discordUser.id) || await getPendingRole(user.steamId);
+      if (pending) {
+        const roles = await getGuildRoles();
+        const role = roles.find(r => r.name.toLowerCase() === pending.toLowerCase());
+        if (role) {
+          await discordPut(`/guilds/${DISCORD_GUILD_ID}/members/${discordUser.id}/roles/${role.id}`);
+          await clearPendingRole(discordUser.id);
+          await clearPendingRole(user.steamId);
+          console.log(`[pending role] Выдана роль "${pending}" для ${discordUser.id}`);
+        }
+      }
+    } catch (e) { console.error('[pending role sync]', e); }
+
     try {
       const roles = await getGuildRoles();
       const playerRole = roles.find(r => r.name.toLowerCase() === 'игрок');
@@ -528,7 +562,6 @@ app.get('/api/me', async (req, res) => {
       roles: p.roles || [],
       provider: 'steam',
       balance,
-      coins: 0,
     }
   });
 });
@@ -619,9 +652,7 @@ app.get('/api/inventory', requireAuth, async (req, res) => {
     .find({ userId: req.user.steamId })
     .sort({ createdAt: -1 })
     .toArray();
-  res.json({
-    items: items.map(i => { delete i._id; return i; })
-  });
+  res.json({ items: items.map(i => { delete i._id; return i; }) });
 });
 
 /* ============ ТРАНЗАКЦИИ ============ */
@@ -632,22 +663,19 @@ app.get('/api/transactions', requireAuth, async (req, res) => {
     .sort({ createdAt: -1 })
     .limit(200)
     .toArray();
-  res.json({
-    transactions: items.map(i => { delete i._id; return i; })
-  });
+  res.json({ transactions: items.map(i => { delete i._id; return i; }) });
 });
 
 /* ============ РЕФЕРАЛЫ ============ */
 app.get('/api/referrals/my', requireAuth, async (req, res) => {
-  if (!mongoDb) return res.json({ code: '', invited: [], earned: 0, earnedK: 0, cashback: 0 });
+  if (!mongoDb) return res.json({ code: '', invited: [], earned: 0, cashback: 0 });
   const invited = await mongoDb.collection('referrals')
     .find({ referrerId: req.user.steamId })
     .sort({ createdAt: -1 })
     .toArray();
   const earnedR = invited.length * 100;
-  const earnedK = invited.length * 500;
   res.json({
-    code: req.user.steamId ? String(req.user.steamId).slice(-3) : 'me',
+    code: req.user.steamId ? String(req.user.steamId) : 'me',
     fullCode: req.user.steamId,
     link: `${FRONTEND_URL}/auth/steam?ref=${req.user.steamId}`,
     invited: invited.map(i => ({
@@ -656,7 +684,6 @@ app.get('/api/referrals/my', requireAuth, async (req, res) => {
       at: i.createdAt,
     })),
     earned: earnedR,
-    earnedK: earnedK,
     cashback: 0,
   });
 });
@@ -955,12 +982,14 @@ app.get('/api/steam-search', requireAdmin, async (req, res) => {
           const roles = await getUserStaffRoles(discordId);
           if (roles.length) currentRole = roles[0];
         }
+        const pendingRole = discordId ? await getPendingRole(discordId) : null;
         results.push({
           steamId: p.steamid,
           personaName: p.personaname,
           avatar: p.avatarfull || p.avatarmedium || p.avatar,
           discordId: discordId || null,
           currentRole,
+          pendingRole,
         });
       }
     } catch {}
@@ -1008,28 +1037,34 @@ app.post('/api/give-role', requireAdmin, async (req, res) => {
   const allowed = getAssignableRolesFor(req.user);
   if (!allowed.length) return res.status(403).json({ error: 'forbidden' });
   const { discordId, roleId } = req.body || {};
-  if (!discordId || !roleId) return res.status(400).json({ error: 'missing_fields' });
+  if (!roleId) return res.status(400).json({ error: 'missing_fields' });
+
   try {
     const roles = await getGuildRoles();
     const role = roles.find(r => r.id === roleId);
     if (!role) return res.status(400).json({ error: 'role_not_found' });
+
     const allowedLower = allowed.map(n => n.toLowerCase());
     if (!allowedLower.includes(role.name.toLowerCase())) {
       return res.status(403).json({ error: 'role_not_assignable' });
     }
-    await removeAllStaffRoles(discordId, [role.name.toLowerCase()]);
-    await discordPut(`/guilds/${DISCORD_GUILD_ID}/members/${discordId}/roles/${roleId}`);
+
+    const key = discordId || 'unknown';
+    await setPendingRole(key, role.name);
+
     await appendHistory({
       id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
       action: 'give_role',
-      targetDiscordId: discordId,
+      targetDiscordId: discordId || null,
       roleName: role.name,
       performedBy: req.user.id,
       performedByName: req.user.global_name || req.user.username,
       performedByAvatar: req.user.avatar,
       performedAt: new Date().toISOString(),
+      appliedToDiscord: false,
     });
-    res.json({ ok: true, role: role.name });
+
+    res.json({ ok: true, role: role.name, pending: true });
   } catch (e) {
     res.status(500).json({ error: 'server_error', details: String(e) });
   }
@@ -1140,7 +1175,6 @@ app.get('/api/users/:id', requireAdmin, async (req, res) => {
         presence: discordInfo ? await getPresence(discordInfo.id) : { status: 'offline', activities: [] },
         provider: 'steam',
         balance,
-        coins: 0,
         description: profileExtra.description || 'Is it worth it?',
         backgroundUrl: profileExtra.backgroundUrl || '',
         profileLink: profileExtra.profileLink || '',

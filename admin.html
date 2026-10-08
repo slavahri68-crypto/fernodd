@@ -21,9 +21,6 @@ body > .auth-widget { display: none !important; }
 .admin-brand-sub { font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; margin-top: 1px; }
 
 .admin-user { display: flex; align-items: center; gap: 12px; }
-.admin-user img { width: 52px; height: 52px; border-radius: 14px; object-fit: cover; }
-.admin-user-name { font-family: 'Unbounded', sans-serif; font-size: 12.5px; color: #fff; font-weight: 700; line-height: 1.2; }
-.admin-user-role { font-size: 9.5px; color: var(--red); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-top: 1px; }
 .admin-exit { padding: 9px 16px; background: rgba(225,6,0,0.12); border: 1px solid rgba(225,6,0,0.4); border-radius: 10px; color: var(--red); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12.5px; cursor: pointer; transition: all 0.3s; }
 .admin-exit:hover { background: rgba(225,6,0,0.25); border-color: var(--red); }
 
@@ -183,7 +180,6 @@ body > .auth-widget { display: none !important; }
   .tab-block { padding: 14px 16px; }
   .tab-block-icon { width: 40px; height: 40px; font-size: 18px; }
   .tab-block-title { font-size: 14px; }
-  .admin-user img { width: 44px; height: 44px; }
   .app-avatar { width: 48px; height: 48px; }
   .fd-modal { padding: 22px; }
 }
@@ -216,10 +212,10 @@ body > .auth-widget { display: none !important; }
       </div>
     </div>
     <div class="admin-user">
-      <img id="topAvatar" src="" alt="">
-      <div>
-        <div class="admin-user-name" id="topName">—</div>
-        <div class="admin-user-role" id="topRole">—</div>
+      <div class="profile-avatar-btn" id="profileAvatarBtn" onclick="toggleProfileMenu(event)">
+        <img id="headerAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        <div id="profileMenuContent"></div>
       </div>
       <button class="admin-exit" onclick="logout()">Выйти</button>
     </div>
@@ -253,8 +249,23 @@ body > .auth-widget { display: none !important; }
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script src="/js/common.js"></script>
+<script src="/js/my-profile.js"></script>
 <script src="/js/auth.js"></script>
 <script>
+const ROLE_COLOR_OVERRIDE = {
+  'Главная администрация': '#e10600',
+  'Владелец': '#e10600',
+  'Разработчик': '#e10600',
+  'Следящий': '#e10600',
+  'Куратор': '#e10600',
+  'Поддержка': '#e10600',
+  'Медиа': '#e10600',
+  'Главный модератор': '#22d3ee',
+  'Старший модератор': '#4ade80',
+  'Модератор': '#3b82f6',
+  'Игрок': '#a855f7',
+};
+
 let isAuthorized = false;
 let currentTab = 'moderator';
 let moderatorSub = 'apps';
@@ -400,7 +411,7 @@ function radioModal({ icon = '❓', title, desc, options = [], confirmText = 'П
 }
 
 function isOwner() { return !!(window.currentUser && window.currentUser.isOwner); }
-function isHeadAdminOrOwner() { const u = window.currentUser; return !!(u && (u.isHeadAdmin || u.isOwner)); }
+function isHeadAdminOrOwner() { return !!(window.currentUser && (window.currentUser.isHeadAdmin || window.currentUser.isOwner)); }
 function isWatcherOrAbove() {
   const u = window.currentUser;
   if (!u) return false;
@@ -411,7 +422,7 @@ function canApprove() { return isWatcherOrAbove(); }
 
 window.addEventListener('auth:changed', (e) => {
   const user = e.detail.user;
-  isAuthorized = !!(user && user.isAdmin);
+  isAuthorized = window.canAccessAdmin ? window.canAccessAdmin(user) : false;
   if (!isAuthorized) {
     document.getElementById('deniedBlock').style.display = 'flex';
     document.getElementById('adminWrap').style.display = 'none';
@@ -419,9 +430,13 @@ window.addEventListener('auth:changed', (e) => {
   }
   document.getElementById('deniedBlock').style.display = 'none';
   document.getElementById('adminWrap').style.display = 'block';
-  document.getElementById('topAvatar').src = user.avatar || '';
-  document.getElementById('topName').textContent = user.global_name || user.username;
-  document.getElementById('topRole').textContent = user.isOwner ? 'Владелец' : ((user.roles && user.roles[0]) || 'Steam');
+
+  const avatar = document.getElementById('headerAvatar');
+  if (avatar) avatar.src = user.avatar || '';
+
+  const menuBox = document.getElementById('profileMenuContent');
+  if (menuBox) menuBox.innerHTML = renderProfileMenu('');
+
   switchTab('moderator');
 });
 
@@ -882,14 +897,15 @@ function renderStaffGrid() {
   }
   grid.innerHTML = list.map(s => {
     const status = (s.presence && s.presence.status) || 'offline';
-    return `<div class="staff-tile" style="--role-color:${s.topRoleColor};" onclick="window.location.href='/profile.html?id=${s.id}'">
+    const color = ROLE_COLOR_OVERRIDE[s.topRole] || s.topRoleColor;
+    return `<div class="staff-tile" style="--role-color:${color};" onclick="window.location.href='/profile.html?id=${s.id}'">
       <div class="staff-avatar-wrap">
         <img class="staff-avatar" src="${s.avatar}" alt="">
         <span class="staff-presence ${status}"></span>
       </div>
       <div class="staff-info">
         <h3>${esc(s.nickname || s.global_name || s.username)}</h3>
-        <span class="staff-role" style="background:${s.topRoleColor}22;color:${s.topRoleColor};border:1px solid ${s.topRoleColor}66;">${esc(s.topRole)}</span>
+        <span class="staff-role" style="background:${color}22;color:${color};border:1px solid ${color}66;">${esc(s.topRole)}</span>
       </div>
     </div>`;
   }).join('');
@@ -955,11 +971,11 @@ async function loadRolesBlock(body) {
       <div class="section-block-head">
         <div>
           <div class="section-block-title"><span class="ico">👑</span> Выдача ролей Discord</div>
-          <div class="section-block-sub">Поиск по Steam ID</div>
+          <div class="section-block-sub">Роль выдаётся на сайте. В Discord применится после привязки.</div>
         </div>
       </div>
       <div class="search-wrap">
-        <input class="search-input" id="steamSearch" placeholder="Например: 76561198000000000" oninput="searchSteamUsers()">
+        <input class="search-input" id="steamSearch" placeholder="Steam ID или ник" oninput="searchSteamUsers()">
       </div>
       <div class="cards-list" id="steamResults"><div class="empty-state">Введите Steam ID</div></div>
       <div id="rolePickArea" style="display:none;margin-top:20px;">
@@ -987,11 +1003,12 @@ async function searchSteamUsers() {
       list.innerHTML = users.map(u => {
         const linked = !!u.discordId;
         const roleLabel = u.currentRole ? `<span style="background:rgba(74,222,128,0.15);color:#4ade80;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;">${esc(u.currentRole)}</span>` : '';
+        const pendingLabel = u.pendingRole ? `<span style="background:rgba(251,191,36,0.15);color:#fbbf24;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;">Ожидает: ${esc(u.pendingRole)}</span>` : '';
         return `<div class="app-card" style="cursor:${linked ? 'pointer' : 'not-allowed'};opacity:${linked ? 1 : 0.5};"
                ${linked ? `onclick="pickSteamUser('${u.discordId}', '${(u.personaName || '').replace(/'/g, "\\'")}')"` : ''}>
           <img class="app-avatar" src="${u.avatar}" alt="">
           <div class="app-body">
-            <div class="app-head"><span class="app-name">${esc(u.personaName)}</span> ${roleLabel}</div>
+            <div class="app-head"><span class="app-name">${esc(u.personaName)}</span> ${roleLabel} ${pendingLabel}</div>
             <div class="app-row">
               <span>Steam: <b>${esc(u.steamId)}</b></span>
               ${linked ? `<span>Discord: <b>${esc(u.discordId)}</b></span>` : '<span style="color:var(--red);">Discord не привязан</span>'}
@@ -1036,13 +1053,13 @@ function giveRole(roleId, roleName) {
   confirmModal({
     icon: '👑',
     title: `Выдать роль "${roleName}"?`,
-    desc: `Пользователь: ${selectedMember.name}`,
+    desc: `Пользователь: ${selectedMember.name}. Роль будет выдана на сайте. В Discord она применится после привязки аккаунта.`,
     confirmText: '✓ Выдать',
     confirmClass: 'green',
     onConfirm: async () => {
       try {
         await api('/api/give-role', { method: 'POST', body: JSON.stringify({ discordId: selectedMember.id, roleId }) });
-        toast(`✓ Роль "${roleName}" выдана`, 'success');
+        toast(`✓ Роль "${roleName}" выдана на сайте`, 'success');
         document.getElementById('rolePickArea').style.display = 'none';
         selectedMember = null;
         document.getElementById('steamSearch').value = '';

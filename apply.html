@@ -139,6 +139,7 @@
 </nav>
 
 <script src="/js/common.js"></script>
+<script src="/js/my-profile.js"></script>
 <script src="/js/auth.js"></script>
 <script>
 const applyIntro = document.getElementById('applyIntro');
@@ -196,9 +197,7 @@ async function loadMyApplicationsCount() {
     const data = await r.json();
     myAppsCache = data.applications || [];
     myAppsCount.textContent = myAppsCache.length;
-  } catch {
-    myAppsCount.textContent = '0';
-  }
+  } catch { myAppsCount.textContent = '0'; }
 }
 
 function openMyApplications() {
@@ -233,10 +232,7 @@ async function loadMyApplications() {
     const r = await fetch(API + '/api/my-applications', {
       headers: { Authorization: 'Bearer ' + token }
     });
-    if (!r.ok) {
-      list.innerHTML = '<p class="my-empty" style="color:var(--red);">Не удалось загрузить заявки.</p>';
-      return;
-    }
+    if (!r.ok) { list.innerHTML = '<p class="my-empty" style="color:var(--red);">Не удалось загрузить заявки.</p>'; return; }
     const data = await r.json();
     myAppsCache = data.applications || [];
     myAppsCount.textContent = myAppsCache.length;
