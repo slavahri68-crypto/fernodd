@@ -9,196 +9,45 @@
 <link rel="stylesheet" href="/css/style.css">
 <script src="/js/config.js"></script>
 <style>
-  * { box-sizing: border-box; }
   body > .auth-widget { display: none !important; }
 
-  .admin-layout {
-    display: grid;
-    grid-template-columns: 260px 1fr;
+  .profile-page {
     min-height: 100vh;
+    padding: 100px 24px 140px;
     position: relative;
     z-index: 1;
-    transition: grid-template-columns 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .admin-layout.collapsed { grid-template-columns: 72px 1fr; }
+  .profile-container { max-width: 900px; margin: 0 auto; }
 
-  .sidebar {
-    position: fixed;
-    top: 0; left: 0; bottom: 0;
-    width: 260px;
-    background: linear-gradient(180deg, rgba(10,10,10,0.98), rgba(6,6,6,0.98));
-    backdrop-filter: blur(30px);
-    border-right: 1px solid var(--border);
-    padding: 20px 14px;
-    display: flex;
-    flex-direction: column;
-    z-index: 50;
-    overflow-y: auto;
-    transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  .admin-layout.collapsed .sidebar { width: 72px; padding: 20px 10px; }
-
-  .sidebar-brand {
-    display: flex;
+  .profile-back {
+    display: inline-flex;
     align-items: center;
-    gap: 10px;
-    padding: 4px 6px 18px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 16px;
-    position: relative;
-  }
-  .sidebar-brand img { width: 36px; height: 36px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 0 10px rgba(225,6,0,0.4)); }
-  .sidebar-brand-text {
-    font-family: 'Unbounded', sans-serif;
-    font-weight: 900;
-    font-size: 16px;
-    letter-spacing: -0.5px;
-    background: linear-gradient(135deg, #fff 20%, var(--red) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    white-space: nowrap;
-  }
-  .sidebar-brand-sub {
-    font-size: 8px;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 2.5px;
-    margin-top: 1px;
-    font-weight: 700;
-    white-space: nowrap;
-  }
-  .sidebar-brand-info { overflow: hidden; }
-  .admin-layout.collapsed .sidebar-brand-info { display: none; }
-  .admin-layout.collapsed .sidebar-brand { justify-content: center; }
-
-  .sidebar-toggle {
-    position: absolute;
-    right: -11px; top: 50%;
-    transform: translateY(-50%);
-    width: 22px; height: 22px;
-    background: var(--bg-card);
-    border: 1px solid var(--border-bright);
-    border-radius: 50%;
-    color: var(--text-dim);
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 10px;
-    z-index: 60;
-    transition: all 0.3s;
-  }
-  .sidebar-toggle:hover { color: var(--red); border-color: var(--red); }
-
-  .sidebar-section {
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--text-dim);
-    font-weight: 700;
-    padding: 14px 10px 6px;
-    white-space: nowrap;
-    overflow: hidden;
-  }
-  .admin-layout.collapsed .sidebar-section { opacity: 0; height: 6px; padding: 3px; }
-
-  .sidebar-link {
-    display: flex;
-    align-items: center;
-    gap: 11px;
-    padding: 9px 11px;
-    border-radius: 10px;
-    color: var(--text-dim);
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.25s;
-    border: 1px solid transparent;
-    margin-bottom: 2px;
-    background: transparent;
-    width: 100%;
-    text-align: left;
-    position: relative;
-    white-space: nowrap;
-    overflow: hidden;
-  }
-  .sidebar-link:hover { color: var(--text); background: rgba(255, 255, 255, 0.04); border-color: rgba(225,6,0,0.2); }
-  .admin-layout.collapsed .sidebar-link { justify-content: center; padding: 9px 6px; }
-  .sidebar-link.active {
-    color: #fff;
-    background: linear-gradient(135deg, rgba(225, 6, 0, 0.22), rgba(139, 0, 0, 0.08));
-    border-color: rgba(225, 6, 0, 0.4);
-  }
-  .sidebar-link.active::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 20%; bottom: 20%;
-    width: 3px;
-    background: var(--red);
-    border-radius: 0 3px 3px 0;
-    box-shadow: 0 0 12px var(--red);
-  }
-  .sidebar-link-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .sidebar-link-icon svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 1.8; }
-  .sidebar-link-label { white-space: nowrap; }
-  .admin-layout.collapsed .sidebar-link-label { display: none; }
-  .admin-layout.collapsed .sidebar-link:hover .sidebar-link-label {
-    display: inline-block;
-    position: absolute;
-    left: calc(100% + 6px);
-    background: var(--bg-card);
-    padding: 7px 12px;
-    border-radius: 8px;
-    border: 1px solid var(--border-bright);
-    font-size: 12px;
-    z-index: 100;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-    color: #fff;
-  }
-  .sidebar-link-back { color: var(--red); }
-  .sidebar-link-back:hover { background: rgba(225,6,0,0.1); border-color: var(--red); }
-
-  .main { grid-column: 2; min-height: 100vh; padding: 20px 28px 80px; position: relative; }
-
-  .topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    gap: 12px;
-    flex-wrap: wrap;
+    gap: 8px;
     padding: 10px 18px;
-    background: rgba(10,10,10,0.85);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-  }
-  .breadcrumbs { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-dim); font-weight: 500; }
-  .breadcrumbs a { color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
-  .breadcrumbs a:hover { color: var(--red); }
-  .breadcrumbs span:last-child { color: var(--text); font-weight: 700; }
-  .breadcrumbs .sep { opacity: 0.3; font-size: 10px; }
-
-  .topbar-actions { display: flex; gap: 8px; align-items: center; }
-  .topbar-action {
-    width: 36px; height: 36px;
-    background: rgba(255,255,255,0.03);
+    background: rgba(255,255,255,0.04);
     border: 1px solid var(--border-bright);
-    border-radius: 10px;
+    border-radius: 12px;
     color: var(--text-dim);
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
     text-decoration: none;
+    margin-bottom: 20px;
+    transition: all 0.3s;
   }
-  .topbar-action:hover { color: var(--red); border-color: var(--red); transform: translateY(-2px); }
-  .topbar-action svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+  .profile-back:hover {
+    color: var(--red);
+    border-color: var(--red);
+    background: rgba(225,6,0,0.08);
+    transform: translateX(-4px);
+  }
 
   .profile-hero {
-    background: linear-gradient(135deg, rgba(225, 6, 0, 0.15) 0%, rgba(14, 14, 14, 0.85) 55%, rgba(139,0,0,0.1) 100%);
-    border: 1px solid rgba(225, 6, 0, 0.35);
-    border-radius: 20px;
-    padding: 22px 26px;
-    margin-bottom: 16px;
+    background: linear-gradient(135deg, rgba(225,6,0,0.15) 0%, rgba(14,14,14,0.85) 55%, rgba(139,0,0,0.1) 100%);
+    border: 1px solid rgba(225,6,0,0.35);
+    border-radius: 24px;
+    padding: 28px 32px;
+    margin-bottom: 18px;
     position: relative;
     overflow: hidden;
   }
@@ -206,165 +55,164 @@
     content: '';
     position: absolute;
     top: -60%; right: -10%;
-    width: 400px; height: 400px;
-    background: radial-gradient(circle, rgba(225, 6, 0, 0.3), transparent 70%);
+    width: 440px; height: 440px;
+    background: radial-gradient(circle, rgba(225,6,0,0.3), transparent 70%);
     pointer-events: none;
+    animation: floatGlow 8s ease-in-out infinite;
   }
-  .profile-hero-inner { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; position: relative; z-index: 1; }
-  .profile-avatar-wrap { position: relative; flex-shrink: 0; }
-  .profile-avatar {
-    width: 90px; height: 90px;
-    border-radius: 50%;
-    border: 3px solid var(--red);
-    object-fit: cover;
-    box-shadow: 0 0 25px rgba(225,6,0,0.5);
+  @keyframes floatGlow {
+    0%,100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.1); }
+  }
+  .profile-hero-inner {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    flex-wrap: wrap;
     position: relative;
     z-index: 1;
   }
-  .profile-avatar-ring {
-    position: absolute;
-    inset: -8px;
-    border-radius: 50%;
-    border: 1px dashed rgba(225,6,0,0.4);
-    animation: rotateSlow 20s linear infinite;
+  .profile-avatar-wrap { position: relative; flex-shrink: 0; }
+  .profile-avatar {
+    width: 128px;
+    height: 128px;
+    border-radius: 30px;
+    object-fit: cover;
+    position: relative;
+    z-index: 1;
+    display: block;
   }
-  @keyframes rotateSlow { to { transform: rotate(360deg); } }
   .profile-status {
     position: absolute;
-    bottom: 4px; right: 4px;
-    width: 20px; height: 20px;
+    bottom: 2px;
+    right: 2px;
+    width: 22px;
+    height: 22px;
     border: 3px solid var(--bg);
     border-radius: 50%;
     z-index: 2;
-    animation: presencePulse 2s ease-in-out infinite;
   }
-  .profile-status.presence-online  { background: #4ade80; box-shadow: 0 0 12px #4ade80; }
-  .profile-status.presence-idle    { background: #fbbf24; box-shadow: 0 0 12px #fbbf24; }
-  .profile-status.presence-dnd     { background: #ef4444; box-shadow: 0 0 12px #ef4444; }
-  .profile-status.presence-offline { background: #6b7280; box-shadow: none; animation: none; }
-  @keyframes presencePulse {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.15); opacity: 0.85; }
-  }
+  .profile-status.online  { background: #4ade80; }
+  .profile-status.idle    { background: #fbbf24; }
+  .profile-status.dnd     { background: #ef4444; }
+  .profile-status.offline { background: #6b7280; }
 
-  .profile-info { flex: 1; min-width: 200px; position: relative; }
+  .profile-info { flex: 1; min-width: 200px; }
   .profile-name {
     font-family: 'Unbounded', sans-serif;
-    font-size: clamp(20px, 3vw, 28px);
+    font-size: clamp(22px, 3vw, 30px);
     font-weight: 900;
     letter-spacing: -1px;
     color: #fff;
     line-height: 1.1;
-    margin-bottom: 3px;
+    margin-bottom: 4px;
   }
-  .profile-username { font-size: 13px; color: var(--text-dim); margin-bottom: 8px; font-weight: 500; }
+  .profile-username {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
   .profile-username::before { content: '@'; color: var(--red); font-weight: 700; }
 
-  .profile-status-line {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 10px;
-    font-size: 11.5px;
-    flex-wrap: wrap;
-  }
-  .status-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    animation: presencePulse 2s ease-in-out infinite;
-  }
-  .status-dot.online  { background: #4ade80; box-shadow: 0 0 8px #4ade80; }
-  .status-dot.idle    { background: #fbbf24; box-shadow: 0 0 8px #fbbf24; }
-  .status-dot.dnd     { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
-  .status-dot.offline { background: #6b7280; animation: none; }
-  .status-text { color: var(--text-dim); font-weight: 600; }
-  .status-activity { color: var(--text-dim); opacity: 0.75; }
-  .status-activity b { color: var(--text); }
-
-  .profile-roles { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
+  .profile-roles { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
   .profile-role-chip {
-    padding: 3px 10px;
-    background: rgba(255, 255, 255, 0.05);
+    padding: 4px 11px;
+    background: rgba(255,255,255,0.05);
     border: 1px solid var(--border-bright);
     border-radius: 100px;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 600;
     color: var(--text);
   }
-  .profile-role-chip:hover { border-color: var(--red); }
   .profile-role-chip.is-admin {
-    background: rgba(225, 6, 0, 0.15);
-    border-color: rgba(225, 6, 0, 0.5);
+    background: rgba(225,6,0,0.15);
+    border-color: rgba(225,6,0,0.5);
     color: var(--red);
   }
-  .profile-meta { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11px; color: var(--text-dim); }
-  .profile-meta-item { display: flex; align-items: center; gap: 5px; }
-  .profile-meta-item svg { width: 12px; height: 12px; stroke: var(--red); fill: none; stroke-width: 2; }
+
+  .profile-meta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .profile-meta-item { display: flex; align-items: center; gap: 6px; }
+  .profile-meta-item svg {
+    width: 13px; height: 13px;
+    stroke: var(--red); fill: none; stroke-width: 2;
+  }
   .profile-meta-item b { color: var(--text); font-weight: 600; }
+  .profile-meta-item a { color: var(--red); text-decoration: none; font-weight: 600; }
+  .profile-meta-item a:hover { text-decoration: underline; }
 
   .profile-stats {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 10px;
-    margin-bottom: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
   }
   .pstat {
     background: linear-gradient(145deg, var(--bg-card), rgba(14,14,14,0.5));
     border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 14px 16px;
+    border-radius: 16px;
+    padding: 16px 18px;
     position: relative;
     overflow: hidden;
+    transition: all 0.3s;
   }
   .pstat::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0;
-    height: 2px;
+    height: 3px;
     background: var(--pstat-color, var(--red));
     box-shadow: 0 0 14px var(--pstat-color, var(--red));
     opacity: 0.8;
   }
-  .pstat:hover { transform: translateY(-3px); border-color: var(--pstat-color, var(--red)); }
-  .pstat-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .pstat:hover {
+    transform: translateY(-4px);
+    border-color: var(--pstat-color, var(--red));
+  }
+  .pstat-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
   .pstat-icon {
-    width: 30px; height: 30px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.04);
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.04);
     border: 1px solid var(--border-bright);
     display: flex; align-items: center; justify-content: center;
-    font-size: 14px;
+    font-size: 15px;
     color: var(--pstat-color, var(--red));
   }
   .pstat-value {
     font-family: 'Unbounded', sans-serif;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 900;
-    letter-spacing: -0.8px;
+    letter-spacing: -1px;
     color: #fff;
     line-height: 1.1;
     word-break: break-word;
   }
   .pstat-label {
-    font-size: 9px;
+    font-size: 9.5px;
     color: var(--text-dim);
     text-transform: uppercase;
     letter-spacing: 1.5px;
     font-weight: 700;
-    margin-top: 2px;
+    margin-top: 3px;
   }
 
   .profile-section {
     background: linear-gradient(145deg, var(--bg-card), rgba(14,14,14,0.5));
     border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 18px 20px;
-    margin-bottom: 14px;
+    border-radius: 18px;
+    padding: 22px 24px;
+    margin-bottom: 16px;
   }
   .profile-section-title {
     font-family: 'Unbounded', sans-serif;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
     color: #fff;
     margin-bottom: 4px;
@@ -373,345 +221,253 @@
     gap: 8px;
   }
   .profile-section-title .ico {
-    width: 26px; height: 26px;
+    width: 28px; height: 28px;
     background: rgba(225,6,0,0.12);
     border: 1px solid rgba(225,6,0,0.3);
-    border-radius: 7px;
+    border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 12px;
+    font-size: 13px;
   }
-  .profile-section-sub { font-size: 10px; color: var(--text-dim); margin-bottom: 14px; }
+  .profile-section-sub { font-size: 11px; color: var(--text-dim); margin-bottom: 16px; }
 
-  .timeline { display: flex; flex-direction: column; position: relative; }
-  .timeline::before {
-    content: '';
-    position: absolute;
-    left: 15px;
-    top: 8px; bottom: 8px;
-    width: 1px;
-    background: linear-gradient(180deg, transparent, var(--border-bright), transparent);
+  .timeline { display: flex; flex-direction: column; gap: 8px; }
+  .timeline-item {
+    display: flex;
+    gap: 12px;
+    padding: 10px 0;
+    align-items: flex-start;
+    border-bottom: 1px solid var(--border);
   }
-  .timeline-item { display: flex; gap: 12px; padding: 8px 0; position: relative; }
-  .timeline-item:hover { transform: translateX(3px); }
-  .timeline-dot {
-    width: 30px; height: 30px;
+  .timeline-item:last-child { border-bottom: none; }
+  .timeline-icon {
+    width: 32px; height: 32px;
     border-radius: 9px;
     background: var(--bg-card);
     border: 1.5px solid var(--red);
     display: flex; align-items: center; justify-content: center;
-    font-size: 12px;
+    font-size: 13px;
     flex-shrink: 0;
-    z-index: 1;
-    box-shadow: 0 0 10px rgba(225,6,0,0.3);
   }
-  .timeline-dot.blue { border-color: #60a5fa; }
-  .timeline-dot.red { border-color: #ef4444; }
-  .timeline-body { flex: 1; min-width: 0; padding-top: 3px; }
-  .timeline-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 2px; }
-  .timeline-title { font-weight: 600; color: #fff; font-size: 12.5px; }
-  .timeline-date { font-size: 10px; color: var(--text-dim); }
-  .timeline-desc { font-size: 11.5px; color: var(--text-dim); line-height: 1.5; }
+  .timeline-icon.blue { border-color: #60a5fa; }
+  .timeline-body { flex: 1; min-width: 0; }
+  .timeline-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 3px;
+  }
+  .timeline-title { font-weight: 600; color: #fff; font-size: 13px; }
+  .timeline-date { font-size: 11px; color: var(--text-dim); }
+  .timeline-desc { font-size: 12px; color: var(--text-dim); line-height: 1.5; }
   .timeline-desc code {
     background: rgba(225,6,0,0.1);
-    padding: 1px 5px;
-    border-radius: 4px;
+    padding: 1px 6px;
+    border-radius: 5px;
     color: var(--red);
     font-family: monospace;
-    font-size: 10.5px;
+    font-size: 11px;
   }
 
-  .activity-bars { display: flex; align-items: flex-end; gap: 5px; height: 90px; padding-top: 14px; }
-  .activity-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; height: 100%; justify-content: flex-end; }
-  .activity-bar {
-    width: 100%;
-    border-radius: 5px 5px 3px 3px;
-    background: linear-gradient(to top, var(--red), var(--red-glow));
-    box-shadow: 0 0 10px rgba(225,6,0,0.25);
-    transition: all 0.4s;
-    min-height: 3px;
-    position: relative;
-    cursor: pointer;
-  }
-  .activity-bar:hover { filter: brightness(1.3); box-shadow: 0 0 20px rgba(225,6,0,0.7); }
-  .activity-bar-value {
-    position: absolute;
-    top: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: 'Unbounded', sans-serif;
-    font-size: 9px;
-    font-weight: 700;
-    color: #fff;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .activity-bar:hover .activity-bar-value { opacity: 1; }
-  .activity-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; font-weight: 600; }
-
-  .roles-list { display: flex; flex-direction: column; gap: 6px; }
+  .roles-list { display: flex; flex-direction: column; gap: 8px; }
   .role-item {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 9px 12px;
+    gap: 12px;
+    padding: 11px 14px;
     background: rgba(255,255,255,0.02);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 12px;
     border-left: 3px solid var(--role-color, var(--red));
+    transition: all 0.3s;
   }
-  .role-item:hover { border-color: var(--role-color, var(--red)); background: rgba(225,6,0,0.04); }
+  .role-item:hover {
+    border-color: var(--role-color, var(--red));
+    background: rgba(225,6,0,0.04);
+  }
   .role-item-icon {
-    width: 26px; height: 26px;
-    border-radius: 7px;
+    width: 30px; height: 30px;
+    border-radius: 8px;
     background: rgba(255,255,255,0.04);
     display: flex; align-items: center; justify-content: center;
-    font-size: 13px;
+    font-size: 14px;
     border: 1px solid var(--border-bright);
     flex-shrink: 0;
   }
   .role-item-info { flex: 1; min-width: 0; }
-  .role-item-name { font-family: 'Unbounded', sans-serif; font-size: 11.5px; font-weight: 700; color: #fff; margin-bottom: 1px; }
-  .role-item-desc { font-size: 10px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .role-item-name {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+  .role-item-desc { font-size: 11px; color: var(--text-dim); }
   .role-item-badge {
-    padding: 2px 8px;
+    padding: 3px 9px;
     background: rgba(225,6,0,0.15);
     border: 1px solid rgba(225,6,0,0.4);
     border-radius: 100px;
-    font-size: 8.5px;
+    font-size: 9px;
     font-weight: 700;
     color: var(--red);
     text-transform: uppercase;
     letter-spacing: 0.8px;
   }
 
-  .empty { text-align: center; padding: 30px 16px; color: var(--text-dim); font-size: 12px; }
-  .empty-icon { font-size: 32px; margin-bottom: 8px; opacity: 0.35; }
-
-  .loading { display: flex; align-items: center; justify-content: center; padding: 30px 16px; gap: 10px; color: var(--text-dim); font-size: 12px; }
-  .spinner { width: 18px; height: 18px; border: 2px solid var(--border-bright); border-top-color: var(--red); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  .loading-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    gap: 10px;
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+  .spinner {
+    width: 20px; height: 20px;
+    border: 2px solid var(--border-bright);
+    border-top-color: var(--red);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
   @keyframes spin { to { transform: rotate(360deg); } }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+  .empty-state .ico { font-size: 36px; margin-bottom: 10px; opacity: 0.35; }
 
   .skeleton {
     background: linear-gradient(90deg, var(--bg-card) 25%, rgba(255,255,255,0.04) 50%, var(--bg-card) 75%);
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
-    border-radius: 10px;
-    height: 50px;
-    margin-bottom: 8px;
+    border-radius: 12px;
+    height: 60px;
+    margin-bottom: 10px;
   }
-  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
-  .btn {
-    padding: 8px 14px;
-    border-radius: 9px;
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 12px;
-    cursor: pointer;
-    border: 1px solid transparent;
-    transition: all 0.3s;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    text-decoration: none;
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
   }
-  .btn-ghost { background: rgba(255, 255, 255, 0.04); color: var(--text); border-color: var(--border-bright); }
-  .btn-ghost:hover { border-color: var(--red); background: rgba(225, 6, 0, 0.08); }
 
-  .toast-wrap { position: fixed; bottom: 20px; right: 20px; z-index: 2000; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
-  .toast {
-    background: rgba(14, 14, 14, 0.97);
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--border-bright);
-    border-left: 3px solid var(--red);
-    border-radius: 10px;
-    padding: 10px 16px;
-    min-width: 200px;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
-    pointer-events: auto;
-    font-size: 12px;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    animation: toastIn 0.4s;
-  }
-  .toast.success { border-left-color: #4ade80; }
-  .toast.error { border-left-color: var(--red); }
-  .toast.fade { animation: toastOut 0.3s ease forwards; }
-  @keyframes toastIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
-  @keyframes toastOut { to { opacity: 0; transform: translateX(40px); } }
-
-  .denied { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; text-align: center; gap: 16px; }
-  .denied-icon { font-size: 60px; filter: drop-shadow(0 0 25px rgba(225, 6, 0, 0.5)); }
-  .denied h1 { font-family: 'Unbounded', sans-serif; font-size: clamp(26px, 4vw, 44px); color: var(--red); letter-spacing: -1.5px; }
-  .denied p { color: var(--text-dim); max-width: 440px; line-height: 1.6; font-size: 13px; }
-
-  .steam-link-box {
-    background: rgba(96, 165, 250, 0.08);
-    border: 1px solid rgba(96, 165, 250, 0.35);
-    border-radius: 14px;
-    padding: 16px 18px;
-    margin-top: 14px;
+  .link-discord-box {
+    background: rgba(96,165,250,0.08);
+    border: 1px solid rgba(96,165,250,0.35);
+    border-radius: 16px;
+    padding: 18px 22px;
+    margin-bottom: 16px;
     display: flex;
     align-items: center;
     gap: 14px;
     flex-wrap: wrap;
   }
-  .steam-link-box .info { flex: 1; min-width: 200px; }
-  .steam-link-box h4 { font-family: 'Unbounded', sans-serif; font-size: 13px; color: #fff; margin-bottom: 4px; }
-  .steam-link-box p { font-size: 12px; color: var(--text-dim); line-height: 1.5; }
-  .steam-link-input {
-    padding: 10px 14px;
+  .link-discord-box .info { flex: 1; min-width: 220px; }
+  .link-discord-box h4 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 14px;
+    color: #fff;
+    margin-bottom: 5px;
+  }
+  .link-discord-box p {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+  .link-discord-input {
+    padding: 11px 15px;
     background: var(--bg-elevated);
     border: 1px solid var(--border-bright);
-    border-radius: 10px;
+    border-radius: 11px;
     color: var(--text);
     font-family: 'Inter', sans-serif;
     font-size: 13px;
     outline: none;
-    min-width: 220px;
+    min-width: 200px;
   }
-  .steam-link-input:focus { border-color: #60a5fa; box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.12); }
+  .link-discord-input:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 4px rgba(96,165,250,0.12);
+  }
   .btn-blue {
-    background: rgba(96, 165, 250, 0.15);
-    border: 1px solid rgba(96, 165, 250, 0.5);
-    color: #60a5fa;
-  }
-  .btn-blue:hover { background: rgba(96, 165, 250, 0.28); border-color: #60a5fa; }
-
-  @media (max-width: 900px) {
-    .admin-layout { grid-template-columns: 1fr; }
-    .sidebar { transform: translateX(-100%); transition: transform 0.35s; width: 260px !important; }
-    .sidebar.open { transform: translateX(0); }
-    .main { grid-column: 1; padding: 16px 14px 80px; }
-    .menu-toggle { display: flex !important; }
-    .sidebar-toggle { display: none; }
-    .profile-hero { padding: 18px; }
-    .profile-avatar { width: 72px; height: 72px; }
-    .profile-name { font-size: 22px; }
-  }
-  .menu-toggle {
-    display: none;
-    position: fixed;
-    top: 14px; left: 14px;
-    width: 40px; height: 40px;
-    background: rgba(10, 10, 10, 0.95);
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--border-bright);
+    padding: 10px 18px;
+    background: rgba(96,165,250,0.15);
+    border: 1px solid rgba(96,165,250,0.5);
     border-radius: 11px;
-    align-items: center;
-    justify-content: center;
+    color: #60a5fa;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
     cursor: pointer;
-    z-index: 100;
-    color: var(--text);
-    font-size: 17px;
+    transition: all 0.3s;
   }
-  .menu-toggle:hover { border-color: var(--red); color: var(--red); }
+  .btn-blue:hover {
+    background: rgba(96,165,250,0.28);
+    border-color: #60a5fa;
+  }
 
   @media (max-width: 600px) {
-    .topbar { padding: 8px 12px; }
-    .profile-name { font-size: 18px; }
+    .profile-page { padding: 90px 14px 120px; }
+    .profile-hero { padding: 22px; }
+    .profile-avatar { width: 96px; height: 96px; border-radius: 22px; }
+    .profile-name { font-size: 20px; }
     .profile-stats { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .pstat { padding: 11px 12px; }
-    .pstat-value { font-size: 15px; }
-    .profile-section { padding: 14px 16px; }
-    .timeline-date { font-size: 9px; }
-    .toast-wrap { right: 12px; left: 12px; bottom: 12px; }
-    .toast { min-width: auto; }
+    .pstat { padding: 12px 14px; }
+    .pstat-value { font-size: 16px; }
+    .profile-section { padding: 16px 18px; }
   }
 </style>
 </head>
 <body>
 
 <div class="bg-layer">
-  <div class="bg-glow-1"></div><div class="bg-glow-2"></div><div class="bg-glow-3"></div>
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+  <div class="bg-glow-3"></div>
   <div class="bg-grid"></div>
   <div class="particles" id="particles"></div>
 </div>
 
-<button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
-
 <div class="auth-widget" id="authWidget"></div>
 
-<div class="denied" id="deniedBlock" style="display:none;">
-  <div class="denied-icon">🔒</div>
-  <h1>Доступ запрещён</h1>
-  <p>Эта страница доступна только персоналу проекта Fernodd.</p>
-  <a class="btn btn-ghost" href="/index.html" style="padding: 12px 24px; font-size: 13px;">← На главную</a>
-</div>
-
-<div class="admin-layout" id="adminLayout" style="display:none;">
-
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-brand">
-      <img src="/logo.png" alt="Fernodd">
-      <div class="sidebar-brand-info">
-        <div class="sidebar-brand-text">Fernodd</div>
-        <div class="sidebar-brand-sub">Profile</div>
-      </div>
-      <button class="sidebar-toggle" id="sidebarToggle" title="Свернуть">◀</button>
-    </div>
-
-    <div class="sidebar-section">Навигация</div>
-    <a class="sidebar-link" href="/admin.html#dashboard">
-      <span class="sidebar-link-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg></span>
-      <span class="sidebar-link-label">Дашборд</span>
-    </a>
-    <a class="sidebar-link" href="/admin.html#applications">
-      <span class="sidebar-link-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
-      <span class="sidebar-link-label">Заявки</span>
-    </a>
-    <a class="sidebar-link" href="/admin.html#staff">
-      <span class="sidebar-link-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
-      <span class="sidebar-link-label">Персонал</span>
-    </a>
-
-    <div class="sidebar-section">Аккаунт</div>
-    <a class="sidebar-link active" href="/profile.html">
-      <span class="sidebar-link-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg></span>
-      <span class="sidebar-link-label">Мой профиль</span>
-    </a>
-    <a class="sidebar-link sidebar-link-back" href="/admin.html">
-      <span class="sidebar-link-icon"><svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></span>
-      <span class="sidebar-link-label">← В панель</span>
-    </a>
-  </aside>
-
-  <main class="main">
-    <div class="topbar">
-      <div class="breadcrumbs">
-        <a href="/admin.html">Панель</a>
-        <span class="sep">/</span>
-        <span>Профиль</span>
-        <span class="sep">/</span>
-        <span id="breadcrumbName">—</span>
-      </div>
-      <div class="topbar-actions">
-        <button class="topbar-action" onclick="copyProfileLink()" title="Скопировать ссылку">
-          <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-        </button>
-        <a class="topbar-action" href="/admin.html" title="Назад">
-          <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-        </a>
-      </div>
-    </div>
+<main class="profile-page">
+  <div class="profile-container">
+    <a class="profile-back" href="/index.html">← На главную</a>
 
     <div class="profile-hero" id="profileHero">
-      <div class="loading"><div class="spinner"></div> Загрузка профиля...</div>
+      <div class="loading-state">
+        <div class="spinner"></div> Загрузка профиля...
+      </div>
     </div>
 
-    <div id="steamLinkBox"></div>
+    <div id="linkDiscordBox"></div>
 
     <div class="profile-stats" id="profileStats"></div>
+
+    <div class="profile-section">
+      <div class="profile-section-title">
+        <span class="ico">🎭</span> Роли на сервере
+      </div>
+      <div class="profile-section-sub">Все роли пользователя в Discord</div>
+      <div class="roles-list" id="rolesList">
+        <div class="skeleton"></div>
+        <div class="skeleton"></div>
+      </div>
+    </div>
 
     <div class="profile-section">
       <div class="profile-section-title">
         <span class="ico">📈</span> Активность за неделю
       </div>
       <div class="profile-section-sub">Количество действий по дням</div>
-      <div class="activity-bars" id="activityBars">
-        <div class="loading"><div class="spinner"></div> Загрузка...</div>
+      <div id="activityBars" style="display:flex;align-items:flex-end;gap:6px;height:100px;padding-top:16px;">
+        <div class="loading-state" style="padding:0;width:100%;">
+          <div class="spinner"></div>
+        </div>
       </div>
     </div>
 
@@ -726,32 +482,40 @@
         <div class="skeleton"></div>
       </div>
     </div>
+  </div>
+</main>
 
-    <div class="profile-section">
-      <div class="profile-section-title">
-        <span class="ico">🎭</span> Роли
-      </div>
-      <div class="profile-section-sub">Все роли пользователя на сервере</div>
-      <div class="roles-list" id="rolesList">
-        <div class="skeleton"></div>
-        <div class="skeleton"></div>
-      </div>
-    </div>
-
-  </main>
-</div>
+<nav class="bottom-nav">
+  <a class="nav-btn" href="/index.html" title="Главная">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Главная</span>
+  </a>
+  <a class="nav-btn" href="/rules.html" title="Правила">
+    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    <span>Правила</span>
+  </a>
+  <a class="nav-btn" href="/roles.html" title="Роли">
+    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+    <span>Роли</span>
+  </a>
+  <a class="nav-btn" href="/apply.html" title="Заявка">
+    <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+    <span>Заявка</span>
+  </a>
+  <a class="nav-btn active" href="/profile.html" title="Профиль">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg>
+    <span>Профиль</span>
+  </a>
+</nav>
 
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script src="/js/common.js"></script>
 <script src="/js/auth.js"></script>
 <script>
-let isAuthorized = false;
 let targetUserId = null;
-let profileData = null;
-let presencePollTimer = null;
 
-function getAuthToken() { return localStorage.getItem('fernodd_token') || ''; }
+function getToken() { return localStorage.getItem('fernodd_token') || ''; }
 
 async function api(path, options = {}) {
   const base = window.API_BASE || '';
@@ -759,7 +523,7 @@ async function api(path, options = {}) {
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + getAuthToken(),
+      'Authorization': 'Bearer ' + getToken(),
       ...(options.headers || {})
     }
   });
@@ -770,217 +534,149 @@ async function api(path, options = {}) {
   return data;
 }
 
-function escapeHtml(s) {
-  return String(s == null ? '' : s)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-}
-
-function showToast(text, type = 'info', ms = 3000) {
-  const wrap = document.getElementById('toastWrap');
-  if (!wrap) return;
-  const icons = { success: '✓', error: '✕', info: 'ℹ' };
-  const el = document.createElement('div');
-  el.className = 'toast ' + type;
-  el.innerHTML = `<span style="font-weight:900;">${icons[type] || 'ℹ'}</span><span>${escapeHtml(text)}</span>`;
-  wrap.appendChild(el);
-  setTimeout(() => {
-    el.classList.add('fade');
-    setTimeout(() => el.remove(), 300);
-  }, ms);
-}
-
-function applyAuth(user) {
-  isAuthorized = !!(user && user.isAdmin);
-  if (!isAuthorized) {
-    document.getElementById('deniedBlock').style.display = 'flex';
-    document.getElementById('adminLayout').style.display = 'none';
+window.addEventListener('auth:changed', async (e) => {
+  const user = e.detail.user;
+  if (!user) {
+    document.getElementById('profileHero').innerHTML = `
+      <div class="empty-state">
+        <div class="ico">🔒</div>
+        Войдите через Steam, чтобы открыть профиль
+      </div>`;
     return;
   }
-  document.getElementById('deniedBlock').style.display = 'none';
-  document.getElementById('adminLayout').style.display = 'grid';
-
   const params = new URLSearchParams(window.location.search);
   const idFromUrl = params.get('id');
-  targetUserId = idFromUrl || user.id;
-
-  renderSteamLinkBox(user);
-
+  targetUserId = idFromUrl || user.steamId || user.id;
+  renderLinkBox(user);
   loadProfile();
-}
+});
 
-function renderSteamLinkBox(user) {
-  const box = document.getElementById('steamLinkBox');
+function renderLinkBox(user) {
+  const box = document.getElementById('linkDiscordBox');
   if (!box) return;
-
   if (user.discordId) {
     box.innerHTML = `
-      <div class="steam-link-box" style="background:rgba(74,222,128,0.08);border-color:rgba(74,222,128,0.35);">
+      <div class="link-discord-box" style="background:rgba(74,222,128,0.08);border-color:rgba(74,222,128,0.35);">
         <div class="info">
           <h4>✅ Discord привязан</h4>
-          <p>Ваш Discord ID: <b>${escapeHtml(user.discordId)}</b>. Роли Discord будут автоматически подтягиваться.</p>
+          <p>Ваш Discord ID: <b>${user.discordId}</b>. Роли подтягиваются автоматически.</p>
         </div>
-      </div>
-    `;
+        <button class="btn-blue" style="background:rgba(239,68,68,0.12);color:#ef4444;border-color:rgba(239,68,68,0.4);" onclick="unlinkDiscord()">Отвязать</button>
+      </div>`;
     return;
   }
-
   box.innerHTML = `
-    <div class="steam-link-box">
+    <div class="link-discord-box">
       <div class="info">
         <h4>🔗 Привязать Discord</h4>
-        <p>Укажите ваш Discord ID, чтобы роли автоматически подтягивались к Steam-аккаунту.</p>
+        <p>Укажите ваш Discord ID — роли и статус подтянутся автоматически.</p>
       </div>
-      <input type="text" class="steam-link-input" id="discordIdInput" placeholder="Например: 1441424461252526166">
-      <button class="btn btn-blue" onclick="linkDiscord()">Привязать</button>
-    </div>
-  `;
+      <input type="text" class="link-discord-input" id="discordIdInput" placeholder="Напр. 1441424461252526166">
+      <button class="btn-blue" onclick="linkDiscord()">Привязать</button>
+    </div>`;
 }
 
 async function linkDiscord() {
   const input = document.getElementById('discordIdInput');
   const discordId = (input?.value || '').trim();
   if (!discordId) { showToast('Введите Discord ID', 'error'); return; }
+  if (!/^\d{17,20}$/.test(discordId)) { showToast('Discord ID — 17–20 цифр', 'error'); return; }
+
+  const btn = input.nextElementSibling;
+  btn.disabled = true;
+  btn.textContent = 'Проверка...';
+
   try {
+    const checkRes = await fetch(
+      (window.API_BASE || '') + '/api/check-discord-member/' + discordId,
+      { headers: { Authorization: 'Bearer ' + getToken() } }
+    );
+    const checkData = await checkRes.json();
+    if (!checkRes.ok || !checkData.exists) {
+      showToast('Пользователь не найден на сервере Discord', 'error');
+      btn.disabled = false;
+      btn.textContent = 'Привязать';
+      return;
+    }
     await api('/api/link-discord', {
       method: 'POST',
       body: JSON.stringify({ discordId })
     });
     showToast('✅ Discord привязан!', 'success');
+    setTimeout(() => location.reload(), 1000);
+  } catch (e) {
+    showToast('Ошибка: ' + e.message, 'error');
+    btn.disabled = false;
+    btn.textContent = 'Привязать';
+  }
+}
+
+async function unlinkDiscord() {
+  if (!confirm('Отвязать Discord от Steam?')) return;
+  try {
+    await api('/api/link-discord', {
+      method: 'POST',
+      body: JSON.stringify({ discordId: null })
+    });
+    showToast('Discord отвязан', 'info');
     setTimeout(() => location.reload(), 800);
   } catch (e) {
     showToast('Ошибка: ' + e.message, 'error');
   }
 }
 
-window.addEventListener('auth:changed', (e) => applyAuth(e.detail.user));
-
-setTimeout(() => {
-  if (!isAuthorized && document.getElementById('adminLayout').style.display === 'none') {
-    document.getElementById('deniedBlock').style.display = 'flex';
-  }
-}, 2000);
-
-document.getElementById('sidebarToggle')?.addEventListener('click', () => {
-  const layout = document.getElementById('adminLayout');
-  layout.classList.toggle('collapsed');
-  const btn = document.getElementById('sidebarToggle');
-  btn.textContent = layout.classList.contains('collapsed') ? '▶' : '◀';
-});
-
 async function loadProfile() {
+  if (!targetUserId) return;
   try {
     let found = null;
     try {
       const r = await api(`/api/users/${targetUserId}`);
       found = r.user;
     } catch (e) {
-      const staff = await api('/api/staff');
-      const all = [...(staff.administrators || []), ...(staff.moderators || [])];
-      found = all.find(s => s.id === targetUserId);
+      if (window.currentUser && (targetUserId === window.currentUser.steamId || targetUserId === window.currentUser.id)) {
+        const me = await api('/api/me');
+        found = me.user;
+      }
     }
-
-    if (!found && targetUserId === (window.currentUser?.id)) {
-      const me = await api('/api/me');
-      found = me.user;
-    }
-
     if (!found) {
-      profileData = { notFound: true };
-      renderProfileNotFound();
+      document.getElementById('profileHero').innerHTML = `<div class="empty-state"><div class="ico">🔍</div>Пользователь не найден</div>`;
+      document.getElementById('profileStats').innerHTML = '';
+      document.getElementById('rolesList').innerHTML = '<div class="empty-state">Роли недоступны</div>';
+      document.getElementById('timeline').innerHTML = '<div class="empty-state">Нет истории</div>';
+      document.getElementById('activityBars').innerHTML = '';
       return;
     }
-
-    profileData = found;
-    renderProfile(found);
+    renderHero(found);
     renderStats(found);
-    renderActivity(found);
-    renderTimeline(found);
     renderRoles(found);
-
-    if (presencePollTimer) clearInterval(presencePollTimer);
-    presencePollTimer = setInterval(updatePresence, 15000);
-
+    loadActivity(found);
+    loadTimeline(found);
   } catch (e) {
-    console.error('[profile]', e);
-    document.getElementById('profileHero').innerHTML = `
-      <div class="empty" style="color:var(--red);">Ошибка: ${escapeHtml(e.message)}</div>
-    `;
+    document.getElementById('profileHero').innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${escapeHtml(e.message)}</div>`;
   }
 }
 
-async function updatePresence() {
-  if (!targetUserId) return;
-  if (!/^\d{17,20}$/.test(targetUserId)) return;
-  try {
-    const p = await api(`/api/presence/${targetUserId}`);
-    const status = p.status || 'offline';
-    const statusText = {
-      online: 'В сети', idle: 'Неактивен', dnd: 'Не беспокоить', offline: 'Не в сети'
-    }[status] || 'Не в сети';
-
-    const bigDot = document.querySelector('.profile-status');
-    if (bigDot) {
-      bigDot.className = 'profile-status presence-' + status;
-      bigDot.title = statusText;
-    }
-
-    const dot = document.querySelector('.status-dot');
-    const text = document.querySelector('.status-text');
-    if (dot) dot.className = 'status-dot ' + status;
-    if (text) text.textContent = statusText;
-
-    const actEl = document.querySelector('.status-activity');
-    const activity = (p.activities && p.activities[0]) || null;
-    if (actEl && activity) actEl.innerHTML = '· ' + formatActivity(activity);
-    else if (actEl) actEl.textContent = '';
-  } catch {}
-}
-
-function formatActivity(a) {
-  const types = { 0: 'играет в', 1: 'стримит', 2: 'слушает', 3: 'смотрит', 5: 'соревнуется в' };
-  if (a.type === 4) return a.state ? escapeHtml(a.state) : 'кастомный статус';
-  const verb = types[a.type] || 'в';
-  return `${verb} <b>${escapeHtml(a.name)}</b>`;
-}
-
-function renderProfile(user) {
+function renderHero(user) {
   const avatar = user.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png';
   const name = user.nickname || user.global_name || user.username || 'Пользователь';
   const username = user.username || '—';
-  const isSteamUser = user.provider === 'steam' || (user.id && user.id.length === 17 && !user.discordId && !user.roles?.length);
-
-  document.getElementById('breadcrumbName').textContent = name;
-
+  const status = (user.presence && user.presence.status) || 'offline';
+  const statusText = { online: 'В сети', idle: 'Неактивен', dnd: 'Не беспокоить', offline: 'Не в сети' }[status] || 'Не в сети';
   const rolesHtml = (user.roles || []).map(r => {
-    const isAdminRole = ['Куратор','Следящий','Главная администрация','Владелец'].includes(r);
+    const isAdminRole = ['Куратор', 'Следящий', 'Главная администрация', 'Владелец'].includes(r);
     return `<span class="profile-role-chip ${isAdminRole ? 'is-admin' : ''}">${escapeHtml(r)}</span>`;
   }).join('') || '<span class="profile-role-chip">Без роли</span>';
-
-  const status = (user.presence && user.presence.status) || 'offline';
-  const statusText = {
-    online: 'В сети', idle: 'Неактивен', dnd: 'Не беспокоить', offline: 'Не в сети'
-  }[status] || 'Не в сети';
-  const activity = (user.presence && user.presence.activities && user.presence.activities[0]) || null;
-  const activityText = activity ? formatActivity(activity) : '';
-
-  const steamProfileLink = user.profileUrl || (user.steamId ? `https://steamcommunity.com/profiles/${user.steamId}` : null);
+  const steamLink = user.profileUrl || (user.steamId ? `https://steamcommunity.com/profiles/${user.steamId}` : null);
 
   document.getElementById('profileHero').innerHTML = `
     <div class="profile-hero-inner">
       <div class="profile-avatar-wrap">
-        <div class="profile-avatar-ring"></div>
-        <img class="profile-avatar" src="${avatar}" alt="${escapeHtml(name)}">
-        <div class="profile-status presence-${status}" title="${statusText}"></div>
+        <img class="profile-avatar" src="${avatar}" alt="">
+        <span class="profile-status ${status}" title="${statusText}"></span>
       </div>
       <div class="profile-info">
         <div class="profile-name">${escapeHtml(name)}</div>
         <div class="profile-username">${escapeHtml(username)}</div>
-        <div class="profile-status-line">
-          <span class="status-dot ${status}"></span>
-          <span class="status-text">${statusText}</span>
-          ${activityText ? `<span class="status-activity">· ${activityText}</span>` : ''}
-        </div>
         <div class="profile-roles">${rolesHtml}</div>
         <div class="profile-meta">
           ${user.joinedAt ? `
@@ -992,30 +688,15 @@ function renderProfile(user) {
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             ID: <b>${escapeHtml(user.id || '—')}</b>
           </div>
-          ${steamProfileLink ? `
+          ${steamLink ? `
             <div class="profile-meta-item">
-              <svg viewBox="0 0 24 24"><path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0z"/></svg>
-              <a href="${steamProfileLink}" target="_blank" rel="noopener" style="color:var(--red);text-decoration:none;"><b>Steam</b></a>
-            </div>` : ''}
-          ${user.topRole ? `
-            <div class="profile-meta-item">
-              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <b style="color:${user.topRoleColor || 'var(--red)'};">${escapeHtml(user.topRole)}</b>
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+              <a href="${steamLink}" target="_blank" rel="noopener"><b>Steam профиль</b></a>
             </div>` : ''}
         </div>
       </div>
     </div>
   `;
-}
-
-function renderProfileNotFound() {
-  document.getElementById('profileHero').innerHTML = `
-    <div class="empty"><div class="empty-icon">🔍</div>Пользователь не найден</div>
-  `;
-  document.getElementById('profileStats').innerHTML = '';
-  document.getElementById('activityBars').innerHTML = '';
-  document.getElementById('timeline').innerHTML = '<div class="empty">Нет истории действий</div>';
-  document.getElementById('rolesList').innerHTML = '<div class="empty">Роли недоступны</div>';
 }
 
 function renderStats(user) {
@@ -1024,10 +705,10 @@ function renderStats(user) {
     { color: '#e10600', icon: '🎭', value: rolesCount, label: 'Ролей' },
     { color: '#4ade80', icon: '📅', value: user.joinedAt ? daysSince(user.joinedAt) : '—', label: 'Дней на сервере' },
     { color: '#60a5fa', icon: '⭐', value: user.topRole || '—', label: 'Главная роль' },
-    { color: '#fbbf24', icon: '🔖', value: user.id ? '#' + user.id.slice(-4) : '—', label: 'Тег ID' },
+    { color: '#fbbf24', icon: '🔖', value: user.id ? '#' + String(user.id).slice(-4) : '—', label: 'Тег' },
   ];
   document.getElementById('profileStats').innerHTML = stats.map(s => `
-    <div class="pstat" style="--pstat-color: ${s.color};">
+    <div class="pstat" style="--pstat-color:${s.color};">
       <div class="pstat-head">
         <div class="pstat-icon">${s.icon}</div>
         <div class="pstat-value">${escapeHtml(String(s.value))}</div>
@@ -1038,72 +719,61 @@ function renderStats(user) {
 }
 
 function daysSince(date) {
-  const d = new Date(date);
-  const diff = Date.now() - d.getTime();
+  const diff = Date.now() - new Date(date).getTime();
   return Math.floor(diff / (1000 * 60 * 60 * 24));
 }
 
-async function renderActivity(user) {
+async function loadActivity(user) {
   const el = document.getElementById('activityBars');
-  el.innerHTML = '<div class="loading"><div class="spinner"></div> Загрузка...</div>';
-
   try {
     const hist = await api('/api/applications-history').catch(() => ({ history: [] }));
     const days = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
     const counts = new Array(7).fill(0);
-
     (hist.history || []).forEach(h => {
       if (h.performedBy !== user.id) return;
       const d = new Date(h.performedAt);
       if (isNaN(d)) return;
-      const idx = (d.getDay() + 6) % 7;
-      counts[idx]++;
+      counts[(d.getDay() + 6) % 7]++;
     });
-
     const max = Math.max(...counts, 1);
     el.innerHTML = days.map((day, i) => {
       const h = (counts[i] / max) * 100;
       return `
-        <div class="activity-bar-wrap">
-          <div class="activity-bar" style="height:${Math.max(h, 4)}%;">
-            <span class="activity-bar-value">${counts[i]}</span>
-          </div>
-          <div class="activity-label">${day}</div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;height:100%;justify-content:flex-end;">
+          <div style="width:100%;background:linear-gradient(to top, var(--red), var(--red-glow));border-radius:5px 5px 3px 3px;min-height:3px;height:${Math.max(h, 4)}%;box-shadow:0 0 10px rgba(225,6,0,0.25);"></div>
+          <div style="font-size:9px;color:var(--text-dim);text-transform:uppercase;font-weight:600;">${day}</div>
         </div>`;
     }).join('');
-  } catch (e) {
-    el.innerHTML = '<div class="empty">Нет данных об активности</div>';
+  } catch {
+    el.innerHTML = '<div class="empty-state" style="width:100%;padding:20px;">Нет данных</div>';
   }
 }
 
-async function renderTimeline(user) {
+async function loadTimeline(user) {
   const el = document.getElementById('timeline');
-  el.innerHTML = '<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>';
-
   try {
     const hist = await api('/api/applications-history').catch(() => ({ history: [] }));
     const actions = (hist.history || []).filter(h => h.performedBy === user.id);
-
     if (!actions.length) {
-      el.innerHTML = '<div class="empty"><div class="empty-icon">📭</div>Действий пока нет</div>';
+      el.innerHTML = '<div class="empty-state"><div class="ico">📭</div>Действий пока нет</div>';
       return;
     }
-
     const statusNames = { approved: 'Одобрено', rejected: 'Отклонено', pending: 'На рассмотрении' };
-
     el.innerHTML = actions.slice(0, 20).map(a => {
       const date = new Date(a.performedAt).toLocaleString('ru-RU');
       const isChange = a.action === 'change';
-      const dotClass = isChange ? 'blue' : 'red';
-      const icon = isChange ? '↻' : '🗑';
-      const title = isChange ? 'Изменил статус' : 'Удалил заявку';
+      const isRole = a.action === 'give_role';
+      const cls = isChange ? 'blue' : '';
+      const icon = isChange ? '↻' : (isRole ? '👑' : '🗑');
+      const title = isChange ? 'Изменил статус' : (isRole ? 'Выдал роль' : 'Удалил заявку');
       const desc = isChange
-        ? `${escapeHtml(a.applicationOwner || '—')}: <code>${statusNames[a.oldStatus] || a.oldStatus || '—'}</code> → <code>${statusNames[a.newStatus] || a.newStatus || '—'}</code>`
-        : `${escapeHtml(a.applicationOwner || '—')}: был <code>${statusNames[a.oldStatus] || a.oldStatus || '—'}</code>`;
-
+        ? `${escapeHtml(a.applicationOwner || '—')}: <code>${statusNames[a.oldStatus] || '—'}</code> → <code>${statusNames[a.newStatus] || '—'}</code>`
+        : isRole
+        ? `Роль <code>${escapeHtml(a.roleName || '—')}</code> → <b>${escapeHtml(a.targetDiscordId || '—')}</b>`
+        : `${escapeHtml(a.applicationOwner || '—')}: был <code>${statusNames[a.oldStatus] || '—'}</code>`;
       return `
         <div class="timeline-item">
-          <div class="timeline-dot ${dotClass}">${icon}</div>
+          <div class="timeline-icon ${cls}">${icon}</div>
           <div class="timeline-body">
             <div class="timeline-head">
               <div class="timeline-title">${title}</div>
@@ -1113,78 +783,50 @@ async function renderTimeline(user) {
           </div>
         </div>`;
     }).join('');
-  } catch (e) {
-    el.innerHTML = `<div class="empty">Ошибка: ${escapeHtml(e.message)}</div>`;
+  } catch {
+    el.innerHTML = '<div class="empty-state">Ошибка загрузки</div>';
   }
 }
 
 function renderRoles(user) {
   const el = document.getElementById('rolesList');
   const roles = user.roles || [];
-
-  const ROLE_DESCS = {
-    'Главная администрация': 'Высшее руководство',
-    'Владелец': 'Полный доступ',
-    'Разработчик': 'Техподдержка',
-    'Следящий': 'Наблюдение за порядком',
-    'Куратор': 'Курирование модераторов',
-    '[Кандидат] Куратор': 'Кандидат на куратора',
-    'Поддержка': 'Помощь игрокам',
-    'Медиа': 'Контент и продвижение',
-    'Главный модератор': 'Руководит модераторами',
-    'Старший модератор': 'Опытный модератор',
-    'Модератор': 'Следит за порядком',
-    'Игрок': 'Базовый участник',
-  };
-
   const ROLE_COLORS = {
     'Главная администрация': '#5b8dd9',
     'Владелец': '#e10600',
     'Разработчик': '#4ade80',
     'Следящий': '#fbbf24',
     'Куратор': '#fcd34d',
-    '[Кандидат] Куратор': '#facc15',
-    'Поддержка': '#ef4444',
-    'Медиа': '#ec4899',
-    'Главный модератор': '#22d3ee',
-    'Старший модератор': '#10b981',
     'Модератор': '#3b82f6',
     'Игрок': '#a855f7',
   };
-
+  const ROLE_DESCS = {
+    'Главная администрация': 'Высшее руководство',
+    'Владелец': 'Полный доступ',
+    'Разработчик': 'Техподдержка',
+    'Следящий': 'Наблюдение за порядком',
+    'Куратор': 'Курирование модераторов',
+    'Модератор': 'Следит за порядком',
+    'Игрок': 'Базовый участник',
+  };
   if (!roles.length) {
-    el.innerHTML = '<div class="empty">Ролей нет. Возможно, Discord не привязан.</div>';
+    el.innerHTML = '<div class="empty-state">Ролей нет. Привяжите Discord.</div>';
     return;
   }
-
   el.innerHTML = roles.map((r, i) => {
     const color = ROLE_COLORS[r] || '#e10600';
     const desc = ROLE_DESCS[r] || 'Роль сервера';
-    const isTop = i === 0;
     return `
       <div class="role-item" style="--role-color:${color};">
-        <div class="role-item-icon">${isTop ? '👑' : '🎭'}</div>
+        <div class="role-item-icon">${i === 0 ? '👑' : '🎭'}</div>
         <div class="role-item-info">
           <div class="role-item-name">${escapeHtml(r)}</div>
           <div class="role-item-desc">${escapeHtml(desc)}</div>
         </div>
-        ${isTop ? '<span class="role-item-badge">ТОП</span>' : ''}
+        ${i === 0 ? '<span class="role-item-badge">ТОП</span>' : ''}
       </div>`;
   }).join('');
 }
-
-function copyProfileLink() {
-  const url = `${window.location.origin}/profile.html?id=${targetUserId}`;
-  navigator.clipboard.writeText(url).then(() => {
-    showToast('Ссылка скопирована!', 'success');
-  }).catch(() => {
-    showToast('Не удалось скопировать', 'error');
-  });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  if (window.currentUser) applyAuth(window.currentUser);
-});
 </script>
 </body>
 </html>
