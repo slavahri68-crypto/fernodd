@@ -17,11 +17,14 @@
   .my-header-left { display: flex; align-items: center; gap: 12px; }
   .my-header-balance { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-bright); border-radius: 100px; font-family: 'Unbounded', sans-serif; font-size: 13px; color: #fff; font-weight: 700; }
   .my-header-right { display: flex; align-items: center; gap: 10px; }
-  .icon-badge { position: relative; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+  .icon-badge { position: relative; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; }
+  .icon-badge:hover { border-color: var(--red); }
   .icon-badge svg { width: 18px; height: 18px; fill: currentColor; color: var(--text-dim); }
   .icon-badge .badge { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 5px; background: var(--red); color: #fff; border-radius: 100px; font-size: 10px; font-weight: 900; display: flex; align-items: center; justify-content: center; border: 2px solid var(--bg); }
 
-  .profile-avatar-btn { position: relative; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); border-radius: 100px; }
+  .profile-avatar-btn { position: relative; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); border-radius: 100px; transition: all 0.3s; }
+  .profile-avatar-btn:hover { border-color: var(--red); }
   .profile-avatar-btn img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
   .profile-avatar-btn .chev { width: 14px; height: 14px; color: var(--text-dim); transition: transform 0.3s; }
   .profile-avatar-btn.open .chev { transform: rotate(180deg); }
@@ -38,6 +41,7 @@
   .my-menu-item.active { background: rgba(225,6,0,0.15); color: #fff; }
   .my-menu-icon { width: 22px; text-align: center; font-size: 16px; }
 
+  /* ТРАНЗАКЦИИ */
   .tx-card { background: #0e0e0e; border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; }
   .tx-list { display: flex; flex-direction: column; }
   .tx-item { display: flex; align-items: center; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--border); }
@@ -52,12 +56,8 @@
   .tx-amount.income { color: #4ade80; }
   .tx-amount.outcome { color: #ef4444; }
   .tx-date { font-size: 11px; color: var(--text-dim); white-space: nowrap; flex-shrink: 0; margin-left: 8px; }
-
-  .pagination { display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 20px; }
-  .pg-btn { min-width: 36px; height: 36px; padding: 0 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-bright); border-radius: 10px; color: var(--text-dim); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.25s; }
-  .pg-btn:hover:not(:disabled) { color: #fff; border-color: var(--red); background: rgba(225,6,0,0.08); }
-  .pg-btn.active { background: rgba(225,6,0,0.15); color: #fff; border-color: var(--red); }
-  .pg-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .tx-empty { text-align: center; padding: 60px 20px; color: var(--text-dim); font-size: 13px; }
+  .tx-empty .ico { font-size: 48px; margin-bottom: 12px; opacity: 0.35; }
 
   @media (max-width: 699px) {
     .my-page { padding: 70px 12px 120px; }
@@ -68,11 +68,19 @@
     .tx-amount { font-size: 12px; }
     .tx-date { font-size: 10px; }
   }
+
+  .loading-state { display: flex; align-items: center; justify-content: center; padding: 60px 20px; gap: 10px; color: var(--text-dim); font-size: 13px; }
+  .spinner { width: 20px; height: 20px; border: 2px solid var(--border-bright); border-top-color: var(--red); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
 
-<div class="bg-layer"><div class="bg-glow-1"></div><div class="bg-glow-2"></div><div class="bg-glow-3"></div><div class="bg-grid"></div><div class="particles" id="particles"></div></div>
+<div class="bg-layer">
+  <div class="bg-glow-1"></div><div class="bg-glow-2"></div><div class="bg-glow-3"></div>
+  <div class="bg-grid"></div>
+  <div class="particles" id="particles"></div>
+</div>
 
 <div class="auth-widget" id="authWidget"></div>
 
@@ -94,19 +102,9 @@
     </div>
 
     <div class="tx-card">
-      <div class="tx-list">
-        <div class="tx-item"><div class="tx-arrow income">↓</div><div class="tx-body"><div class="tx-title">Награда за стрик: +5 рублей</div></div><div class="tx-amount income">+5₽</div><div class="tx-date">08:07 03.10.2026</div></div>
-        <div class="tx-item"><div class="tx-arrow income">↓</div><div class="tx-body"><div class="tx-title">Награда за стрик: +5 рублей</div></div><div class="tx-amount income">+5₽</div><div class="tx-date">08:06 03.10.2026</div></div>
-        <div class="tx-item"><div class="tx-arrow outcome">↑</div><div class="tx-body"><div class="tx-title">Покупка INTERIAL+ (90 дн.)</div><div class="tx-subtitle">Срок: 90 дней</div></div><div class="tx-amount outcome">-629₽</div><div class="tx-date">15:54 01.10.2026</div></div>
-        <div class="tx-item"><div class="tx-arrow income">↓</div><div class="tx-body"><div class="tx-title">Боевой пропуск: 140 койнов</div></div><div class="tx-amount income">+140 койнов</div><div class="tx-date">17:01 30.09.2026</div></div>
-        <div class="tx-item"><div class="tx-arrow income">↓</div><div class="tx-body"><div class="tx-title">Боевой пропуск: 140 койнов</div></div><div class="tx-amount income">+140 койнов</div><div class="tx-date">17:01 30.09.2026</div></div>
-        <div class="tx-item"><div class="tx-arrow income">↓</div><div class="tx-body"><div class="tx-title">Активация промокода пойдемтеиграть</div></div><div class="tx-amount income">+15₽</div><div class="tx-date">15:01 30.09.2026</div></div>
-        <div class="tx-item"><div class="tx-arrow income">↓</div><div class="tx-body"><div class="tx-title">Активация промокода запустилимск</div></div><div class="tx-amount income">+25₽</div><div class="tx-date">14:52 28.09.2026</div></div>
-        <div class="tx-item"><div class="tx-arrow income">↓</div><div class="tx-body"><div class="tx-title">Активация промокода 800</div></div><div class="tx-amount income">+40₽</div><div class="tx-date">18:39 27.09.2026</div></div>
-        <div class="tx-item"><div class="tx-arrow income">↓</div><div class="tx-body"><div class="tx-title">Боевой пропуск: 140 койнов</div></div><div class="tx-amount income">+140 койнов</div><div class="tx-date">09:04 26.09.2026</div></div>
-        <div class="tx-item"><div class="tx-arrow income">↓</div><div class="tx-body"><div class="tx-title">Победа в игре слов</div></div><div class="tx-amount income">+66₽</div><div class="tx-date">18:40 21.09.2026</div></div>
+      <div class="tx-list" id="txList">
+        <div class="loading-state"><div class="spinner"></div> Загрузка транзакций...</div>
       </div>
-      <div class="pagination" id="pagination"></div>
     </div>
   </div>
 </main>
@@ -125,9 +123,6 @@
 <script src="/js/auth.js"></script>
 <script src="/js/my-profile.js"></script>
 <script>
-let currentPage = 1;
-const TOTAL_PAGES = 13;
-
 window.addEventListener('auth:changed', (e) => {
   const user = e.detail.user;
   if (!user) return;
@@ -135,23 +130,46 @@ window.addEventListener('auth:changed', (e) => {
   document.getElementById('headerBalance').textContent = `${user.balance || 0} ₽`;
   document.getElementById('headerCoins').textContent = `${user.coins || 0}`;
   document.getElementById('profileMenuContent').innerHTML = renderProfileMenu('transactions');
-  renderPagination();
+  loadTransactions();
 });
 
-function renderPagination() {
-  const el = document.getElementById('pagination');
-  const pages = [1, 2, 3, 4, 13];
-  el.innerHTML = `
-    <button class="pg-btn" onclick="goPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>‹</button>
-    ${pages.map(p => `<button class="pg-btn ${p === currentPage ? 'active' : ''}" onclick="goPage(${p})">${p}</button>`).join('')}
-    <button class="pg-btn" onclick="goPage(${currentPage + 1})" ${currentPage === TOTAL_PAGES ? 'disabled' : ''}>›</button>
-  `;
-}
+async function loadTransactions() {
+  const list = document.getElementById('txList');
+  try {
+    const data = await api('/api/transactions');
+    const items = data.transactions || [];
 
-function goPage(n) {
-  if (n < 1 || n > TOTAL_PAGES) return;
-  currentPage = n;
-  renderPagination();
+    if (!items.length) {
+      list.innerHTML = `
+        <div class="tx-empty">
+          <div class="ico">💸</div>
+          Пока нет транзакций
+        </div>`;
+      return;
+    }
+
+    list.innerHTML = items.map(t => {
+      const date = new Date(t.createdAt).toLocaleString('ru-RU', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
+      const isIncome = t.type === 'income';
+      const symbol = isIncome ? '+' : '-';
+      const unit = t.currency === 'COINS' ? ' койнов' : '₽';
+      return `
+        <div class="tx-item">
+          <div class="tx-arrow ${t.type}">${isIncome ? '↓' : '↑'}</div>
+          <div class="tx-body">
+            <div class="tx-title">${escapeHtml(t.description || 'Операция')}</div>
+          </div>
+          <div class="tx-amount ${t.type}">${symbol}${t.amount}${unit}</div>
+          <div class="tx-date">${date}</div>
+        </div>
+      `;
+    }).join('');
+  } catch (e) {
+    list.innerHTML = `<div class="tx-empty" style="color:var(--red);">Ошибка: ${escapeHtml(e.message)}</div>`;
+  }
 }
 </script>
 </body>

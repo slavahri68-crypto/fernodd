@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fernodd — Рефералы</title>
+<link rel="icon" type="image/png" href="/logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/config.js"></script>
+<style>
+  body > .auth-widget { display: none !important; }
+  .ref-page { min-height: 100vh; padding: 80px 24px 140px; position: relative; z-index: 1; }
+  .ref-container { max-width: 1100px; margin: 0 auto; }
+
+  .ref-page-title { font-family: 'Unbounded', sans-serif; font-size: clamp(28px, 5vw, 42px); font-weight: 900; letter-spacing: -1.5px; color: #fff; margin-bottom: 24px; }
+
+  .ref-block { background: #0e0e0e; border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; margin-bottom: 16px; }
+
+  /* Как это работает */
+  .how-info { display: flex; gap: 18px; align-items: flex-start; }
+  .how-icon { width: 48px; height: 48px; border-radius: 12px; background: rgba(96,165,250,0.12); border: 1px solid rgba(96,165,250,0.4); display: flex; align-items: center; justify-content: center; font-size: 22px; color: #60a5fa; flex-shrink: 0; }
+  .how-icon svg { width: 24px; height: 24px; fill: currentColor; }
+  .how-info-title { font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .how-desc { font-size: 13.5px; color: var(--text-dim); line-height: 1.7; margin-bottom: 12px; }
+  .how-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .how-chip { padding: 5px 12px; border-radius: 100px; font-size: 11px; font-weight: 700; font-family: 'Unbounded', sans-serif; }
+  .how-chip.red   { background: rgba(239,68,68,0.15); color: #ef4444; }
+  .how-chip.gold  { background: rgba(251,191,36,0.15); color: #fbbf24; }
+  .how-chip.green { background: rgba(74,222,128,0.15); color: #4ade80; }
+
+  /* Статистика */
+  .ref-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .ref-stat-card { background: #0e0e0e; border: 1px solid var(--border); border-radius: 14px; padding: 18px 22px; }
+  .ref-stat-value { font-family: 'Unbounded', sans-serif; font-size: 26px; font-weight: 900; color: #fff; line-height: 1; letter-spacing: -1px; margin-bottom: 6px; }
+  .ref-stat-value.gold { color: #fbbf24; }
+  .ref-stat-value.green { color: #4ade80; }
+  .ref-stat-label { font-size: 11px; color: var(--text-dim); font-weight: 500; }
+
+  /* Код + Активация */
+  .ref-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media (max-width: 700px) { .ref-two-col { grid-template-columns: 1fr; } }
+
+  .ref-code-card { background: #0e0e0e; border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; }
+  .ref-code-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .ref-code-icon { width: 36px; height: 36px; border-radius: 10px; background: rgba(96,165,250,0.12); border: 1px solid rgba(96,165,250,0.4); display: flex; align-items: center; justify-content: center; font-size: 16px; color: #60a5fa; flex-shrink: 0; }
+  .ref-code-title { font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+  .ref-code-sub { font-size: 11px; color: var(--text-dim); }
+
+  .ref-code-row { display: flex; gap: 8px; }
+  .ref-code-input { flex: 1; padding: 11px 14px; background: var(--bg-elevated); border: 1px solid var(--border-bright); border-radius: 8px; color: #fff; font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 700; outline: none; min-width: 0; text-align: center; letter-spacing: 2px; }
+  .ref-code-btn { padding: 11px 18px; background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; border-radius: 8px; color: #fff; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12.5px; cursor: pointer; transition: all 0.3s; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
+  .ref-code-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(59,130,246,0.5); }
+
+  .ref-activate-input { width: 100%; padding: 12px 14px; background: var(--bg-elevated); border: 1px solid var(--border-bright); border-radius: 8px; color: #fff; font-family: 'Inter', sans-serif; font-size: 13px; outline: none; margin-bottom: 10px; }
+  .ref-activate-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59,130,246,0.12); }
+  .ref-activate-btn { width: 100%; padding: 11px; background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; border-radius: 8px; color: #fff; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.3s; }
+  .ref-activate-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(59,130,246,0.5); }
+  .ref-activate-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* Мои рефералы */
+  .ref-block-title { font-family: 'Unbounded', sans-serif; font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 16px; }
+  .my-refs-list { display: flex; flex-direction: column; gap: 8px; }
+  .my-ref-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 10px; }
+  .my-ref-avatar { width: 36px; height: 36px; border-radius: 9px; object-fit: cover; flex-shrink: 0; background: linear-gradient(135deg,var(--red),var(--red-dark)); display: flex; align-items: center; justify-content: center; font-family: 'Unbounded'; font-weight: 900; font-size: 14px; color: #fff; }
+  .my-ref-name { flex: 1; font-size: 13px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .my-ref-date { font-size: 11px; color: var(--text-dim); flex-shrink: 0; }
+  .empty-refs { text-align: center; padding: 40px 20px; color: var(--text-dim); font-size: 13px; }
+  .empty-refs .ico { font-size: 40px; margin-bottom: 10px; opacity: 0.4; }
+
+  /* Топ-5 */
+  .top-table { width: 100%; border-collapse: collapse; }
+  .top-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-dim); font-weight: 700; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  .top-table th:last-child, .top-table td:last-child { text-align: right; }
+  .top-table td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 13px; color: #fff; }
+  .top-table tr:last-child td { border-bottom: none; }
+  .top-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .top-rank { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; font-family: 'Unbounded', sans-serif; font-size: 12px; font-weight: 900; color: var(--text-dim); }
+  .top-user { display: flex; align-items: center; gap: 12px; }
+  .top-user-avatar { width: 36px; height: 36px; border-radius: 9px; object-fit: cover; flex-shrink: 0; }
+  .top-user-name { font-size: 13px; font-weight: 600; color: #fff; }
+  .top-badge-verify { display: inline-flex; width: 14px; height: 14px; border-radius: 50%; background: #3b82f6; color: #fff; align-items: center; justify-content: center; font-size: 9px; font-weight: 900; margin-left: 4px; }
+  .top-count { font-family: 'Unbounded', sans-serif; font-weight: 700; }
+  .top-count-blue { color: #3b82f6; }
+  .top-count-red { color: var(--red); }
+
+  /* Меню профиля */
+  .profile-avatar-btn { position: absolute; top: 20px; right: 24px; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); border-radius: 100px; z-index: 500; }
+  .profile-avatar-btn img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+  .profile-avatar-btn .chev { width: 14px; height: 14px; color: var(--text-dim); transition: transform 0.3s; }
+  .profile-avatar-btn.open .chev { transform: rotate(180deg); }
+  .my-menu { position: absolute; top: calc(100% + 12px); right: 0; width: 320px; background: #0e0e0e; border: 1px solid var(--border-bright); border-radius: 18px; padding: 12px; box-shadow: 0 25px 70px rgba(0,0,0,0.9); opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-10px) scale(0.96); transform-origin: top right; transition: opacity 0.25s, transform 0.25s, visibility 0s linear 0.25s; z-index: 600; }
+  .profile-avatar-btn.open .my-menu { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0) scale(1); transition: opacity 0.25s, transform 0.25s, visibility 0s; }
+  .my-menu-head { display: flex; align-items: center; gap: 12px; padding: 10px 12px; }
+  .my-menu-avatar { width: 52px; height: 52px; border-radius: 12px; border: 2px solid var(--red); object-fit: cover; }
+  .my-menu-name { font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 15px; color: #fff; margin-bottom: 3px; }
+  .my-menu-balance { font-size: 12px; color: var(--text-dim); }
+  .my-menu-divider { height: 1px; background: var(--border); margin: 10px 8px; }
+  .my-menu-item { display: flex; align-items: center; gap: 14px; padding: 11px 14px; border-radius: 10px; color: var(--text-dim); font-size: 14px; font-weight: 500; text-decoration: none; transition: all 0.2s; }
+  .my-menu-item:hover { background: rgba(225,6,0,0.12); color: #fff; transform: translateX(3px); }
+  .my-menu-item.active { background: rgba(225,6,0,0.15); color: #fff; }
+  .my-menu-icon { width: 22px; text-align: center; font-size: 16px; }
+
+  @media (max-width: 600px) {
+    .ref-page { padding: 70px 12px 120px; }
+    .ref-block { padding: 16px 18px; }
+    .how-info { flex-direction: column; }
+    .ref-code-row { flex-direction: column; }
+    .ref-code-input { text-align: center; }
+    .top-table th:nth-child(3), .top-table td:nth-child(3) { display: none; }
+    .top-table th, .top-table td { padding: 10px 6px; font-size: 12px; }
+    .my-menu { width: 280px; right: -50px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-layer">
+  <div class="bg-glow-1"></div><div class="bg-glow-2"></div><div class="bg-glow-3"></div>
+  <div class="bg-grid"></div>
+  <div class="particles" id="particles"></div>
+</div>
+
+<div class="auth-widget" id="authWidget"></div>
+
+<div class="profile-avatar-btn" id="profileAvatarBtn" onclick="toggleProfileMenu(event)">
+  <img id="headerAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
+  <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  <div id="profileMenuContent"></div>
+</div>
+
+<main class="ref-page">
+  <div class="ref-container">
+    <h1 class="ref-page-title">Реферальная система</h1>
+
+    <!-- Как это работает -->
+    <div class="ref-block">
+      <div class="how-info">
+        <div class="how-icon">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div style="flex:1;">
+          <div class="how-info-title">Как это работает?</div>
+          <div class="how-desc">
+            Приглашай друзей по своему коду. За каждого, кто наберёт 10 часов, ты получишь 100₽ + 500 койнов, а также 10% от каждого его пополнения баланса. Друг получит 35₽, 500 койнов и VIP+ на 7 дней.
+          </div>
+          <div class="how-chips">
+            <span class="how-chip red">+100 ₽</span>
+            <span class="how-chip gold">+500 койнов</span>
+            <span class="how-chip green">+10% с пополнений</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Статистика -->
+    <div class="ref-stats-grid" id="refStatsGrid">
+      <div class="ref-stat-card"><div class="ref-stat-value">0</div><div class="ref-stat-label">Рефералов</div></div>
+      <div class="ref-stat-card"><div class="ref-stat-value">0 ₽</div><div class="ref-stat-label">Заработано рублей</div></div>
+      <div class="ref-stat-card"><div class="ref-stat-value gold">0 к</div><div class="ref-stat-label">Заработано койнов</div></div>
+      <div class="ref-stat-card"><div class="ref-stat-value green">0 ₽</div><div class="ref-stat-label">Кэшбэк с пополнений</div></div>
+    </div>
+
+    <!-- Код + Активация -->
+    <div class="ref-two-col">
+      <div class="ref-code-card">
+        <div class="ref-code-head">
+          <div class="ref-code-icon">
+            <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          </div>
+          <div>
+            <div class="ref-code-title">Мой реферальный код</div>
+            <div class="ref-code-sub">Поделись этим кодом с друзьями</div>
+          </div>
+        </div>
+        <div class="ref-code-row">
+          <input class="ref-code-input" id="myRefCode" value="..." readonly onclick="this.select()">
+          <button class="ref-code-btn" onclick="copyMyCode()">
+            <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Скопировать
+          </button>
+        </div>
+      </div>
+
+      <div class="ref-code-card">
+        <div class="ref-code-head">
+          <div class="ref-code-icon" style="background:rgba(251,191,36,0.12);border-color:rgba(251,191,36,0.4);color:#fbbf24;">
+            <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;"><circle cx="8" cy="15" r="4"/><line x1="10.85" y1="12.15" x2="19" y2="4"/><line x1="18" y1="5" x2="20" y2="7"/><line x1="15" y1="8" x2="17" y2="10"/></svg>
+          </div>
+          <div>
+            <div class="ref-code-title">Активировать код</div>
+            <div class="ref-code-sub">Введи реферальный код друга, который тебя пригласил</div>
+          </div>
+        </div>
+        <input class="ref-activate-input" id="activateInput" placeholder="Введи реферальный код..." oninput="checkActivateBtn()">
+        <button class="ref-activate-btn" id="activateBtn" disabled onclick="activateRefCode()">Активировать</button>
+      </div>
+    </div>
+
+    <!-- Мои рефералы -->
+    <div class="ref-block">
+      <div class="ref-block-title">Мои рефералы</div>
+      <div class="my-refs-list" id="myRefsList">
+        <div class="empty-refs">
+          <div class="ico">👥</div>
+          Пока никого нет. Поделись своим кодом!
+        </div>
+      </div>
+    </div>
+
+    <!-- Топ 5 -->
+    <div class="ref-block">
+      <div class="ref-block-title">Топ 5 рефералов</div>
+      <table class="top-table">
+        <thead>
+          <tr>
+            <th style="width:40px;">#</th>
+            <th>Игрок</th>
+            <th style="width:120px;">Рефералов</th>
+            <th style="width:120px;">Выполнили</th>
+          </tr>
+        </thead>
+        <tbody id="topRefsBody">
+          <tr><td colspan="4" style="text-align:center;color:var(--text-dim);padding:30px;">Загрузка...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<nav class="bottom-nav">
+  <a class="nav-btn" href="/index.html"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Главная</span></a>
+  <a class="nav-btn" href="/rules.html"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Правила</span></a>
+  <a class="nav-btn" href="/roles.html"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Роли</span></a>
+  <a class="nav-btn" href="/apply.html"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>Заявка</span></a>
+  <a class="nav-btn" href="/profile.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg><span>Профиль</span></a>
+</nav>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script src="/js/common.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/my-profile.js"></script>
+<script>
+window.addEventListener('auth:changed', async (e) => {
+  const user = e.detail.user;
+  if (!user) {
+    showToast('Войдите через Steam, чтобы открыть рефералы', 'error');
+    return;
+  }
+  document.getElementById('headerAvatar').src = user.avatar || '';
+  document.getElementById('profileMenuContent').innerHTML = renderProfileMenu('referrals');
+  loadMyReferrals();
+  loadTopReferrals();
+});
+
+async function loadMyReferrals() {
+  try {
+    const data = await api('/api/referrals/my');
+
+    document.getElementById('myRefCode').value = data.code || '...';
+
+    const invited = data.invited || [];
+    const earned = data.earned || 0;
+    const earnedK = data.earnedK || 0;
+    const cashback = data.cashback || 0;
+
+    document.getElementById('refStatsGrid').innerHTML = `
+      <div class="ref-stat-card"><div class="ref-stat-value">${invited.length}</div><div class="ref-stat-label">Рефералов</div></div>
+      <div class="ref-stat-card"><div class="ref-stat-value">${earned} ₽</div><div class="ref-stat-label">Заработано рублей</div></div>
+      <div class="ref-stat-card"><div class="ref-stat-value gold">${earnedK} к</div><div class="ref-stat-label">Заработано койнов</div></div>
+      <div class="ref-stat-card"><div class="ref-stat-value green">${cashback} ₽</div><div class="ref-stat-label">Кэшбэк с пополнений</div></div>
+    `;
+
+    const list = document.getElementById('myRefsList');
+    if (!invited.length) {
+      list.innerHTML = `
+        <div class="empty-refs">
+          <div class="ico">👥</div>
+          Пока никого нет. Поделись своим кодом!
+        </div>`;
+    } else {
+      list.innerHTML = invited.map(i => `
+        <div class="my-ref-item">
+          <div class="my-ref-avatar">${(i.name || '?').charAt(0).toUpperCase()}</div>
+          <div class="my-ref-name">${escapeHtml(i.name || i.steamId)}</div>
+          <div class="my-ref-date">${new Date(i.at).toLocaleDateString('ru-RU')}</div>
+        </div>
+      `).join('');
+    }
+  } catch (e) {
+    console.error('[referrals]', e);
+  }
+}
+
+async function loadTopReferrals() {
+  const tbody = document.getElementById('topRefsBody');
+  try {
+    const data = await api('/api/referrals/top');
+    const top = data.top || [];
+    if (!top.length) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-dim);padding:30px;">Пока нет данных</td></tr>';
+      return;
+    }
+    tbody.innerHTML = top.map((t, i) => `
+      <tr>
+        <td><span class="top-rank">${i + 1}</span></td>
+        <td>
+          <div class="top-user">
+            <img class="top-user-avatar" src="${t.avatar}" alt="" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
+            <div class="top-user-name">${escapeHtml(t.name)}<span class="top-badge-verify">✓</span></div>
+          </div>
+        </td>
+        <td><span class="top-count top-count-blue">${t.count}</span></td>
+        <td><span class="top-count top-count-red">${t.completed}</span></td>
+      </tr>
+    `).join('');
+  } catch (e) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--red);padding:30px;">Ошибка загрузки</td></tr>';
+  }
+}
+
+function checkActivateBtn() {
+  const val = document.getElementById('activateInput').value.trim();
+  document.getElementById('activateBtn').disabled = val.length < 2;
+}
+
+async function activateRefCode() {
+  const code = document.getElementById('activateInput').value.trim();
+  if (!code) return;
+  const btn = document.getElementById('activateBtn');
+  btn.disabled = true;
+  btn.textContent = 'Активация...';
+  try {
+    await api('/api/referrals/activate', {
+      method: 'POST',
+      body: JSON.stringify({ code })
+    });
+    showToast('✅ Код активирован!', 'success');
+    document.getElementById('activateInput').value = '';
+    setTimeout(() => location.reload(), 1200);
+  } catch (e) {
+    const errors = {
+      self_ref: 'Нельзя использовать свой код',
+      user_not_found: 'Пользователь не найден',
+      already_activated: 'Вы уже активировали код',
+      missing_code: 'Введите код'
+    };
+    const key = e.message.split(' — ')[0];
+    showToast('❌ ' + (errors[key] || e.message), 'error');
+    btn.disabled = false;
+    btn.textContent = 'Активировать';
+  }
+}
+
+function copyMyCode() {
+  const code = document.getElementById('myRefCode').value;
+  navigator.clipboard.writeText(code).then(() => {
+    showToast('✅ Код скопирован', 'success');
+  }).catch(() => {
+    showToast('Не удалось скопировать', 'error');
+  });
+}
+</script>
+</body>
+</html>

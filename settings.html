@@ -17,11 +17,14 @@
   .my-header-left { display: flex; align-items: center; gap: 12px; }
   .my-header-balance { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-bright); border-radius: 100px; font-family: 'Unbounded', sans-serif; font-size: 13px; color: #fff; font-weight: 700; }
   .my-header-right { display: flex; align-items: center; gap: 10px; }
-  .icon-badge { position: relative; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+  .icon-badge { position: relative; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; }
+  .icon-badge:hover { border-color: var(--red); }
   .icon-badge svg { width: 18px; height: 18px; fill: currentColor; color: var(--text-dim); }
   .icon-badge .badge { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 5px; background: var(--red); color: #fff; border-radius: 100px; font-size: 10px; font-weight: 900; display: flex; align-items: center; justify-content: center; border: 2px solid var(--bg); }
 
-  .profile-avatar-btn { position: relative; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); border-radius: 100px; }
+  .profile-avatar-btn { position: relative; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); border-radius: 100px; transition: all 0.3s; }
+  .profile-avatar-btn:hover { border-color: var(--red); }
   .profile-avatar-btn img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
   .profile-avatar-btn .chev { width: 14px; height: 14px; color: var(--text-dim); transition: transform 0.3s; }
   .profile-avatar-btn.open .chev { transform: rotate(180deg); }
@@ -38,6 +41,7 @@
   .my-menu-item.active { background: rgba(225,6,0,0.15); color: #fff; }
   .my-menu-icon { width: 22px; text-align: center; font-size: 16px; }
 
+  /* НАСТРОЙКИ */
   .settings-card { background: #0e0e0e; border: 1px solid var(--border); border-radius: 14px; padding: 24px; }
   .form-label { display: block; font-size: 13px; color: #fff; margin-bottom: 8px; font-weight: 500; }
   .form-input { width: 100%; padding: 12px 16px; background: var(--bg-elevated); border: 1px solid var(--border-bright); border-radius: 10px; color: #fff; font-family: 'Inter', sans-serif; font-size: 13.5px; outline: none; margin-bottom: 20px; transition: all 0.3s; }
@@ -46,8 +50,10 @@
   .form-row-btn { display: flex; gap: 8px; }
   .form-row-btn .form-input { margin-bottom: 0; flex: 1; }
   .form-save-btn { padding: 12px 20px; background: linear-gradient(135deg, var(--red), var(--red-dark)); border: none; border-radius: 10px; color: #fff; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.3s; white-space: nowrap; }
-  .form-save-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(225,6,0,0.4); }
+  .form-save-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(225,6,0,0.4); }
+  .form-save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .form-hint { font-size: 11px; color: var(--text-dim); margin-top: -14px; margin-bottom: 20px; }
+  .form-hint.warn { color: var(--red); }
 
   .form-link-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
   .form-link-label { font-size: 13px; color: #fff; font-weight: 500; display: flex; align-items: center; gap: 10px; }
@@ -55,7 +61,7 @@
   .form-link-remove { font-size: 11px; color: var(--text-dim); cursor: pointer; text-decoration: underline; }
   .form-link-remove:hover { color: var(--red); }
 
-  .discord-link-box { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: rgba(96,165,250,0.06); border: 1px solid rgba(96,165,250,0.35); border-radius: 10px; margin-bottom: 20px; gap: 12px; }
+  .discord-link-box { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: rgba(96,165,250,0.06); border: 1px solid rgba(96,165,250,0.35); border-radius: 10px; margin-bottom: 20px; gap: 12px; flex-wrap: wrap; }
   .discord-link-info { display: flex; align-items: center; gap: 12px; }
   .discord-link-info img { width: 36px; height: 36px; border-radius: 10px; }
   .discord-link-info .name { font-size: 13px; color: #fff; font-weight: 600; }
@@ -72,7 +78,11 @@
 </head>
 <body>
 
-<div class="bg-layer"><div class="bg-glow-1"></div><div class="bg-glow-2"></div><div class="bg-glow-3"></div><div class="bg-grid"></div><div class="particles" id="particles"></div></div>
+<div class="bg-layer">
+  <div class="bg-glow-1"></div><div class="bg-glow-2"></div><div class="bg-glow-3"></div>
+  <div class="bg-grid"></div>
+  <div class="particles" id="particles"></div>
+</div>
 
 <div class="auth-widget" id="authWidget"></div>
 
@@ -95,20 +105,20 @@
 
     <div class="settings-card">
       <label class="form-label">Введите описание профиля</label>
-      <input class="form-input" id="descInput" placeholder="Is it worth it?" value="Is it worth it?">
+      <input class="form-input" id="descInput" placeholder="Is it worth it?" maxlength="200">
 
       <label class="form-label">Введите ссылку на фон</label>
-      <input class="form-input" id="bgInput" placeholder="https://...">
+      <input class="form-input" id="bgInput" placeholder="https://example.com/image.jpg">
 
       <div class="form-link-row">
         <div class="form-link-label">Ссылка профиля <span class="badge-tag">INTERIAL+</span></div>
         <div class="form-link-remove" onclick="removeProfileLink()">Убрать ссылку</div>
       </div>
       <div class="form-row-btn">
-        <input class="form-input" id="linkInput" placeholder="Введите ссылку" value="interial.su/profile/love">
+        <input class="form-input" id="linkInput" placeholder="Например: love">
         <button class="form-save-btn" onclick="saveProfileLink()">Сохранить</button>
       </div>
-      <div class="form-hint">3–20 символов: латиница, цифры, «_» и «-». Менять можно раз в сутки</div>
+      <div class="form-hint" id="linkHint">3–20 символов: латиница, цифры, «_» и «-»</div>
 
       <label class="form-label">Привязка Discord</label>
       <div class="discord-link-box" id="discordBox">
@@ -116,7 +126,7 @@
           <img id="discordAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
           <div class="name" id="discordName">Загрузка...</div>
         </div>
-        <button class="discord-unlink" onclick="unlinkDiscord()">Отвязать</button>
+        <button class="discord-unlink" id="discordActionBtn" onclick="unlinkDiscord()">Отвязать</button>
       </div>
 
       <label class="form-label">Введите Telegram</label>
@@ -125,7 +135,7 @@
       <label class="form-label">Введите VK</label>
       <input class="form-input" id="vkInput" placeholder="https://vk.com/username">
 
-      <button class="form-save-btn" style="width:100%;" onclick="saveSettings()">Сохранить</button>
+      <button class="form-save-btn" style="width:100%;" id="saveAllBtn" onclick="saveAllSettings()">Сохранить</button>
     </div>
   </div>
 </main>
@@ -144,20 +154,39 @@
 <script src="/js/auth.js"></script>
 <script src="/js/my-profile.js"></script>
 <script>
-window.addEventListener('auth:changed', (e) => {
+let currentUserData = null;
+
+window.addEventListener('auth:changed', async (e) => {
   const user = e.detail.user;
   if (!user) return;
   document.getElementById('headerAvatar').src = user.avatar || '';
   document.getElementById('headerBalance').textContent = `${user.balance || 0} ₽`;
   document.getElementById('headerCoins').textContent = `${user.coins || 0}`;
   document.getElementById('profileMenuContent').innerHTML = renderProfileMenu('settings');
+  currentUserData = user;
+  loadProfileData();
   loadDiscordInfo(user.discordId);
 });
 
+async function loadProfileData() {
+  try {
+    const r = await api(`/api/users/${currentUserData.steamId || currentUserData.id}`);
+    const u = r.user || {};
+    document.getElementById('descInput').value = u.description || 'Is it worth it?';
+    document.getElementById('bgInput').value = u.backgroundUrl || '';
+    document.getElementById('linkInput').value = u.profileLink || '';
+    document.getElementById('tgInput').value = u.telegram || '';
+    document.getElementById('vkInput').value = u.vk || '';
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 async function loadDiscordInfo(discordId) {
+  const box = document.getElementById('discordBox');
   if (!discordId) {
-    document.getElementById('discordBox').innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:space-between;width:100%;">
+    box.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:12px;flex-wrap:wrap;">
         <div style="font-size:13px;color:var(--text-dim);">Не привязан</div>
         <a href="${window.API_BASE}/auth/discord?token=${encodeURIComponent(getToken())}" class="btn-link-discord">Привязать</a>
       </div>`;
@@ -185,14 +214,55 @@ function removeProfileLink() { document.getElementById('linkInput').value = ''; 
 
 function saveProfileLink() {
   const link = document.getElementById('linkInput').value.trim();
+  const hint = document.getElementById('linkHint');
   if (link && !/^[a-zA-Z0-9_\-]{3,20}$/.test(link)) {
-    showToast('3–20 символов: латиница, цифры, _ и -', 'error');
+    hint.textContent = '❌ 3–20 символов: латиница, цифры, _ и -';
+    hint.classList.add('warn');
     return;
   }
+  hint.textContent = '3–20 символов: латиница, цифры, «_» и «-»';
+  hint.classList.remove('warn');
   showToast('✅ Ссылка сохранена', 'success');
 }
 
-function saveSettings() { showToast('✅ Настройки сохранены', 'success'); }
+async function saveAllSettings() {
+  const btn = document.getElementById('saveAllBtn');
+  btn.disabled = true;
+  btn.textContent = 'Сохранение...';
+
+  const payload = {
+    description: document.getElementById('descInput').value.trim(),
+    backgroundUrl: document.getElementById('bgInput').value.trim(),
+    profileLink: document.getElementById('linkInput').value.trim(),
+    telegram: document.getElementById('tgInput').value.trim(),
+    vk: document.getElementById('vkInput').value.trim(),
+  };
+
+  if (payload.profileLink && !/^[a-zA-Z0-9_\-]{3,20}$/.test(payload.profileLink)) {
+    showToast('❌ Неверный формат ссылки профиля', 'error');
+    btn.disabled = false;
+    btn.textContent = 'Сохранить';
+    return;
+  }
+
+  try {
+    await api('/api/profile/update', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    showToast('✅ Настройки сохранены', 'success');
+  } catch (e) {
+    const errors = {
+      bad_link_format: 'Неверный формат ссылки профиля',
+      no_db: 'Ошибка базы данных',
+    };
+    const key = e.message.split(' — ')[0];
+    showToast('❌ ' + (errors[key] || e.message), 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Сохранить';
+  }
+}
 </script>
 </body>
 </html>

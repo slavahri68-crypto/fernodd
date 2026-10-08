@@ -17,11 +17,14 @@
   .my-header-left { display: flex; align-items: center; gap: 12px; }
   .my-header-balance { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-bright); border-radius: 100px; font-family: 'Unbounded', sans-serif; font-size: 13px; color: #fff; font-weight: 700; }
   .my-header-right { display: flex; align-items: center; gap: 10px; }
-  .icon-badge { position: relative; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+  .icon-badge { position: relative; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; }
+  .icon-badge:hover { border-color: var(--red); }
   .icon-badge svg { width: 18px; height: 18px; fill: currentColor; color: var(--text-dim); }
   .icon-badge .badge { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 5px; background: var(--red); color: #fff; border-radius: 100px; font-size: 10px; font-weight: 900; display: flex; align-items: center; justify-content: center; border: 2px solid var(--bg); }
 
-  .profile-avatar-btn { position: relative; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); border-radius: 100px; }
+  .profile-avatar-btn { position: relative; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); border-radius: 100px; transition: all 0.3s; }
+  .profile-avatar-btn:hover { border-color: var(--red); }
   .profile-avatar-btn img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
   .profile-avatar-btn .chev { width: 14px; height: 14px; color: var(--text-dim); transition: transform 0.3s; }
   .profile-avatar-btn.open .chev { transform: rotate(180deg); }
@@ -38,6 +41,7 @@
   .my-menu-item.active { background: rgba(225,6,0,0.15); color: #fff; }
   .my-menu-icon { width: 22px; text-align: center; font-size: 16px; }
 
+  /* ИНВЕНТАРЬ */
   .inv-tabs { display: flex; gap: 8px; margin-bottom: 20px; align-items: center; flex-wrap: wrap; }
   .inv-tab { padding: 9px 18px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-bright); border-radius: 100px; color: var(--text-dim); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.25s; }
   .inv-tab:hover { color: var(--text); }
@@ -59,7 +63,8 @@
   .inv-name { font-family: 'Unbounded', sans-serif; font-size: 15px; font-weight: 700; color: #fff; text-align: center; margin-bottom: 10px; }
   .inv-info { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; color: var(--text-dim); padding-top: 10px; border-top: 1px solid var(--border); }
   .inv-info b { color: #fff; }
-  .inv-empty { text-align: center; padding: 40px 20px; color: var(--text-dim); font-size: 13px; }
+  .inv-empty { text-align: center; padding: 60px 20px; color: var(--text-dim); font-size: 13px; }
+  .inv-empty .ico { font-size: 48px; margin-bottom: 12px; opacity: 0.35; }
 
   @media (max-width: 699px) {
     .my-page { padding: 70px 12px 120px; }
@@ -70,11 +75,19 @@
     .inv-name { font-size: 12px; }
     .inv-info { font-size: 10px; }
   }
+
+  .loading-state { display: flex; align-items: center; justify-content: center; padding: 60px 20px; gap: 10px; color: var(--text-dim); font-size: 13px; }
+  .spinner { width: 20px; height: 20px; border: 2px solid var(--border-bright); border-top-color: var(--red); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
 
-<div class="bg-layer"><div class="bg-glow-1"></div><div class="bg-glow-2"></div><div class="bg-glow-3"></div><div class="bg-grid"></div><div class="particles" id="particles"></div></div>
+<div class="bg-layer">
+  <div class="bg-glow-1"></div><div class="bg-glow-2"></div><div class="bg-glow-3"></div>
+  <div class="bg-grid"></div>
+  <div class="particles" id="particles"></div>
+</div>
 
 <div class="auth-widget" id="authWidget"></div>
 
@@ -95,30 +108,16 @@
       </div>
     </div>
 
-    <div class="inv-tabs">
-      <button class="inv-tab active" onclick="switchInvTab(this)">Игровые услуги</button>
-      <button class="inv-tab" onclick="switchInvTab(this)">Реальные скины</button>
-    </div>
-
-    <div class="inv-section-title">Активные <span class="count">13</span></div>
-    <div class="inv-grid">
-      <div class="inv-card" style="--item-color:#ef4444;"><span class="inv-tag admin">Админ-права</span><div class="inv-image">👑</div><div class="inv-name">Модератор</div><div class="inv-info"><span>Сервер: <b>Все сервера</b></span><span>Навсегда</span></div></div>
-      <div class="inv-card" style="--item-color:#fbbf24;"><span class="inv-tag vip">VIP</span><div class="inv-image">💠</div><div class="inv-name">MAX VIP</div><div class="inv-info"><span>Сервер: <b>SAIL</b></span><span>26.10.2026</span></div></div>
-      <div class="inv-card" style="--item-color:#60a5fa;"><span class="inv-tag skin">Скин</span><div class="inv-image">🔫</div><div class="inv-name">AK-47 Лего</div><div class="inv-info"><span>Действует до</span><span>18.02.2027</span></div></div>
-      <div class="inv-card" style="--item-color:#60a5fa;"><span class="inv-tag skin">Скин</span><div class="inv-image">🎯</div><div class="inv-name">AWP Лего</div><div class="inv-info"><span>Действует до</span><span>18.02.2027</span></div></div>
-      <div class="inv-card" style="--item-color:#60a5fa;"><span class="inv-tag skin">Скин</span><div class="inv-image">🔫</div><div class="inv-name">Deagle Лего</div><div class="inv-info"><span>Действует до</span><span>18.02.2027</span></div></div>
-      <div class="inv-card" style="--item-color:#60a5fa;"><span class="inv-tag skin">Скин</span><div class="inv-image">💣</div><div class="inv-name">Граната Лего</div><div class="inv-info"><span>Действует до</span><span>18.02.2027</span></div></div>
-      <div class="inv-card" style="--item-color:#60a5fa;"><span class="inv-tag skin">Скин</span><div class="inv-image">🔪</div><div class="inv-name">Кукры Лего</div><div class="inv-info"><span>Действует до</span><span>03.03.2027</span></div></div>
-      <div class="inv-card" style="--item-color:#60a5fa;"><span class="inv-tag skin">Скин</span><div class="inv-image">🔫</div><div class="inv-name">M4A1-S Лего</div><div class="inv-info"><span>Действует до</span><span>18.02.2027</span></div></div>
-      <div class="inv-card" style="--item-color:#60a5fa;"><span class="inv-tag skin">Скин</span><div class="inv-image">🗡️</div><div class="inv-name">Нож Magepunk</div><div class="inv-info"><span>Действует до</span><span>15.02.2027</span></div></div>
-      <div class="inv-card" style="--item-color:#a855f7;"><span class="inv-tag tag">Тег чата</span><div class="inv-image" style="font-family:'Unbounded';font-size:20px;font-weight:900;color:#fff;">бот</div><div class="inv-name">бот</div><div class="inv-info"><span>Действует до</span><span>15.11.2026</span></div></div>
-      <div class="inv-card" style="--item-color:#a855f7;"><span class="inv-tag tag">Тег чата</span><div class="inv-image" style="font-family:'Unbounded';font-size:20px;font-weight:900;color:#fbbf24;">INTERIAL+</div><div class="inv-name">INTERIAL+</div><div class="inv-info"><span>Действует до</span><span>30.12.2026</span></div></div>
-      <div class="inv-card" style="--item-color:#a855f7;"><span class="inv-tag tag">Тег чата</span><div class="inv-image" style="font-family:'Unbounded';font-size:20px;font-weight:900;color:#fff;">сверхразум</div><div class="inv-name">сверхразум</div><div class="inv-info"><span>Действует до</span><span>30.11.2026</span></div></div>
-      <div class="inv-card" style="--item-color:#a855f7;"><span class="inv-tag tag">Тег чата</span><div class="inv-image" style="font-family:'Unbounded';font-size:20px;font-weight:900;color:#fff;">лучший</div><div class="inv-name">лучший</div><div class="inv-info"><span>Действует до</span><span>17.11.2026</span></div></div>
+    <div class="inv-section-title">Активные <span class="count" id="invCount">0</span></div>
+    <div class="inv-grid" id="invActive">
+      <div class="loading-state" style="grid-column:1/-1;"><div class="spinner"></div> Загрузка...</div>
     </div>
 
     <div class="inv-section-title">Неактивные <span class="count">0</span></div>
-    <div class="inv-empty">Неактивных услуг нет</div>
+    <div class="inv-empty" id="invInactive">
+      <div class="ico">📦</div>
+      Неактивных услуг нет
+    </div>
   </div>
 </main>
 
@@ -143,11 +142,49 @@ window.addEventListener('auth:changed', (e) => {
   document.getElementById('headerBalance').textContent = `${user.balance || 0} ₽`;
   document.getElementById('headerCoins').textContent = `${user.coins || 0}`;
   document.getElementById('profileMenuContent').innerHTML = renderProfileMenu('inventory');
+  loadInventory();
 });
 
-function switchInvTab(el) {
-  el.parentElement.querySelectorAll('.inv-tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
+async function loadInventory() {
+  const grid = document.getElementById('invActive');
+  try {
+    const data = await api('/api/inventory');
+    const items = data.items || [];
+    document.getElementById('invCount').textContent = items.length;
+
+    if (!items.length) {
+      grid.innerHTML = `
+        <div class="inv-empty" style="grid-column:1/-1;">
+          <div class="ico">📦</div>
+          Пока нет покупок. Загляните в магазин!
+        </div>`;
+      return;
+    }
+
+    const SHOP_ICONS = {
+      moderator:        { icon: '👑', color: '#ef4444', tag: 'admin', tagLabel: 'Админ-права' },
+      senior_moderator: { icon: '⚔️', color: '#10b981', tag: 'admin', tagLabel: 'Админ-права' },
+      chief_moderator:  { icon: '👑', color: '#22d3ee', tag: 'admin', tagLabel: 'Админ-права' },
+    };
+
+    grid.innerHTML = items.map(it => {
+      const meta = SHOP_ICONS[it.itemId] || { icon: '🎁', color: 'var(--red)', tag: 'vip', tagLabel: 'Услуга' };
+      const date = new Date(it.createdAt).toLocaleDateString('ru-RU');
+      return `
+        <div class="inv-card" style="--item-color:${meta.color};">
+          <span class="inv-tag ${meta.tag}">${meta.tagLabel}</span>
+          <div class="inv-image">${meta.icon}</div>
+          <div class="inv-name">${escapeHtml(it.itemName)}</div>
+          <div class="inv-info">
+            <span>Цена: <b>${it.price} 🪙</b></span>
+            <span>${date}</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch (e) {
+    grid.innerHTML = `<div class="inv-empty" style="grid-column:1/-1;color:var(--red);">Ошибка: ${escapeHtml(e.message)}</div>`;
+  }
 }
 </script>
 </body>

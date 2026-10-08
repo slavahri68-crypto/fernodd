@@ -10,45 +10,30 @@
 <script src="/js/config.js"></script>
 <style>
   .apply-row { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; align-items: center; }
-  .my-apps-btn { padding: 22px 40px; background: linear-gradient(135deg, #1e1e1e, #0e0e0e); border: 1px solid rgba(225,6,0,0.5); border-radius: 16px; color: #fff; font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 17px; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 10px; letter-spacing: 0.5px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-  .my-apps-btn:hover { border-color: var(--red); background: rgba(225,6,0,0.08); transform: translateY(-3px); }
+  .my-apps-btn { padding: 22px 40px; background: linear-gradient(135deg, #1e1e1e, #0e0e0e); border: 1px solid rgba(225,6,0,0.5); border-radius: 16px; color: #fff; font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 17px; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 10px; }
+  .my-apps-btn:hover { border-color: var(--red); transform: translateY(-3px); }
   .my-apps-count { display: inline-block; padding: 3px 12px; background: rgba(225,6,0,0.2); border: 1px solid rgba(225,6,0,0.5); border-radius: 100px; font-size: 13px; color: var(--red); font-weight: 700; }
-
-  .toast-wrap { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); z-index: 2000; display: flex; flex-direction: column; gap: 12px; align-items: center; pointer-events: none; }
-  .toast { background: rgba(14,14,14,0.95); backdrop-filter: blur(20px); border: 1px solid var(--border-bright); border-left: 4px solid var(--red); border-radius: 14px; padding: 16px 22px; min-width: 280px; max-width: 500px; box-shadow: 0 20px 60px rgba(0,0,0,0.7); pointer-events: auto; animation: toastIn 0.4s cubic-bezier(0.22, 1, 0.36, 1); font-size: 14px; color: var(--text); }
-  .toast.success { border-left-color: #4ade80; }
-  .toast.error { border-left-color: var(--red); }
-  .toast.info { border-left-color: #60a5fa; }
-  .toast.fade { animation: toastOut 0.3s ease forwards; }
-  @keyframes toastIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
-  @keyframes toastOut { to { opacity: 0; transform: translateY(20px) scale(0.95); } }
-
-  .my-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 1500; display: none; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+  .my-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 1500; display: none; align-items: center; justify-content: center; padding: 20px; }
   .my-modal.visible { display: flex; }
   .my-modal-inner { background: var(--bg); border: 1px solid var(--border-bright); border-radius: 24px; max-width: 800px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 32px; position: relative; }
-  .my-modal-inner::-webkit-scrollbar { width: 8px; }
-  .my-modal-inner::-webkit-scrollbar-thumb { background: linear-gradient(var(--red), var(--red-dark)); border-radius: 4px; }
-  .my-modal-close { position: sticky; top: 0; float: right; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-bright); color: var(--text); font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-left: auto; }
-  .my-modal h2 { font-family: 'Unbounded', sans-serif; font-size: 28px; color: #fff; margin-bottom: 8px; letter-spacing: -1px; }
+  .my-modal-close { position: sticky; top: 0; float: right; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-bright); color: var(--text); font-size: 20px; cursor: pointer; margin-left: auto; }
+  .my-modal h2 { font-family: 'Unbounded'; font-size: 28px; color: #fff; margin-bottom: 8px; }
   .my-modal h2 span { color: var(--red); }
-  .my-modal p.sub { color: var(--text-dim); font-size: 14px; margin-bottom: 24px; }
   .my-tabs { display: flex; gap: 10px; margin-bottom: 24px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
-  .my-tab { padding: 10px 20px; background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--text-dim); font-family: 'Unbounded', sans-serif; font-weight: 600; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; margin-bottom: -1px; }
+  .my-tab { padding: 10px 20px; background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--text-dim); font-family: 'Unbounded'; font-weight: 600; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
   .my-tab.active { color: #fff; border-bottom-color: var(--red); }
-  .my-tab-count { display: inline-block; padding: 2px 10px; background: var(--red-soft); border: 1px solid rgba(225,6,0,0.4); border-radius: 100px; font-size: 11px; color: var(--red); font-weight: 700; }
-  .my-list { display: flex; flex-direction: column; gap: 14px; }
-  .my-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 18px 22px; border-left: 4px solid #fbbf24; }
+  .my-tab-count { display: inline-block; padding: 2px 10px; background: rgba(225,6,0,0.15); border-radius: 100px; font-size: 11px; color: var(--red); font-weight: 700; }
+  .my-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 18px 22px; border-left: 4px solid #fbbf24; margin-bottom: 12px; }
   .my-card.approved { border-left-color: #4ade80; }
   .my-card.rejected { border-left-color: #ef4444; }
-  .my-card-head { display: flex; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 12px; align-items: baseline; }
-  .my-card-head .status { display: inline-block; padding: 4px 12px; border-radius: 100px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .my-card-head { display: flex; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 12px; }
+  .my-card-head .status { padding: 4px 12px; border-radius: 100px; font-size: 11px; font-weight: 700; }
   .my-card-head .status.pending { background: rgba(251,191,36,0.15); color: #fbbf24; }
   .my-card-head .status.approved { background: rgba(74,222,128,0.15); color: #4ade80; }
   .my-card-head .status.rejected { background: rgba(239,68,68,0.15); color: #ef4444; }
-  .my-card-date { font-size: 12px; color: var(--text-dim); }
   .my-card-row { display: flex; gap: 20px; flex-wrap: wrap; font-size: 13px; color: var(--text-dim); margin-bottom: 8px; }
   .my-card-row b { color: var(--text); }
-  .my-card-text { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; font-size: 13px; color: var(--text); white-space: pre-wrap; word-break: break-word; }
+  .my-card-text { background: rgba(255,255,255,0.03); border-radius: 10px; padding: 10px 14px; font-size: 13px; color: var(--text); white-space: pre-wrap; }
   .my-empty { color: var(--text-dim); text-align: center; padding: 40px 20px; font-size: 14px; }
 </style>
 </head>
@@ -78,7 +63,7 @@
         <div class="info-list">
           <div class="info-item"><div class="info-icon">🎂</div><div><h4>Возраст от 14 лет</h4><p>Адекватность и ответственность важнее возраста.</p></div></div>
           <div class="info-item"><div class="info-icon">⏰</div><div><h4>Хороший онлайн</h4><p>Модератор должен быть активным и оперативно реагировать.</p></div></div>
-          <div class="info-item"><div class="info-icon">🎤</div><div><h4>Discord и микрофон</h4><p>Обязательно наличие Discord и возможность голосового общения.</p></div></div>
+          <div class="info-item"><div class="info-icon">🎤</div><div><h4>Discord и микрофон</h4><p>Обязательно наличие Discord и голосового общения.</p></div></div>
           <div class="info-item"><div class="info-icon">📚</div><div><h4>Знание правил сервера</h4><p>Ты должен знать правила наизусть и уметь применять их.</p></div></div>
           <div class="info-item"><div class="info-icon">🧠</div><div><h4>Стрессоустойчивость</h4><p>Умение сохранять спокойствие в конфликтах.</p></div></div>
           <div class="info-item"><div class="info-icon">📝</div><div><h4>Грамотная речь</h4><p>Писать без ошибок и корректно общаться с игроками.</p></div></div>
@@ -88,9 +73,7 @@
           <h3>Готов присоединиться к команде?</h3>
           <p id="applyCtaText">Войдите через Steam, чтобы подать заявку.</p>
           <div class="apply-row">
-            <button class="apply-open-btn" id="openFormBtn" disabled>
-              Подать заявку <span class="arrow">→</span>
-            </button>
+            <button class="apply-open-btn" id="openFormBtn" disabled>Подать заявку <span class="arrow">→</span></button>
             <button class="my-apps-btn" id="myAppsBtn" style="display:none;" onclick="openMyApplications()">
               📄 Мои заявки <span class="my-apps-count" id="myAppsCount">0</span>
             </button>
@@ -137,7 +120,7 @@
   <div class="my-modal-inner">
     <button class="my-modal-close" onclick="closeMyApplications()">✕</button>
     <h2>Мои <span>заявки</span></h2>
-    <p class="sub">Здесь показаны только ваши заявки.</p>
+    <p style="color:var(--text-dim);margin-bottom:20px;">Здесь показаны только ваши заявки.</p>
     <div class="my-tabs">
       <button class="my-tab active" data-tab="pending" onclick="switchMyTab('pending')">🕒 На рассмотрении <span class="my-tab-count" id="myCountPending">0</span></button>
       <button class="my-tab" data-tab="approved" onclick="switchMyTab('approved')">✓ Одобренные <span class="my-tab-count" id="myCountApproved">0</span></button>
@@ -147,58 +130,29 @@
   </div>
 </div>
 
-<div class="toast-wrap" id="toastWrap"></div>
-
 <nav class="bottom-nav">
-  <a class="nav-btn" href="/index.html" title="Главная">
-    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-    <span>Главная</span>
-  </a>
-  <a class="nav-btn" href="/rules.html" title="Правила">
-    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-    <span>Правила</span>
-  </a>
-  <a class="nav-btn" href="/roles.html" title="Роли">
-    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-    <span>Роли</span>
-  </a>
-  <a class="nav-btn active" href="/apply.html" title="Заявка">
-    <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-    <span>Заявка</span>
-  </a>
+  <a class="nav-btn" href="/index.html"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Главная</span></a>
+  <a class="nav-btn" href="/rules.html"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Правила</span></a>
+  <a class="nav-btn" href="/roles.html"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Роли</span></a>
+  <a class="nav-btn active" href="/apply.html"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>Заявка</span></a>
+  <a class="nav-btn" href="/profile.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg><span>Профиль</span></a>
 </nav>
 
-<script src="/js/config.js"></script>
 <script src="/js/common.js"></script>
 <script src="/js/auth.js"></script>
-
 <script>
-const applyIntro     = document.getElementById('applyIntro');
-const formContainer  = document.getElementById('formContainer');
-const openFormBtn    = document.getElementById('openFormBtn');
-const backBtn        = document.getElementById('backBtn');
-const applyCtaText   = document.getElementById('applyCtaText');
-const form           = document.getElementById('applyForm');
-const submitBtn      = document.getElementById('submitBtn');
-const myAppsBtn      = document.getElementById('myAppsBtn');
-const myAppsCount    = document.getElementById('myAppsCount');
-
+const applyIntro = document.getElementById('applyIntro');
+const formContainer = document.getElementById('formContainer');
+const openFormBtn = document.getElementById('openFormBtn');
+const backBtn = document.getElementById('backBtn');
+const applyCtaText = document.getElementById('applyCtaText');
+const form = document.getElementById('applyForm');
+const submitBtn = document.getElementById('submitBtn');
+const myAppsBtn = document.getElementById('myAppsBtn');
+const myAppsCount = document.getElementById('myAppsCount');
 const API = window.API_BASE || '';
 let myAppsCache = [];
 let myTab = 'pending';
-
-function showToast(text, type = 'info', ms = 3000) {
-  const wrap = document.getElementById('toastWrap');
-  if (!wrap) return;
-  const el = document.createElement('div');
-  el.className = 'toast ' + type;
-  el.textContent = text;
-  wrap.appendChild(el);
-  setTimeout(() => {
-    el.classList.add('fade');
-    setTimeout(() => el.remove(), 300);
-  }, ms);
-}
 
 function resetApplyView() {
   applyIntro.classList.remove('hidden');
@@ -286,11 +240,9 @@ async function loadMyApplications() {
     const data = await r.json();
     myAppsCache = data.applications || [];
     myAppsCount.textContent = myAppsCache.length;
-
-    document.getElementById('myCountPending').textContent  = myAppsCache.filter(a => a.status === 'pending').length;
+    document.getElementById('myCountPending').textContent = myAppsCache.filter(a => a.status === 'pending').length;
     document.getElementById('myCountApproved').textContent = myAppsCache.filter(a => a.status === 'approved').length;
     document.getElementById('myCountRejected').textContent = myAppsCache.filter(a => a.status === 'rejected').length;
-
     renderMyList();
   } catch {
     list.innerHTML = '<p class="my-empty" style="color:var(--red);">Ошибка сети.</p>';
@@ -300,27 +252,19 @@ async function loadMyApplications() {
 function renderMyList() {
   const list = document.getElementById('myList');
   const items = myAppsCache.filter(a => a.status === myTab);
-
   if (!items.length) {
-    const labels = {
-      pending: 'У вас нет заявок на рассмотрении.',
-      approved: 'У вас нет одобренных заявок.',
-      rejected: 'У вас нет отклонённых заявок.'
-    };
+    const labels = { pending: 'У вас нет заявок на рассмотрении.', approved: 'У вас нет одобренных заявок.', rejected: 'У вас нет отклонённых заявок.' };
     list.innerHTML = `<p class="my-empty">${labels[myTab]}</p>`;
     return;
   }
-
   list.innerHTML = items.map(a => {
     const date = new Date(a.date).toLocaleString('ru-RU');
-    const statusLabel = a.status === 'approved' ? 'Одобрено'
-      : a.status === 'rejected' ? 'Отклонено'
-      : 'На рассмотрении';
+    const statusLabel = a.status === 'approved' ? 'Одобрено' : a.status === 'rejected' ? 'Отклонено' : 'На рассмотрении';
     return `
       <div class="my-card ${a.status}">
         <div class="my-card-head">
           <span class="status ${a.status}">${statusLabel}</span>
-          <span class="my-card-date">${date}</span>
+          <span style="font-size:12px;color:var(--text-dim);">${date}</span>
         </div>
         <div class="my-card-row">
           <span>Возраст: <b>${escapeHtml(a.age || '—')}</b></span>
@@ -350,10 +294,7 @@ form.addEventListener('submit', async (e) => {
     const token = localStorage.getItem('fernodd_token') || '';
     const r = await fetch(API + '/api/apply', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token
-      },
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
       body: JSON.stringify(payload)
     });
     if (r.ok) {
@@ -373,12 +314,6 @@ form.addEventListener('submit', async (e) => {
     submitBtn.textContent = 'Отправить заявку →';
   }
 });
-
-function escapeHtml(s) {
-  return String(s == null ? '' : s)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-}
 </script>
 </body>
 </html>
