@@ -13,11 +13,11 @@
 
   .profile-page {
     min-height: 100vh;
-    padding: 100px 24px 140px;
+    padding: 80px 24px 140px;
     position: relative;
     z-index: 1;
   }
-  .profile-container { max-width: 900px; margin: 0 auto; }
+  .profile-container { max-width: 1100px; margin: 0 auto; }
 
   .profile-back {
     display: inline-flex;
@@ -32,7 +32,7 @@
     font-weight: 500;
     font-size: 13px;
     text-decoration: none;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     transition: all 0.3s;
   }
   .profile-back:hover {
@@ -42,183 +42,327 @@
     transform: translateX(-4px);
   }
 
-  .profile-hero {
-    background: linear-gradient(135deg, rgba(225,6,0,0.15) 0%, rgba(14,14,14,0.85) 55%, rgba(139,0,0,0.1) 100%);
-    border: 1px solid rgba(225,6,0,0.35);
-    border-radius: 24px;
-    padding: 28px 32px;
-    margin-bottom: 18px;
+  /* ============ STEAM-КАРТОЧКА ============ */
+  .steam-card {
+    background: #0e0e0e;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    position: relative;
+  }
+
+  /* Обложка */
+  .steam-cover {
+    height: 180px;
+    background: linear-gradient(135deg, #1a1a1a 0%, #060606 100%);
     position: relative;
     overflow: hidden;
   }
-  .profile-hero::before {
+  .steam-cover::before {
     content: '';
     position: absolute;
-    top: -60%; right: -10%;
-    width: 440px; height: 440px;
-    background: radial-gradient(circle, rgba(225,6,0,0.3), transparent 70%);
-    pointer-events: none;
-    animation: floatGlow 8s ease-in-out infinite;
+    inset: 0;
+    background: radial-gradient(circle at 30% 50%, rgba(225,6,0,0.15), transparent 60%);
   }
-  @keyframes floatGlow {
-    0%,100% { opacity: 0.6; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.1); }
-  }
-  .profile-hero-inner {
-    display: flex;
-    gap: 24px;
-    align-items: center;
-    flex-wrap: wrap;
-    position: relative;
-    z-index: 1;
-  }
-  .profile-avatar-wrap { position: relative; flex-shrink: 0; }
-  .profile-avatar {
-    width: 128px;
-    height: 128px;
-    border-radius: 30px;
-    object-fit: cover;
-    position: relative;
-    z-index: 1;
-    display: block;
-  }
-  .profile-status {
+  .steam-cover-text {
     position: absolute;
-    bottom: 2px;
-    right: 2px;
-    width: 22px;
-    height: 22px;
-    border: 3px solid var(--bg);
-    border-radius: 50%;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 60px;
+    color: rgba(255,255,255,0.08);
+    font-weight: 900;
+    letter-spacing: -3px;
+  }
+  .steam-cover-actions {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    gap: 8px;
     z-index: 2;
   }
-  .profile-status.online  { background: #4ade80; }
-  .profile-status.idle    { background: #fbbf24; }
-  .profile-status.dnd     { background: #ef4444; }
-  .profile-status.offline { background: #6b7280; }
-
-  .profile-info { flex: 1; min-width: 200px; }
-  .profile-name {
-    font-family: 'Unbounded', sans-serif;
-    font-size: clamp(22px, 3vw, 30px);
-    font-weight: 900;
-    letter-spacing: -1px;
-    color: #fff;
-    line-height: 1.1;
-    margin-bottom: 4px;
-  }
-  .profile-username {
-    font-size: 13px;
+  .cover-icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-bright);
     color: var(--text-dim);
-    margin-bottom: 10px;
-    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
   }
-  .profile-username::before { content: '@'; color: var(--red); font-weight: 700; }
+  .cover-icon-btn:hover {
+    color: var(--red);
+    border-color: var(--red);
+    transform: translateY(-2px);
+  }
+  .cover-icon-btn svg { width: 18px; height: 18px; }
 
-  .profile-roles { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
-  .profile-role-chip {
-    padding: 4px 11px;
+  /* Основная область карточки */
+  .steam-body {
+    padding: 0 24px 24px;
+    position: relative;
+  }
+
+  /* Аватар */
+  .steam-avatar-wrap {
+    position: relative;
+    width: 130px;
+    height: 130px;
+    margin-top: -65px;
+    margin-bottom: 12px;
+    border: 4px solid #0e0e0e;
+    border-radius: 6px;
+    overflow: hidden;
+    z-index: 2;
+    background: #060606;
+  }
+  .steam-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .steam-status {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
+    border: 4px solid #0e0e0e;
+    border-radius: 4px;
+    z-index: 3;
+  }
+  .steam-status.online  { background: #57cbde; }
+  .steam-status.idle    { background: #fbbf24; }
+  .steam-status.dnd     { background: #ef4444; }
+  .steam-status.offline { background: #898989; }
+
+  /* Имя + роль */
+  .steam-name-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .steam-name {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+  .steam-badge {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #fbbf24, #d97706);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .steam-fire {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    background: rgba(225,6,0,0.15);
+    border: 1px solid rgba(225,6,0,0.4);
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--red);
+  }
+  .steam-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
     background: rgba(255,255,255,0.05);
     border: 1px solid var(--border-bright);
     border-radius: 100px;
     font-size: 11px;
     font-weight: 600;
-    color: var(--text);
-  }
-  .profile-role-chip.is-admin {
-    background: rgba(225,6,0,0.15);
-    border-color: rgba(225,6,0,0.5);
-    color: var(--red);
-  }
-
-  .profile-meta {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    font-size: 12px;
     color: var(--text-dim);
   }
-  .profile-meta-item { display: flex; align-items: center; gap: 6px; }
-  .profile-meta-item svg {
-    width: 13px; height: 13px;
-    stroke: var(--red); fill: none; stroke-width: 2;
-  }
-  .profile-meta-item b { color: var(--text); font-weight: 600; }
-  .profile-meta-item a { color: var(--red); text-decoration: none; font-weight: 600; }
-  .profile-meta-item a:hover { text-decoration: underline; }
-
-  .profile-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 12px;
-    margin-bottom: 18px;
-  }
-  .pstat {
-    background: linear-gradient(145deg, var(--bg-card), rgba(14,14,14,0.5));
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 16px 18px;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s;
-  }
-  .pstat::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--pstat-color, var(--red));
-    box-shadow: 0 0 14px var(--pstat-color, var(--red));
-    opacity: 0.8;
-  }
-  .pstat:hover {
-    transform: translateY(-4px);
-    border-color: var(--pstat-color, var(--red));
-  }
-  .pstat-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-  .pstat-icon {
-    width: 34px; height: 34px;
-    border-radius: 10px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid var(--border-bright);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 15px;
-    color: var(--pstat-color, var(--red));
-  }
-  .pstat-value {
+  .steam-role-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 14px;
+    background: rgba(96,165,250,0.12);
+    border: 1px solid rgba(96,165,250,0.5);
+    border-radius: 100px;
     font-family: 'Unbounded', sans-serif;
-    font-size: 20px;
-    font-weight: 900;
-    letter-spacing: -1px;
-    color: #fff;
-    line-height: 1.1;
-    word-break: break-word;
+    font-size: 12px;
+    font-weight: 700;
+    color: #60a5fa;
+    margin-bottom: 8px;
   }
-  .pstat-label {
-    font-size: 9.5px;
+  .steam-status-text {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 14px;
+  }
+  .steam-status-text b { color: #57cbde; }
+
+  /* Статистика Steam-стиля */
+  .steam-stats {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 14px 0;
+    border-top: 1px solid var(--border);
+    margin-top: 14px;
+  }
+  .steam-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 100px;
+  }
+  .steam-stat-value {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .steam-stat-label {
+    font-size: 10px;
     color: var(--text-dim);
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 1.2px;
     font-weight: 700;
-    margin-top: 3px;
   }
 
+  /* Кнопки действий */
+  .steam-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+  .steam-btn {
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    border: 1px solid var(--border-bright);
+    background: rgba(255,255,255,0.04);
+    color: var(--text);
+    transition: all 0.25s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .steam-btn:hover {
+    background: rgba(255,255,255,0.08);
+    border-color: var(--red);
+  }
+  .steam-btn.primary {
+    background: linear-gradient(135deg, var(--red), var(--red-dark));
+    border-color: var(--red);
+    color: #fff;
+  }
+  .steam-btn.primary:hover {
+    box-shadow: 0 8px 24px rgba(225,6,0,0.4);
+    transform: translateY(-2px);
+  }
+  .steam-btn.discord {
+    background: linear-gradient(135deg, #5865f2, #4752c4);
+    border-color: #5865f2;
+    color: #fff;
+  }
+  .steam-btn.danger {
+    color: #ef4444;
+    border-color: rgba(239,68,68,0.4);
+    background: rgba(239,68,68,0.08);
+  }
+  .steam-btn.danger:hover {
+    background: rgba(239,68,68,0.2);
+  }
+
+  /* ============ ПК-РЕЖИМ: аватар и имя в строку ============ */
+  @media (min-width: 700px) {
+    .steam-card.pc-layout .steam-body {
+      display: block;
+      position: relative;
+    }
+    .steam-card.pc-layout .steam-avatar-wrap {
+      position: absolute;
+      top: -65px;
+      left: 24px;
+      margin: 0;
+    }
+    .steam-card.pc-layout .steam-content {
+      margin-left: 154px;
+      padding-top: 16px;
+      min-height: 100px;
+    }
+    .steam-card.pc-layout .steam-cover {
+      height: 180px;
+    }
+  }
+
+  /* ============ МОБИЛЬНЫЙ: центрирование ============ */
+  @media (max-width: 699px) {
+    .steam-cover { height: 140px; }
+    .steam-body { padding: 0 16px 20px; text-align: center; }
+    .steam-avatar-wrap {
+      margin-left: auto;
+      margin-right: auto;
+      width: 110px;
+      height: 110px;
+      margin-top: -55px;
+    }
+    .steam-name-row {
+      justify-content: center;
+    }
+    .steam-name { font-size: 22px; }
+    .steam-role-badge { margin: 0 auto 8px; }
+    .steam-stats {
+      justify-content: center;
+    }
+    .steam-stat {
+      align-items: center;
+      min-width: 80px;
+    }
+    .steam-actions {
+      justify-content: center;
+    }
+  }
+
+  /* ============ СЕКЦИИ ============ */
   .profile-section {
-    background: linear-gradient(145deg, var(--bg-card), rgba(14,14,14,0.5));
+    background: #0e0e0e;
     border: 1px solid var(--border);
-    border-radius: 18px;
+    border-radius: 12px;
     padding: 22px 24px;
     margin-bottom: 16px;
   }
   .profile-section-title {
     font-family: 'Unbounded', sans-serif;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 700;
     color: #fff;
     margin-bottom: 4px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
   }
   .profile-section-title .ico {
     width: 28px; height: 28px;
@@ -228,7 +372,7 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 13px;
   }
-  .profile-section-sub { font-size: 11px; color: var(--text-dim); margin-bottom: 16px; }
+  .profile-section-sub { font-size: 12px; color: var(--text-dim); margin-bottom: 16px; }
 
   .timeline { display: flex; flex-direction: column; gap: 8px; }
   .timeline-item {
@@ -357,10 +501,10 @@
 
   /* ПРИВЯЗКА DISCORD */
   .link-discord-box {
-    background: linear-gradient(145deg, var(--bg-card), rgba(14,14,14,0.5));
+    background: #0e0e0e;
     border: 1px solid var(--border-bright);
-    border-radius: 16px;
-    padding: 18px 22px;
+    border-radius: 12px;
+    padding: 16px 20px;
     margin-bottom: 16px;
     display: flex;
     align-items: center;
@@ -380,46 +524,46 @@
     min-width: 200px;
   }
   .link-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
     object-fit: cover;
     flex-shrink: 0;
   }
   .link-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
     background: rgba(114,137,218,0.15);
     border: 1px solid rgba(114,137,218,0.4);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
+    font-size: 20px;
     flex-shrink: 0;
   }
   .link-title {
     font-family: 'Unbounded', sans-serif;
-    font-size: 14px;
+    font-size: 13px;
     color: #fff;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
     font-weight: 700;
   }
-  .link-name { font-size: 13px; color: #4ade80; font-weight: 600; }
-  .link-desc { font-size: 12px; color: var(--text-dim); line-height: 1.5; }
+  .link-name { font-size: 12px; color: #4ade80; font-weight: 600; }
+  .link-desc { font-size: 11.5px; color: var(--text-dim); line-height: 1.4; }
 
   .btn-link-discord {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 11px 20px;
+    padding: 10px 18px;
     background: linear-gradient(135deg, #5865f2, #4752c4);
     border: none;
-    border-radius: 11px;
+    border-radius: 8px;
     color: #fff;
     font-family: 'Inter', sans-serif;
     font-weight: 600;
-    font-size: 13px;
+    font-size: 12.5px;
     cursor: pointer;
     text-decoration: none;
     transition: all 0.3s;
@@ -431,14 +575,14 @@
     box-shadow: 0 10px 30px rgba(88,101,242,0.7);
   }
   .btn-unlink {
-    padding: 10px 18px;
+    padding: 9px 16px;
     background: rgba(239,68,68,0.12);
     border: 1px solid rgba(239,68,68,0.4);
-    border-radius: 11px;
+    border-radius: 8px;
     color: #ef4444;
     font-family: 'Inter', sans-serif;
     font-weight: 600;
-    font-size: 13px;
+    font-size: 12.5px;
     cursor: pointer;
     transition: all 0.3s;
     white-space: nowrap;
@@ -583,14 +727,11 @@
   .ref-invite b { color: #fff; }
   .ref-invite span { color: var(--text-dim); font-size: 11px; }
 
+  /* Активность */
+  #activityBars { display: flex; align-items: flex-end; gap: 6px; height: 100px; padding-top: 16px; }
+
   @media (max-width: 600px) {
-    .profile-page { padding: 90px 14px 120px; }
-    .profile-hero { padding: 22px; }
-    .profile-avatar { width: 96px; height: 96px; border-radius: 22px; }
-    .profile-name { font-size: 20px; }
-    .profile-stats { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .pstat { padding: 12px 14px; }
-    .pstat-value { font-size: 16px; }
+    .profile-page { padding: 70px 12px 120px; }
     .profile-section { padding: 16px 18px; }
     .link-discord-box { padding: 14px 16px; }
     .btn-link-discord, .btn-unlink { width: 100%; justify-content: center; }
@@ -613,15 +754,35 @@
   <div class="profile-container">
     <a class="profile-back" href="/index.html">← На главную</a>
 
-    <div class="profile-hero" id="profileHero">
-      <div class="loading-state">
-        <div class="spinner"></div> Загрузка профиля...
+    <!-- STEAM-КАРТОЧКА -->
+    <div class="steam-card pc-layout" id="steamCard">
+      <div class="steam-cover">
+        <div class="steam-cover-text">FERNODD</div>
+        <div class="steam-cover-actions">
+          <a class="cover-icon-btn" href="#" title="Steam" id="steamLinkBtn">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0z"/></svg>
+          </a>
+          <button class="cover-icon-btn" onclick="copyProfileLink()" title="Скопировать ссылку">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="steam-body">
+        <div class="steam-avatar-wrap">
+          <img class="steam-avatar" id="steamAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
+          <span class="steam-status offline" id="steamStatus"></span>
+        </div>
+
+        <div class="steam-content" id="steamContent">
+          <div class="loading-state">
+            <div class="spinner"></div> Загрузка профиля...
+          </div>
+        </div>
       </div>
     </div>
 
     <div id="linkDiscordBox"></div>
-
-    <div class="profile-stats" id="profileStats"></div>
 
     <!-- МАГАЗИН -->
     <div class="profile-section" id="shopSection">
@@ -646,6 +807,7 @@
       </div>
     </div>
 
+    <!-- РОЛИ -->
     <div class="profile-section">
       <div class="profile-section-title">
         <span class="ico">🎭</span> Роли на сервере
@@ -657,23 +819,25 @@
       </div>
     </div>
 
+    <!-- АКТИВНОСТЬ -->
     <div class="profile-section">
       <div class="profile-section-title">
         <span class="ico">📈</span> Активность за неделю
       </div>
       <div class="profile-section-sub">Количество действий по дням</div>
-      <div id="activityBars" style="display:flex;align-items:flex-end;gap:6px;height:100px;padding-top:16px;">
+      <div id="activityBars">
         <div class="loading-state" style="padding:0;width:100%;">
           <div class="spinner"></div>
         </div>
       </div>
     </div>
 
+    <!-- ИСТОРИЯ -->
     <div class="profile-section">
       <div class="profile-section-title">
         <span class="ico">🕐</span> История действий
       </div>
-      <div class="profile-section-sub">Все действия пользователя (топ 20)</div>
+      <div class="profile-section-sub">Последние действия пользователя</div>
       <div class="timeline" id="timeline">
         <div class="skeleton"></div>
         <div class="skeleton"></div>
@@ -712,6 +876,7 @@
 <script src="/js/auth.js"></script>
 <script>
 let targetUserId = null;
+let profileData = null;
 
 function getToken() { return localStorage.getItem('fernodd_token') || ''; }
 
@@ -735,7 +900,7 @@ async function api(path, options = {}) {
 window.addEventListener('auth:changed', async (e) => {
   const user = e.detail.user;
   if (!user) {
-    document.getElementById('profileHero').innerHTML = `
+    document.getElementById('steamContent').innerHTML = `
       <div class="empty-state">
         <div class="ico">🔒</div>
         Войдите через Steam, чтобы открыть профиль
@@ -757,12 +922,12 @@ window.addEventListener('auth:changed', async (e) => {
     const errors = {
       not_configured: 'OAuth Discord не настроен',
       no_code: 'Discord не вернул код',
-      bad_state: 'Ошибка состояния OAuth',
+      bad_state: 'Ошибка состояния',
       bad_token: 'Сессия истекла',
       token_failed: 'Не удалось получить токен',
       user_failed: 'Не удалось получить данные',
-      not_in_guild: 'Вас нет на сервере Fernodd',
-      guild_check_failed: 'Не удалось проверить членство',
+      not_in_guild: 'Вас нет на сервере',
+      guild_check_failed: 'Не удалось проверить',
       unknown: 'Неизвестная ошибка'
     };
     showToast('❌ ' + (errors[discordError] || discordError), 'error', 5000);
@@ -806,7 +971,7 @@ function renderLinkBox(user) {
         </div>
       </div>
       <a class="btn-link-discord" href="${(window.API_BASE || '')}/auth/discord?token=${encodeURIComponent(getToken())}">
-        <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor;"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286z"/></svg>
+        <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor;"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286z"/></svg>
         Привязать Discord
       </a>
     </div>`;
@@ -840,91 +1005,97 @@ async function loadProfile() {
     const r = await api(`/api/users/${targetUserId}`);
     const found = r.user;
     if (!found) {
-      document.getElementById('profileHero').innerHTML = `<div class="empty-state"><div class="ico">🔍</div>Пользователь не найден</div>`;
+      document.getElementById('steamContent').innerHTML = `<div class="empty-state"><div class="ico">🔍</div>Пользователь не найден</div>`;
       return;
     }
-    renderHero(found);
-    renderStats(found);
+    profileData = found;
+    renderSteamCard(found);
     renderRoles(found);
     loadActivity(found);
     loadTimeline(found);
     loadShop();
     loadReferrals();
   } catch (e) {
-    document.getElementById('profileHero').innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${escapeHtml(e.message)}</div>`;
+    document.getElementById('steamContent').innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${escapeHtml(e.message)}</div>`;
   }
 }
 
-function renderHero(user) {
+function renderSteamCard(user) {
   const avatar = user.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png';
   const name = user.nickname || user.global_name || user.username || 'Пользователь';
-  const username = user.username || '—';
+  const username = user.username || '';
   const status = (user.presence && user.presence.status) || 'offline';
-  const statusText = { online: 'В сети', idle: 'Неактивен', dnd: 'Не беспокоить', offline: 'Не в сети' }[status] || 'Не в сети';
-  const rolesHtml = (user.roles || []).map(r => {
-    const isAdminRole = ['Куратор', 'Следящий', 'Главная администрация', 'Владелец'].includes(r);
-    return `<span class="profile-role-chip ${isAdminRole ? 'is-admin' : ''}">${escapeHtml(r)}</span>`;
-  }).join('') || '<span class="profile-role-chip">Без роли</span>';
-  const steamLink = user.profileUrl || (user.steamId ? `https://steamcommunity.com/profiles/${user.steamId}` : null);
+  const statusText = {
+    online: 'В сети', idle: 'Неактивен', dnd: 'Не беспокоить', offline: 'Не в сети'
+  }[status] || 'Не в сети';
 
-  let discordBadge = '';
-  if (user.discord && user.discord.id) {
-    discordBadge = `
-      <div class="profile-meta-item">
-        <svg viewBox="0 0 24 24" style="fill:#7289da;stroke:none;"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286z"/></svg>
-        Discord: <b>${escapeHtml(user.discord.nickname || user.discord.global_name || user.discord.username)}</b>
-      </div>`;
-  }
+  /* Аватар */
+  document.getElementById('steamAvatar').src = avatar;
+  const statusEl = document.getElementById('steamStatus');
+  statusEl.className = 'steam-status ' + status;
 
-  document.getElementById('profileHero').innerHTML = `
-    <div class="profile-hero-inner">
-      <div class="profile-avatar-wrap">
-        <img class="profile-avatar" src="${avatar}" alt="">
-        <span class="profile-status ${status}" title="${statusText}"></span>
+  /* Роли — верхняя роль как бейдж */
+  const roles = user.roles || [];
+  const topRole = user.topRole || roles[0] || null;
+  const ROLE_COLORS = {
+    'Главная администрация': '#5b8dd9', 'Владелец': '#e10600', 'Разработчик': '#4ade80',
+    'Следящий': '#fbbf24', 'Куратор': '#fcd34d', 'Модератор': '#3b82f6', 'Игрок': '#a855f7',
+  };
+  const roleColor = ROLE_COLORS[topRole] || '#60a5fa';
+
+  /* Steam-ссылка */
+  const steamLink = user.profileUrl || (user.steamId ? `https://steamcommunity.com/profiles/${user.steamId}` : '#');
+  document.getElementById('steamLinkBtn').href = steamLink;
+
+  /* Дата на сервере */
+  const joined = user.joinedAt ? new Date(user.joinedAt) : null;
+
+  /* Тег ID */
+  const idTag = user.id ? '#' + String(user.id).slice(-4) : '';
+
+  document.getElementById('steamContent').innerHTML = `
+    ${topRole ? `<div class="steam-role-badge" style="background:${roleColor}22;border-color:${roleColor}88;color:${roleColor};">${escapeHtml(topRole)}</div>` : ''}
+
+    <div class="steam-name-row">
+      <div class="steam-name">${escapeHtml(name)}</div>
+      ${user.isOwner ? '<div class="steam-badge" title="Владелец">👑</div>' : ''}
+      <div class="steam-fire">🔥 ${user.balance || 0}</div>
+      ${idTag ? `<div class="steam-tag">${idTag}</div>` : ''}
+    </div>
+
+    <div class="steam-status-text">
+      <b>${statusText}</b>
+      ${joined ? ` · В сообществе с ${joined.toLocaleDateString('ru-RU')}` : ''}
+    </div>
+
+    <div class="steam-stats">
+      <div class="steam-stat">
+        <div class="steam-stat-value">${(user.roles || []).length}</div>
+        <div class="steam-stat-label">Ролей</div>
       </div>
-      <div class="profile-info">
-        <div class="profile-name">${escapeHtml(name)}</div>
-        <div class="profile-username">${escapeHtml(username)}</div>
-        <div class="profile-roles">${rolesHtml}</div>
-        <div class="profile-meta">
-          ${user.joinedAt ? `
-            <div class="profile-meta-item">
-              <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              С <b>${new Date(user.joinedAt).toLocaleDateString('ru-RU')}</b>
-            </div>` : ''}
-          <div class="profile-meta-item">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            ID: <b>${escapeHtml(user.id || '—')}</b>
-          </div>
-          ${steamLink ? `
-            <div class="profile-meta-item">
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
-              <a href="${steamLink}" target="_blank" rel="noopener"><b>Steam профиль</b></a>
-            </div>` : ''}
-          ${discordBadge}
+      <div class="steam-stat">
+        <div class="steam-stat-value">💰 ${user.balance || 0}</div>
+        <div class="steam-stat-label">Баланс</div>
+      </div>
+      ${joined ? `
+        <div class="steam-stat">
+          <div class="steam-stat-value">${daysSince(joined)}</div>
+          <div class="steam-stat-label">Дней</div>
         </div>
-      </div>
+      ` : ''}
+    </div>
+
+    <div class="steam-actions">
+      <a class="steam-btn primary" href="${steamLink}" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor;"><path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0z"/></svg>
+        Steam профиль
+      </a>
+      <button class="steam-btn" onclick="copyProfileLink()">
+        <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        Скопировать ссылку
+      </button>
     </div>
   `;
-}
-
-function renderStats(user) {
-  const rolesCount = (user.roles || []).length;
-  const stats = [
-    { color: '#e10600', icon: '🎭', value: rolesCount, label: 'Ролей' },
-    { color: '#4ade80', icon: '💰', value: user.balance || 0, label: 'Баланс' },
-    { color: '#60a5fa', icon: '⭐', value: user.topRole || '—', label: 'Главная роль' },
-    { color: '#fbbf24', icon: '🔖', value: user.id ? '#' + String(user.id).slice(-4) : '—', label: 'Тег' },
-  ];
-  document.getElementById('profileStats').innerHTML = stats.map(s => `
-    <div class="pstat" style="--pstat-color:${s.color};">
-      <div class="pstat-head">
-        <div class="pstat-icon">${s.icon}</div>
-        <div class="pstat-value">${escapeHtml(String(s.value))}</div>
-      </div>
-      <div class="pstat-label">${escapeHtml(s.label)}</div>
-    </div>
-  `).join('');
 }
 
 function daysSince(date) {
@@ -975,11 +1146,11 @@ async function loadTimeline(user) {
       const isShop = a.action === 'shop_buy';
       const cls = isChange ? 'blue' : '';
       const icon = isChange ? '↻' : (isRole ? '👑' : (isShop ? '🛒' : '🗑'));
-      const title = isChange ? 'Изменил статус' : (isRole ? 'Выдал роль' : (isShop ? 'Купил в магазине' : 'Удалил заявку'));
+      const title = isChange ? 'Изменил статус' : (isRole ? 'Выдал роль' : (isShop ? 'Купил' : 'Удалил заявку'));
       let desc = '';
       if (isChange) desc = `${escapeHtml(a.applicationOwner || '—')}: <code>${statusNames[a.oldStatus] || '—'}</code> → <code>${statusNames[a.newStatus] || '—'}</code>`;
-      else if (isRole) desc = `Роль <code>${escapeHtml(a.roleName || '—')}</code> → <b>${escapeHtml(a.targetDiscordId || '—')}</b>`;
-      else if (isShop) desc = `<code>${escapeHtml(a.itemName || '—')}</code> за <b>${a.price || 0}</b> баллов`;
+      else if (isRole) desc = `Роль <code>${escapeHtml(a.roleName || '—')}</code>`;
+      else if (isShop) desc = `<code>${escapeHtml(a.itemName || '—')}</code> за <b>${a.price || 0}</b> 🪙`;
       else desc = `${escapeHtml(a.applicationOwner || '—')}: был <code>${statusNames[a.oldStatus] || '—'}</code>`;
       return `
         <div class="timeline-item">
@@ -1029,6 +1200,12 @@ function renderRoles(user) {
   }).join('');
 }
 
+function copyProfileLink() {
+  const url = `${window.location.origin}/profile.html?id=${targetUserId}`;
+  navigator.clipboard.writeText(url).then(() => showToast('✅ Ссылка скопирована', 'success'))
+    .catch(() => showToast('Не удалось', 'error'));
+}
+
 /* ============ МАГАЗИН ============ */
 async function loadShop() {
   const grid = document.getElementById('shopGrid');
@@ -1036,7 +1213,7 @@ async function loadShop() {
   try {
     const data = await api('/api/shop/items');
     const items = data.items || [];
-    const balance = window.currentUser?.balance || 0;
+    const balance = profileData?.balance || 0;
     grid.innerHTML = items.map(it => `
       <div class="shop-item" style="--item-color:${it.color};">
         <div class="shop-icon">${it.icon}</div>
