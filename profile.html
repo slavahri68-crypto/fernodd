@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fernodd — Профиль</title>
+<link rel="icon" type="image/png" href="/logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/config.js"></script>
+<style>
+  body > .auth-widget { display: none !important; }
+
+  .profile-page {
+    min-height: 100vh;
+    padding: 100px 24px 140px;
+    position: relative;
+    z-index: 1;
+  }
+  .profile-container { max-width: 900px; margin: 0 auto; }
+
+  .profile-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border-bright);
+    border-radius: 12px;
+    color: var(--text-dim);
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    text-decoration: none;
+    margin-bottom: 20px;
+    transition: all 0.3s;
+  }
+  .profile-back:hover {
+    color: var(--red);
+    border-color: var(--red);
+    background: rgba(225,6,0,0.08);
+    transform: translateX(-4px);
+  }
+
+  .profile-hero {
+    background: linear-gradient(135deg, rgba(225,6,0,0.15) 0%, rgba(14,14,14,0.85) 55%, rgba(139,0,0,0.1) 100%);
+    border: 1px solid rgba(225,6,0,0.35);
+    border-radius: 24px;
+    padding: 28px 32px;
+    margin-bottom: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .profile-hero::before {
+    content: '';
+    position: absolute;
+    top: -60%; right: -10%;
+    width: 440px; height: 440px;
+    background: radial-gradient(circle, rgba(225,6,0,0.3), transparent 70%);
+    pointer-events: none;
+    animation: floatGlow 8s ease-in-out infinite;
+  }
+  @keyframes floatGlow {
+    0%,100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.1); }
+  }
+  .profile-hero-inner {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+  .profile-avatar-wrap { position: relative; flex-shrink: 0; }
+  .profile-avatar {
+    width: 128px;
+    height: 128px;
+    border-radius: 30px;
+    object-fit: cover;
+    position: relative;
+    z-index: 1;
+    display: block;
+  }
+  .profile-status {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 22px;
+    height: 22px;
+    border: 3px solid var(--bg);
+    border-radius: 50%;
+    z-index: 2;
+  }
+  .profile-status.online  { background: #4ade80; }
+  .profile-status.idle    { background: #fbbf24; }
+  .profile-status.dnd     { background: #ef4444; }
+  .profile-status.offline { background: #6b7280; }
+
+  .profile-info { flex: 1; min-width: 200px; }
+  .profile-name {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 900;
+    letter-spacing: -1px;
+    color: #fff;
+    line-height: 1.1;
+    margin-bottom: 4px;
+  }
+  .profile-username {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+  .profile-username::before { content: '@'; color: var(--red); font-weight: 700; }
+
+  .profile-roles { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .profile-role-chip {
+    padding: 4px 11px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border-bright);
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .profile-role-chip.is-admin {
+    background: rgba(225,6,0,0.15);
+    border-color: rgba(225,6,0,0.5);
+    color: var(--red);
+  }
+
+  .profile-meta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .profile-meta-item { display: flex; align-items: center; gap: 6px; }
+  .profile-meta-item svg {
+    width: 13px; height: 13px;
+    stroke: var(--red); fill: none; stroke-width: 2;
+  }
+  .profile-meta-item b { color: var(--text); font-weight: 600; }
+  .profile-meta-item a { color: var(--red); text-decoration: none; font-weight: 600; }
+  .profile-meta-item a:hover { text-decoration: underline; }
+
+  .profile-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .pstat {
+    background: linear-gradient(145deg, var(--bg-card), rgba(14,14,14,0.5));
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 18px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+  .pstat::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--pstat-color, var(--red));
+    box-shadow: 0 0 14px var(--pstat-color, var(--red));
+    opacity: 0.8;
+  }
+  .pstat:hover {
+    transform: translateY(-4px);
+    border-color: var(--pstat-color, var(--red));
+  }
+  .pstat-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .pstat-icon {
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border-bright);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    color: var(--pstat-color, var(--red));
+  }
+  .pstat-value {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    color: #fff;
+    line-height: 1.1;
+    word-break: break-word;
+  }
+  .pstat-label {
+    font-size: 9.5px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    margin-top: 3px;
+  }
+
+  .profile-section {
+    background: linear-gradient(145deg, var(--bg-card), rgba(14,14,14,0.5));
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 22px 24px;
+    margin-bottom: 16px;
+  }
+  .profile-section-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .profile-section-title .ico {
+    width: 28px; height: 28px;
+    background: rgba(225,6,0,0.12);
+    border: 1px solid rgba(225,6,0,0.3);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+  }
+  .profile-section-sub { font-size: 11px; color: var(--text-dim); margin-bottom: 16px; }
+
+  .timeline { display: flex; flex-direction: column; gap: 8px; }
+  .timeline-item {
+    display: flex;
+    gap: 12px;
+    padding: 10px 0;
+    align-items: flex-start;
+    border-bottom: 1px solid var(--border);
+  }
+  .timeline-item:last-child { border-bottom: none; }
+  .timeline-icon {
+    width: 32px; height: 32px;
+    border-radius: 9px;
+    background: var(--bg-card);
+    border: 1.5px solid var(--red);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .timeline-icon.blue { border-color: #60a5fa; }
+  .timeline-body { flex: 1; min-width: 0; }
+  .timeline-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 3px;
+  }
+  .timeline-title { font-weight: 600; color: #fff; font-size: 13px; }
+  .timeline-date { font-size: 11px; color: var(--text-dim); }
+  .timeline-desc { font-size: 12px; color: var(--text-dim); line-height: 1.5; }
+  .timeline-desc code {
+    background: rgba(225,6,0,0.1);
+    padding: 1px 6px;
+    border-radius: 5px;
+    color: var(--red);
+    font-family: monospace;
+    font-size: 11px;
+  }
+
+  .roles-list { display: flex; flex-direction: column; gap: 8px; }
+  .role-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    border-left: 3px solid var(--role-color, var(--red));
+    transition: all 0.3s;
+  }
+  .role-item:hover {
+    border-color: var(--role-color, var(--red));
+    background: rgba(225,6,0,0.04);
+  }
+  .role-item-icon {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.04);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    border: 1px solid var(--border-bright);
+    flex-shrink: 0;
+  }
+  .role-item-info { flex: 1; min-width: 0; }
+  .role-item-name {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+  .role-item-desc { font-size: 11px; color: var(--text-dim); }
+  .role-item-badge {
+    padding: 3px 9px;
+    background: rgba(225,6,0,0.15);
+    border: 1px solid rgba(225,6,0,0.4);
+    border-radius: 100px;
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--red);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .loading-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    gap: 10px;
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+  .spinner {
+    width: 20px; height: 20px;
+    border: 2px solid var(--border-bright);
+    border-top-color: var(--red);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+  .empty-state .ico { font-size: 36px; margin-bottom: 10px; opacity: 0.35; }
+
+  .skeleton {
+    background: linear-gradient(90deg, var(--bg-card) 25%, rgba(255,255,255,0.04) 50%, var(--bg-card) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 12px;
+    height: 60px;
+    margin-bottom: 10px;
+  }
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* ПРИВЯЗКА DISCORD */
+  .link-discord-box {
+    background: linear-gradient(145deg, var(--bg-card), rgba(14,14,14,0.5));
+    border: 1px solid var(--border-bright);
+    border-radius: 16px;
+    padding: 18px 22px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .link-discord-box.linked {
+    background: rgba(74,222,128,0.06);
+    border-color: rgba(74,222,128,0.35);
+  }
+  .link-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1;
+    min-width: 200px;
+  }
+  .link-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+  .link-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(114,137,218,0.15);
+    border: 1px solid rgba(114,137,218,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .link-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 14px;
+    color: #fff;
+    margin-bottom: 4px;
+    font-weight: 700;
+  }
+  .link-name { font-size: 13px; color: #4ade80; font-weight: 600; }
+  .link-desc { font-size: 12px; color: var(--text-dim); line-height: 1.5; }
+
+  .btn-link-discord {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 20px;
+    background: linear-gradient(135deg, #5865f2, #4752c4);
+    border: none;
+    border-radius: 11px;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s;
+    box-shadow: 0 6px 20px rgba(88,101,242,0.4);
+    white-space: nowrap;
+  }
+  .btn-link-discord:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(88,101,242,0.7);
+  }
+  .btn-unlink {
+    padding: 10px 18px;
+    background: rgba(239,68,68,0.12);
+    border: 1px solid rgba(239,68,68,0.4);
+    border-radius: 11px;
+    color: #ef4444;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s;
+    white-space: nowrap;
+  }
+  .btn-unlink:hover {
+    background: rgba(239,68,68,0.25);
+    border-color: #ef4444;
+  }
+
+  @media (max-width: 600px) {
+    .profile-page { padding: 90px 14px 120px; }
+    .profile-hero { padding: 22px; }
+    .profile-avatar { width: 96px; height: 96px; border-radius: 22px; }
+    .profile-name { font-size: 20px; }
+    .profile-stats { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .pstat { padding: 12px 14px; }
+    .pstat-value { font-size: 16px; }
+    .profile-section { padding: 16px 18px; }
+    .link-discord-box { padding: 14px 16px; }
+    .btn-link-discord, .btn-unlink { width: 100%; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-layer">
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+  <div class="bg-glow-3"></div>
+  <div class="bg-grid"></div>
+  <div class="particles" id="particles"></div>
+</div>
+
+<div class="auth-widget" id="authWidget"></div>
+
+<main class="profile-page">
+  <div class="profile-container">
+    <a class="profile-back" href="/index.html">← На главную</a>
+
+    <div class="profile-hero" id="profileHero">
+      <div class="loading-state">
+        <div class="spinner"></div> Загрузка профиля...
+      </div>
+    </div>
+
+    <div id="linkDiscordBox"></div>
+
+    <div class="profile-stats" id="profileStats"></div>
+
+    <div class="profile-section">
+      <div class="profile-section-title">
+        <span class="ico">🎭</span> Роли на сервере
+      </div>
+      <div class="profile-section-sub">Все роли пользователя в Discord</div>
+      <div class="roles-list" id="rolesList">
+        <div class="skeleton"></div>
+        <div class="skeleton"></div>
+      </div>
+    </div>
+
+    <div class="profile-section">
+      <div class="profile-section-title">
+        <span class="ico">📈</span> Активность за неделю
+      </div>
+      <div class="profile-section-sub">Количество действий по дням</div>
+      <div id="activityBars" style="display:flex;align-items:flex-end;gap:6px;height:100px;padding-top:16px;">
+        <div class="loading-state" style="padding:0;width:100%;">
+          <div class="spinner"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-section">
+      <div class="profile-section-title">
+        <span class="ico">🕐</span> История действий
+      </div>
+      <div class="profile-section-sub">Все действия пользователя (топ 20)</div>
+      <div class="timeline" id="timeline">
+        <div class="skeleton"></div>
+        <div class="skeleton"></div>
+        <div class="skeleton"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<nav class="bottom-nav">
+  <a class="nav-btn" href="/index.html" title="Главная">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Главная</span>
+  </a>
+  <a class="nav-btn" href="/rules.html" title="Правила">
+    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    <span>Правила</span>
+  </a>
+  <a class="nav-btn" href="/roles.html" title="Роли">
+    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+    <span>Роли</span>
+  </a>
+  <a class="nav-btn" href="/apply.html" title="Заявка">
+    <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+    <span>Заявка</span>
+  </a>
+  <a class="nav-btn active" href="/profile.html" title="Профиль">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg>
+    <span>Профиль</span>
+  </a>
+</nav>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script src="/js/common.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+let targetUserId = null;
+
+function getToken() { return localStorage.getItem('fernodd_token') || ''; }
+
+async function api(path, options = {}) {
+  const base = window.API_BASE || '';
+  const r = await fetch(base + path, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + getToken(),
+      ...(options.headers || {})
+    }
+  });
+  const text = await r.text();
+  let data;
+  try { data = JSON.parse(text); } catch { data = { error: text }; }
+  if (!r.ok) throw new Error((data.error || 'error') + ' — ' + (data.details || ''));
+  return data;
+}
+
+window.addEventListener('auth:changed', async (e) => {
+  const user = e.detail.user;
+  if (!user) {
+    document.getElementById('profileHero').innerHTML = `
+      <div class="empty-state">
+        <div class="ico">🔒</div>
+        Войдите через Steam, чтобы открыть профиль
+      </div>`;
+    return;
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const idFromUrl = params.get('id');
+  targetUserId = idFromUrl || user.steamId || user.id;
+
+  /* Обработка redirect от Discord OAuth */
+  if (params.get('discord_linked') === '1') {
+    showToast('✅ Discord успешно привязан!', 'success');
+    params.delete('discord_linked');
+    window.history.replaceState({}, '', window.location.pathname + (params.toString() ? '?' + params.toString() : ''));
+  }
+  const discordError = params.get('discord_error');
+  if (discordError) {
+    const errors = {
+      not_configured: 'OAuth Discord не настроен на сервере',
+      no_code: 'Discord не вернул код авторизации',
+      bad_state: 'Ошибка состояния OAuth',
+      bad_token: 'Сессия истекла',
+      token_failed: 'Не удалось получить токен Discord',
+      user_failed: 'Не удалось получить данные пользователя Discord',
+      not_in_guild: 'Вас нет на сервере Fernodd в Discord',
+      guild_check_failed: 'Не удалось проверить членство в Discord',
+      unknown: 'Неизвестная ошибка'
+    };
+    showToast('❌ ' + (errors[discordError] || discordError), 'error', 5000);
+    params.delete('discord_error');
+    window.history.replaceState({}, '', window.location.pathname + (params.toString() ? '?' + params.toString() : ''));
+  }
+
+  renderLinkBox(user);
+  loadProfile();
+});
+
+function renderLinkBox(user) {
+  const box = document.getElementById('linkDiscordBox');
+  if (!box) return;
+
+  const isOwnProfile = !new URLSearchParams(window.location.search).get('id');
+
+  /* Чужой профиль — не показываем блок привязки */
+  if (!isOwnProfile) {
+    box.innerHTML = '';
+    return;
+  }
+
+  if (user.discordId) {
+    box.innerHTML = `
+      <div class="link-discord-box linked">
+        <div class="link-info">
+          <img class="link-avatar" id="discordAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
+          <div>
+            <div class="link-title">✅ Discord привязан</div>
+            <div class="link-name" id="discordName">Загрузка...</div>
+          </div>
+        </div>
+        <button class="btn-unlink" onclick="unlinkDiscord()">Отвязать</button>
+      </div>`;
+    loadDiscordInfo(user.discordId);
+    return;
+  }
+
+  box.innerHTML = `
+    <div class="link-discord-box">
+      <div class="link-info">
+        <div class="link-icon">💬</div>
+        <div>
+          <div class="link-title">Привязать Discord</div>
+          <div class="link-desc">Авторизуйтесь через Discord, чтобы получать роли и статусы</div>
+        </div>
+      </div>
+      <a class="btn-link-discord" href="${(window.API_BASE || '')}/auth/discord?token=${encodeURIComponent(getToken())}">
+        <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor;"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg>
+        Привязать Discord
+      </a>
+    </div>`;
+}
+
+async function loadDiscordInfo(discordId) {
+  try {
+    const data = await api('/api/discord-info/' + discordId);
+    const avatarEl = document.getElementById('discordAvatar');
+    const nameEl = document.getElementById('discordName');
+    if (avatarEl) avatarEl.src = data.avatar;
+    if (nameEl) nameEl.textContent = data.nickname || data.global_name || data.username;
+  } catch (e) {
+    console.error('[discord-info]', e);
+    const nameEl = document.getElementById('discordName');
+    if (nameEl) nameEl.textContent = 'Привязан';
+  }
+}
+
+async function unlinkDiscord() {
+  if (!confirm('Отвязать Discord от Steam?')) return;
+  try {
+    await api('/api/unlink-discord', { method: 'POST' });
+    showToast('Discord отвязан', 'info');
+    setTimeout(() => location.reload(), 800);
+  } catch (e) {
+    showToast('Ошибка: ' + e.message, 'error');
+  }
+}
+
+async function loadProfile() {
+  if (!targetUserId) return;
+  try {
+    const r = await api(`/api/users/${targetUserId}`);
+    const found = r.user;
+    if (!found) {
+      document.getElementById('profileHero').innerHTML = `<div class="empty-state"><div class="ico">🔍</div>Пользователь не найден</div>`;
+      document.getElementById('profileStats').innerHTML = '';
+      document.getElementById('rolesList').innerHTML = '<div class="empty-state">Роли недоступны</div>';
+      document.getElementById('timeline').innerHTML = '<div class="empty-state">Нет истории</div>';
+      document.getElementById('activityBars').innerHTML = '';
+      return;
+    }
+    renderHero(found);
+    renderStats(found);
+    renderRoles(found);
+    loadActivity(found);
+    loadTimeline(found);
+  } catch (e) {
+    document.getElementById('profileHero').innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${escapeHtml(e.message)}</div>`;
+  }
+}
+
+function renderHero(user) {
+  const avatar = user.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png';
+  const name = user.nickname || user.global_name || user.username || 'Пользователь';
+  const username = user.username || '—';
+  const status = (user.presence && user.presence.status) || 'offline';
+  const statusText = { online: 'В сети', idle: 'Неактивен', dnd: 'Не беспокоить', offline: 'Не в сети' }[status] || 'Не в сети';
+  const rolesHtml = (user.roles || []).map(r => {
+    const isAdminRole = ['Куратор', 'Следящий', 'Главная администрация', 'Владелец'].includes(r);
+    return `<span class="profile-role-chip ${isAdminRole ? 'is-admin' : ''}">${escapeHtml(r)}</span>`;
+  }).join('') || '<span class="profile-role-chip">Без роли</span>';
+  const steamLink = user.profileUrl || (user.steamId ? `https://steamcommunity.com/profiles/${user.steamId}` : null);
+
+  /* Discord badge */
+  let discordBadge = '';
+  if (user.discord && user.discord.id) {
+    discordBadge = `
+      <div class="profile-meta-item">
+        <svg viewBox="0 0 24 24" style="fill:#7289da;stroke:none;"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286z"/></svg>
+        Discord: <b>${escapeHtml(user.discord.nickname || user.discord.global_name || user.discord.username)}</b>
+      </div>`;
+  }
+
+  document.getElementById('profileHero').innerHTML = `
+    <div class="profile-hero-inner">
+      <div class="profile-avatar-wrap">
+        <img class="profile-avatar" src="${avatar}" alt="">
+        <span class="profile-status ${status}" title="${statusText}"></span>
+      </div>
+      <div class="profile-info">
+        <div class="profile-name">${escapeHtml(name)}</div>
+        <div class="profile-username">${escapeHtml(username)}</div>
+        <div class="profile-roles">${rolesHtml}</div>
+        <div class="profile-meta">
+          ${user.joinedAt ? `
+            <div class="profile-meta-item">
+              <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              С <b>${new Date(user.joinedAt).toLocaleDateString('ru-RU')}</b>
+            </div>` : ''}
+          <div class="profile-meta-item">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            ID: <b>${escapeHtml(user.id || '—')}</b>
+          </div>
+          ${steamLink ? `
+            <div class="profile-meta-item">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+              <a href="${steamLink}" target="_blank" rel="noopener"><b>Steam профиль</b></a>
+            </div>` : ''}
+          ${discordBadge}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderStats(user) {
+  const rolesCount = (user.roles || []).length;
+  const stats = [
+    { color: '#e10600', icon: '🎭', value: rolesCount, label: 'Ролей' },
+    { color: '#4ade80', icon: '📅', value: user.joinedAt ? daysSince(user.joinedAt) : '—', label: 'Дней на сервере' },
+    { color: '#60a5fa', icon: '⭐', value: user.topRole || '—', label: 'Главная роль' },
+    { color: '#fbbf24', icon: '🔖', value: user.id ? '#' + String(user.id).slice(-4) : '—', label: 'Тег' },
+  ];
+  document.getElementById('profileStats').innerHTML = stats.map(s => `
+    <div class="pstat" style="--pstat-color:${s.color};">
+      <div class="pstat-head">
+        <div class="pstat-icon">${s.icon}</div>
+        <div class="pstat-value">${escapeHtml(String(s.value))}</div>
+      </div>
+      <div class="pstat-label">${escapeHtml(s.label)}</div>
+    </div>
+  `).join('');
+}
+
+function daysSince(date) {
+  const diff = Date.now() - new Date(date).getTime();
+  return Math.floor(diff / (1000 * 60 * 60 * 24));
+}
+
+async function loadActivity(user) {
+  const el = document.getElementById('activityBars');
+  try {
+    const hist = await api('/api/applications-history').catch(() => ({ history: [] }));
+    const days = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+    const counts = new Array(7).fill(0);
+    (hist.history || []).forEach(h => {
+      if (h.performedBy !== user.id) return;
+      const d = new Date(h.performedAt);
+      if (isNaN(d)) return;
+      counts[(d.getDay() + 6) % 7]++;
+    });
+    const max = Math.max(...counts, 1);
+    el.innerHTML = days.map((day, i) => {
+      const h = (counts[i] / max) * 100;
+      return `
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;height:100%;justify-content:flex-end;">
+          <div style="width:100%;background:linear-gradient(to top, var(--red), var(--red-glow));border-radius:5px 5px 3px 3px;min-height:3px;height:${Math.max(h, 4)}%;box-shadow:0 0 10px rgba(225,6,0,0.25);"></div>
+          <div style="font-size:9px;color:var(--text-dim);text-transform:uppercase;font-weight:600;">${day}</div>
+        </div>`;
+    }).join('');
+  } catch {
+    el.innerHTML = '<div class="empty-state" style="width:100%;padding:20px;">Нет данных</div>';
+  }
+}
+
+async function loadTimeline(user) {
+  const el = document.getElementById('timeline');
+  try {
+    const hist = await api('/api/applications-history').catch(() => ({ history: [] }));
+    const actions = (hist.history || []).filter(h => h.performedBy === user.id);
+    if (!actions.length) {
+      el.innerHTML = '<div class="empty-state"><div class="ico">📭</div>Действий пока нет</div>';
+      return;
+    }
+    const statusNames = { approved: 'Одобрено', rejected: 'Отклонено', pending: 'На рассмотрении' };
+    el.innerHTML = actions.slice(0, 20).map(a => {
+      const date = new Date(a.performedAt).toLocaleString('ru-RU');
+      const isChange = a.action === 'change';
+      const isRole = a.action === 'give_role';
+      const cls = isChange ? 'blue' : '';
+      const icon = isChange ? '↻' : (isRole ? '👑' : '🗑');
+      const title = isChange ? 'Изменил статус' : (isRole ? 'Выдал роль' : 'Удалил заявку');
+      const desc = isChange
+        ? `${escapeHtml(a.applicationOwner || '—')}: <code>${statusNames[a.oldStatus] || '—'}</code> → <code>${statusNames[a.newStatus] || '—'}</code>`
+        : isRole
+        ? `Роль <code>${escapeHtml(a.roleName || '—')}</code> → <b>${escapeHtml(a.targetDiscordId || '—')}</b>`
+        : `${escapeHtml(a.applicationOwner || '—')}: был <code>${statusNames[a.oldStatus] || '—'}</code>`;
+      return `
+        <div class="timeline-item">
+          <div class="timeline-icon ${cls}">${icon}</div>
+          <div class="timeline-body">
+            <div class="timeline-head">
+              <div class="timeline-title">${title}</div>
+              <div class="timeline-date">${date}</div>
+            </div>
+            <div class="timeline-desc">${desc}</div>
+          </div>
+        </div>`;
+    }).join('');
+  } catch {
+    el.innerHTML = '<div class="empty-state">Ошибка загрузки</div>';
+  }
+}
+
+function renderRoles(user) {
+  const el = document.getElementById('rolesList');
+  const roles = user.roles || [];
+  const ROLE_COLORS = {
+    'Главная администрация': '#5b8dd9',
+    'Владелец': '#e10600',
+    'Разработчик': '#4ade80',
+    'Следящий': '#fbbf24',
+    'Куратор': '#fcd34d',
+    'Модератор': '#3b82f6',
+    'Игрок': '#a855f7',
+  };
+  const ROLE_DESCS = {
+    'Главная администрация': 'Высшее руководство',
+    'Владелец': 'Полный доступ',
+    'Разработчик': 'Техподдержка',
+    'Следящий': 'Наблюдение за порядком',
+    'Куратор': 'Курирование модераторов',
+    'Модератор': 'Следит за порядком',
+    'Игрок': 'Базовый участник',
+  };
+  if (!roles.length) {
+    el.innerHTML = '<div class="empty-state">Ролей нет. Привяжите Discord.</div>';
+    return;
+  }
+  el.innerHTML = roles.map((r, i) => {
+    const color = ROLE_COLORS[r] || '#e10600';
+    const desc = ROLE_DESCS[r] || 'Роль сервера';
+    return `
+      <div class="role-item" style="--role-color:${color};">
+        <div class="role-item-icon">${i === 0 ? '👑' : '🎭'}</div>
+        <div class="role-item-info">
+          <div class="role-item-name">${escapeHtml(r)}</div>
+          <div class="role-item-desc">${escapeHtml(desc)}</div>
+        </div>
+        ${i === 0 ? '<span class="role-item-badge">ТОП</span>' : ''}
+      </div>`;
+  }).join('');
+}
+</script>
+</body>
+</html>
