@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fernodd — Транзакции</title>
+<link rel="icon" type="image/png" href="/logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/config.js"></script>
+<style>
+  body > .auth-widget { display: none !important; }
+  .my-page { min-height: 100vh; padding: 80px 24px 140px; position: relative; z-index: 1; }
+  .my-container { max-width: 1100px; margin: 0 auto; }
+
+  .my-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  .my-header-left { display: flex; align-items: center; gap: 12px; }
+  .my-header-balance { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-bright); border-radius: 100px; font-family: 'Unbounded', sans-serif; font-size: 13px; color: #fff; font-weight: 700; }
+  .my-header-right { display: flex; align-items: center; gap: 10px; }
+  .icon-badge { position: relative; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .icon-badge svg { width: 18px; height: 18px; fill: currentColor; color: var(--text-dim); }
+  .icon-badge .badge { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 5px; background: var(--red); color: #fff; border-radius: 100px; font-size: 10px; font-weight: 900; display: flex; align-items: center; justify-content: center; border: 2px solid var(--bg); }
+
+  .profile-avatar-btn { position: relative; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); border-radius: 100px; }
+  .profile-avatar-btn img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+  .profile-avatar-btn .chev { width: 14px; height: 14px; color: var(--text-dim); transition: transform 0.3s; }
+  .profile-avatar-btn.open .chev { transform: rotate(180deg); }
+
+  .my-menu { position: absolute; top: calc(100% + 12px); right: 0; width: 320px; background: #0e0e0e; border: 1px solid var(--border-bright); border-radius: 18px; padding: 12px; box-shadow: 0 25px 70px rgba(0,0,0,0.9); opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-10px) scale(0.96); transform-origin: top right; transition: opacity 0.25s, transform 0.25s, visibility 0s linear 0.25s; z-index: 600; }
+  .profile-avatar-btn.open .my-menu { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0) scale(1); transition: opacity 0.25s, transform 0.25s, visibility 0s; }
+  .my-menu-head { display: flex; align-items: center; gap: 12px; padding: 10px 12px; }
+  .my-menu-avatar { width: 52px; height: 52px; border-radius: 12px; border: 2px solid var(--red); object-fit: cover; }
+  .my-menu-name { font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 15px; color: #fff; margin-bottom: 3px; }
+  .my-menu-balance { font-size: 12px; color: var(--text-dim); }
+  .my-menu-divider { height: 1px; background: var(--border); margin: 10px 8px; }
+  .my-menu-item { display: flex; align-items: center; gap: 14px; padding: 11px 14px; border-radius: 10px; color: var(--text-dim); font-size: 14px; font-weight: 500; text-decoration: none; transition: all 0.2s; }
+  .my-menu-item:hover { background: rgba(225,6,0,0.12); color: #fff; transform: translateX(3px); }
+  .my-menu-item.active { background: rgba(225,6,0,0.15); color: #fff; }
+  .my-menu-icon { width: 22px; text-align: center; font-size: 16px; }
+
+  .tx-card { background: #0e0e0e; border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; }
+  .tx-list { display: flex; flex-direction: column; }
+  .tx-item { display: flex; align-items: center; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--border); }
+  .tx-item:last-child { border-bottom: none; }
+  .tx-arrow { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; font-weight: 900; }
+  .tx-arrow.income { background: rgba(74,222,128,0.12); color: #4ade80; }
+  .tx-arrow.outcome { background: rgba(239,68,68,0.12); color: #ef4444; }
+  .tx-body { flex: 1; min-width: 0; }
+  .tx-title { font-size: 13.5px; color: #fff; font-weight: 500; margin-bottom: 3px; }
+  .tx-subtitle { font-size: 11.5px; color: var(--text-dim); }
+  .tx-amount { font-family: 'Unbounded', sans-serif; font-size: 13.5px; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
+  .tx-amount.income { color: #4ade80; }
+  .tx-amount.outcome { color: #ef4444; }
+  .tx-date { font-size: 11px; color: var(--text-dim); white-space: nowrap; flex-shrink: 0; margin-left: 8px; }
+
+  .pagination { display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 20px; }
+  .pg-btn { min-width: 36px; height: 36px; padding: 0 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-bright); border-radius: 10px; color: var(--text-dim); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.25s; }
+  .pg-btn:hover:not(:disabled) { color: #fff; border-color: var(--red); background: rgba(225,6,0,0.08); }
+  .pg-btn.active { background: rgba(225,6,0,0.15); color: #fff; border-color: var(--red); }
+  .pg-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  @media (max-width: 699px) {
+    .my-page { padding: 70px 12px 120px; }
+    .my-menu { width: 280px; right: -50px; }
+    .tx-card { padding: 14px 16px; }
+    .tx-item { gap: 10px; padding: 12px 0; }
+    .tx-title { font-size: 12px; }
+    .tx-amount { font-size: 12px; }
+    .tx-date { font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-layer"><div class="bg-glow-1"></div><div class="bg-glow-2"></div><div class="bg-glow-3"></div><div class="bg-grid"></div><div class="particles" id="particles"></div></div>
+
+<div class="auth-widget" id="authWidget"></div>
+
+<main class="my-page">
+  <div class="my-container">
+    <div class="my-header">
+      <div class="my-header-left">
+        <div class="my-header-balance"><span style="color:#fbbf24;">🔥</span> <span id="headerBalance">0 ₽</span></div>
+        <div class="my-header-balance" style="border-color:rgba(251,191,36,0.3);"><span style="color:#fbbf24;">🪙</span> <span id="headerCoins">0</span></div>
+      </div>
+      <div class="my-header-right">
+        <div class="icon-badge"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">9+</span></div>
+        <div class="profile-avatar-btn" id="profileAvatarBtn" onclick="toggleProfileMenu(event)">
+          <img id="headerAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          <div id="profileMenuContent"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tx-card">
+      <div class="tx-list">
+        <div class="tx-item"><div class="tx-arrow income">↓</div><div class="tx-body"><div class="tx-title">Награда за стрик: +5 рублей</div></div><div class="tx-amount income">+5₽</div><div class="tx-date">08:07 03.10.2026</div></div>
+        <div class="tx-item"><div class="tx-arrow income">↓</div><div class="tx-body"><div class="tx-title">Награда за стрик: +5 рублей</div></div><div class="tx-amount income">+5₽</div><div class="tx-date">08:06 03.10.2026</div></div>
+        <div class="tx-item"><div class="tx-arrow outcome">↑</div><div class="tx-body"><div class="tx-title">Покупка INTERIAL+ (90 дн.)</div><div class="tx-subtitle">Срок: 90 дней</div></div><div class="tx-amount outcome">-629₽</div><div class="tx-date">15:54 01.10.2026</div></div>
+        <div class="tx-item"><div class="tx-arrow income">↓</div><div class="tx-body"><div class="tx-title">Боевой пропуск: 140 койнов</div></div><div class="tx-amount income">+140 койнов</div><div class="tx-date">17:01 30.09.2026</div></div>
+        <div class="tx-item"><div class="tx-arrow income">↓</div><div class="tx-body"><div class="tx-title">Боевой пропуск: 140 койнов</div></div><div class="tx-amount income">+140 койнов</div><div class="tx-date">17:01 30.09.2026</div></div>
+        <div class="tx-item"><div class="tx-arrow income">↓</div><div class="tx-body"><div class="tx-title">Активация промокода пойдемтеиграть</div></div><div class="tx-amount income">+15₽</div><div class="tx-date">15:01 30.09.2026</div></div>
+        <div class="tx-item"><div class="tx-arrow income">↓</div><div class="tx-body"><div class="tx-title">Активация промокода запустилимск</div></div><div class="tx-amount income">+25₽</div><div class="tx-date">14:52 28.09.2026</div></div>
+        <div class="tx-item"><div class="tx-arrow income">↓</div><div class="tx-body"><div class="tx-title">Активация промокода 800</div></div><div class="tx-amount income">+40₽</div><div class="tx-date">18:39 27.09.2026</div></div>
+        <div class="tx-item"><div class="tx-arrow income">↓</div><div class="tx-body"><div class="tx-title">Боевой пропуск: 140 койнов</div></div><div class="tx-amount income">+140 койнов</div><div class="tx-date">09:04 26.09.2026</div></div>
+        <div class="tx-item"><div class="tx-arrow income">↓</div><div class="tx-body"><div class="tx-title">Победа в игре слов</div></div><div class="tx-amount income">+66₽</div><div class="tx-date">18:40 21.09.2026</div></div>
+      </div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </div>
+</main>
+
+<nav class="bottom-nav">
+  <a class="nav-btn" href="/index.html"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Главная</span></a>
+  <a class="nav-btn" href="/rules.html"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Правила</span></a>
+  <a class="nav-btn" href="/roles.html"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Роли</span></a>
+  <a class="nav-btn" href="/apply.html"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>Заявка</span></a>
+  <a class="nav-btn active" href="/profile.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg><span>Профиль</span></a>
+</nav>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script src="/js/common.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/my-profile.js"></script>
+<script>
+let currentPage = 1;
+const TOTAL_PAGES = 13;
+
+window.addEventListener('auth:changed', (e) => {
+  const user = e.detail.user;
+  if (!user) return;
+  document.getElementById('headerAvatar').src = user.avatar || '';
+  document.getElementById('headerBalance').textContent = `${user.balance || 0} ₽`;
+  document.getElementById('headerCoins').textContent = `${user.coins || 0}`;
+  document.getElementById('profileMenuContent').innerHTML = renderProfileMenu('transactions');
+  renderPagination();
+});
+
+function renderPagination() {
+  const el = document.getElementById('pagination');
+  const pages = [1, 2, 3, 4, 13];
+  el.innerHTML = `
+    <button class="pg-btn" onclick="goPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>‹</button>
+    ${pages.map(p => `<button class="pg-btn ${p === currentPage ? 'active' : ''}" onclick="goPage(${p})">${p}</button>`).join('')}
+    <button class="pg-btn" onclick="goPage(${currentPage + 1})" ${currentPage === TOTAL_PAGES ? 'disabled' : ''}>›</button>
+  `;
+}
+
+function goPage(n) {
+  if (n < 1 || n > TOTAL_PAGES) return;
+  currentPage = n;
+  renderPagination();
+}
+</script>
+</body>
+</html>
