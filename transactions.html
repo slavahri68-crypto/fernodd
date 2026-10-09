@@ -10,8 +10,8 @@
 <script src="/js/config.js"></script>
 <style>
   body > .auth-widget { display: none !important; }
-  .my-page { min-height: 100vh; padding: 80px 24px 140px; position: relative; z-index: 1; }
-  .my-container { max-width: 1100px; margin: 0 auto; }
+  .my-page { min-height: 100vh; padding: 80px clamp(16px, 2.5vw, 56px) 140px; position: relative; z-index: 1; }
+  .my-container { width: 100%; max-width: 1920px; margin: 0 auto; }
   .tx-card { background: #0e0e0e; border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; }
   .tx-list { display: flex; flex-direction: column; }
   .tx-item { display: flex; align-items: center; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--border); }

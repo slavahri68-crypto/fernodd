@@ -11,10 +11,4 @@
 /referrals/*    /referrals.html    200
 /skins/*        /skins.html        200
 
-/profile  /profile.html  200
-/shop     /shop.html     200
-/admin    /admin.html    200
-/rules    /rules.html    200
-/roles    /roles.html    200
-/apply    /apply.html    200
-/friends  /friends.html  200
+/  /index.html  200

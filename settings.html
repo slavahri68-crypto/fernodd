@@ -10,31 +10,292 @@
 <script src="/js/config.js"></script>
 <style>
   body > .auth-widget { display: none !important; }
-  .my-page { min-height: 100vh; padding: 80px 24px 140px; position: relative; z-index: 1; }
-  .my-container { max-width: 900px; margin: 0 auto; }
+  .my-page { min-height: 100vh; padding: 80px clamp(16px, 2.5vw, 56px) 140px; position: relative; z-index: 1; }
+  .my-container { width: 100%; max-width: 1200px; margin: 0 auto; }
 
   .settings-card { background: #0e0e0e; border: 1px solid var(--border); border-radius: 14px; padding: 24px; }
   .form-label { display: block; font-size: 13px; color: #fff; margin-bottom: 8px; font-weight: 500; }
   .form-input { width: 100%; padding: 12px 16px; background: var(--bg-elevated); border: 1px solid var(--border-bright); border-radius: 10px; color: #fff; font-family: 'Inter', sans-serif; font-size: 13.5px; outline: none; margin-bottom: 20px; transition: all 0.3s; }
   .form-input:focus { border-color: var(--red); box-shadow: 0 0 0 4px rgba(225,6,0,0.12); }
   .form-input::placeholder { color: #555; }
-  .form-row-btn { display: flex; gap: 8px; }
+
   .form-save-btn { padding: 12px 20px; background: linear-gradient(135deg, var(--red), var(--red-dark)); border: none; border-radius: 10px; color: #fff; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.3s; white-space: nowrap; }
   .form-save-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(225,6,0,0.4); }
   .form-save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .form-hint { font-size: 11px; color: var(--text-dim); margin-top: -14px; margin-bottom: 20px; }
-  .form-hint.warn { color: var(--red); }
 
-  .form-link-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
-  .form-link-label { font-size: 13px; color: #fff; font-weight: 500; display: flex; align-items: center; gap: 10px; }
-  .badge-tag { padding: 3px 10px; background: linear-gradient(135deg, #fbbf24, #d97706); color: #000; border-radius: 100px; font-size: 10px; font-weight: 900; letter-spacing: 0.5px; font-family: 'Unbounded', sans-serif; }
-  .form-link-remove { font-size: 11px; color: var(--text-dim); cursor: pointer; text-decoration: underline; }
-  .form-link-remove:hover { color: var(--red); }
+  .link-block {
+    background: linear-gradient(145deg, #111111 0%, #0a0a0a 100%);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 20px 20px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .link-block::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--red), transparent);
+    opacity: 0.6;
+    transition: opacity 0.3s;
+  }
+  .link-block.valid::before { opacity: 1; }
+  .link-block.valid { border-color: rgba(74,222,128,0.35); }
+  .link-block.error { border-color: rgba(239,68,68,0.45); }
 
-  .refixed-input { display: flex; align-items: center; flex: 1; background: var(--bg-elevated); border: 1px solid var(--border-bright); border-radius: 10px; overflow: hidden; transition: all 0.3s; }
-  .refixed-input:focus-within { border-color: var(--red); box-shadow: 0 0 0 4px rgba(225,6,0,0.12); }
-  .refixed-prefix { padding: 12px 12px; color: var(--text-dim); font-size: 12px; background: rgba(255,255,255,0.02); border-right: 1px solid var(--border-bright); white-space: nowrap; user-select: none; font-family: 'Inter', sans-serif; }
-  .refixed-input .form-input { border: none !important; border-radius: 0 !important; margin-bottom: 0 !important; flex: 1; box-shadow: none !important; background: transparent !important; min-width: 0; }
+  .link-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .link-head-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .link-head-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.2px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .link-head-title .ico {
+    width: 24px; height: 24px;
+    border-radius: 7px;
+    background: rgba(225,6,0,0.12);
+    border: 1px solid rgba(225,6,0,0.3);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+  }
+  .link-head-clear {
+    font-size: 11.5px;
+    color: var(--text-dim);
+    cursor: pointer;
+    text-decoration: none;
+    padding: 4px 10px;
+    border-radius: 8px;
+    transition: all 0.2s;
+    background: transparent;
+    border: 1px solid transparent;
+    font-family: 'Inter', sans-serif;
+  }
+  .link-head-clear:hover { color: var(--red); background: rgba(225,6,0,0.08); border-color: rgba(225,6,0,0.25); }
+
+  .badge-tag {
+    padding: 3px 10px;
+    background: linear-gradient(135deg, #fbbf24, #d97706);
+    color: #000;
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    font-family: 'Unbounded', sans-serif;
+    box-shadow: 0 0 14px rgba(251,191,36,0.35);
+  }
+
+  .link-input-row {
+    display: flex;
+    align-items: stretch;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-bright);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.25s;
+    position: relative;
+  }
+  .link-input-row:focus-within { border-color: var(--red); box-shadow: 0 0 0 4px rgba(225,6,0,0.12); }
+  .link-block.valid .link-input-row { border-color: rgba(74,222,128,0.5); box-shadow: 0 0 0 4px rgba(74,222,128,0.08); }
+  .link-block.error .link-input-row { border-color: rgba(239,68,68,0.5); box-shadow: 0 0 0 4px rgba(239,68,68,0.08); }
+
+  .link-prefix {
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    background: rgba(255,255,255,0.025);
+    border-right: 1px solid var(--border-bright);
+    color: var(--text-dim);
+    font-size: 12px;
+    font-family: 'Inter', monospace;
+    white-space: nowrap;
+    user-select: none;
+    flex-shrink: 0;
+    gap: 6px;
+  }
+  .link-prefix .domain { color: var(--text-dim); }
+  .link-prefix .path { color: var(--red); font-weight: 600; }
+
+  .link-input {
+    flex: 1;
+    min-width: 0;
+    padding: 13px 14px;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    outline: none;
+  }
+  .link-input::placeholder { color: #444; font-weight: 400; letter-spacing: 0; font-family: 'Inter', sans-serif; }
+
+  .link-input-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 8px;
+    border-left: 1px solid var(--border-bright);
+    background: rgba(255,255,255,0.01);
+  }
+  .link-icon-btn {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    padding: 0;
+  }
+  .link-icon-btn:hover { color: #fff; background: rgba(255,255,255,0.05); border-color: var(--border-bright); }
+  .link-icon-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  .link-status-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 10px;
+    min-height: 20px;
+    flex-wrap: wrap;
+  }
+  .link-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11.5px;
+    font-weight: 500;
+    transition: color 0.25s;
+  }
+  .link-status .dot-indicator {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+    box-shadow: 0 0 8px currentColor;
+  }
+  .link-status.ok { color: #4ade80; }
+  .link-status.err { color: #ef4444; }
+  .link-status.checking { color: #60a5fa; }
+  .link-status.idle { color: var(--text-dim); }
+  .link-status .spin-mini {
+    width: 10px; height: 10px;
+    border: 1.5px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: inline-block;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .link-counter {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 10.5px;
+    color: var(--text-dim);
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    transition: color 0.25s;
+  }
+  .link-counter.warn { color: #fbbf24; }
+  .link-counter.max { color: #ef4444; }
+
+  .link-preview {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.02);
+    border: 1px dashed var(--border-bright);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--text-dim);
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+  .link-preview .pv-icon {
+    width: 24px; height: 24px;
+    border-radius: 6px;
+    background: rgba(96,165,250,0.12);
+    border: 1px solid rgba(96,165,250,0.3);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+  .link-preview .pv-url {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: 'Inter', monospace;
+    color: #fff;
+    font-size: 11.5px;
+  }
+  .link-preview .pv-url b { color: var(--red); font-weight: 700; }
+  .link-preview .pv-copy {
+    font-size: 10.5px;
+    color: #60a5fa;
+    cursor: pointer;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: rgba(96,165,250,0.1);
+    border: 1px solid rgba(96,165,250,0.25);
+    transition: all 0.2s;
+    font-weight: 600;
+    flex-shrink: 0;
+    font-family: 'Inter', sans-serif;
+  }
+  .link-preview .pv-copy:hover { background: rgba(96,165,250,0.2); }
+
+  .link-save-row {
+    margin-top: 14px;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .link-save-btn {
+    padding: 11px 22px;
+    background: linear-gradient(135deg, var(--red), var(--red-dark));
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700;
+    font-size: 12.5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 6px 20px rgba(225,6,0,0.35);
+    letter-spacing: -0.2px;
+  }
+  .link-save-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(225,6,0,0.55); }
+  .link-save-btn:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
+  .link-save-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 
   .discord-link-box { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: rgba(96,165,250,0.06); border: 1px solid rgba(96,165,250,0.35); border-radius: 10px; margin-bottom: 20px; gap: 12px; flex-wrap: wrap; }
   .discord-link-info { display: flex; align-items: center; gap: 12px; }
@@ -47,7 +308,13 @@
   @media (max-width: 699px) {
     .my-page { padding: 70px 12px 120px; }
     .settings-card { padding: 18px; }
-    .refixed-prefix { font-size: 10px; padding: 12px 8px; }
+    .link-prefix { padding: 0 10px; font-size: 10.5px; }
+    .link-prefix .domain { display: none; }
+    .link-input { font-size: 12.5px; padding: 12px 10px; }
+    .link-head-title { font-size: 12px; }
+    .link-preview { font-size: 11px; padding: 8px 12px; }
+    .link-preview .pv-url { font-size: 10.5px; }
+    .link-save-btn { width: 100%; justify-content: center; }
   }
 </style>
 </head>
@@ -80,18 +347,51 @@
       <label class="form-label">Введите ссылку на фон</label>
       <input class="form-input" id="bgInput" placeholder="https://example.com/image.jpg">
 
-      <div class="form-link-row">
-        <div class="form-link-label">Ссылка профиля <span class="badge-tag" id="plusBadge" style="display:none;">FERNODD+</span></div>
-        <div class="form-link-remove" onclick="removeProfileLink()">Убрать ссылку</div>
-      </div>
-      <div class="form-row-btn">
-        <div class="refixed-input">
-          <span class="refixed-prefix">https://fernodd.netlify.app/profile/</span>
-          <input class="form-input" id="linkInput" placeholder="love" maxlength="20">
+      <div class="link-block" id="linkBlock">
+        <div class="link-head">
+          <div class="link-head-left">
+            <span class="link-head-title"><span class="ico">🔗</span> Ссылка профиля</span>
+            <span class="badge-tag" id="plusBadge" style="display:none;">FERNODD+</span>
+          </div>
+          <button class="link-head-clear" onclick="clearProfileLink()">Убрать</button>
         </div>
-        <button class="form-save-btn" onclick="saveProfileLink()">Сохранить</button>
+
+        <div class="link-input-row">
+          <div class="link-prefix">
+            <span class="domain">fernodd.netlify.app</span><span class="path">/profile/</span>
+          </div>
+          <input class="link-input" id="linkInput" placeholder="love" maxlength="20" autocomplete="off" spellcheck="false">
+          <div class="link-input-actions">
+            <button class="link-icon-btn" onclick="copyProfileUrl()" title="Скопировать ссылку">
+              <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            </button>
+            <button class="link-icon-btn" onclick="clearProfileLink()" title="Очистить">
+              <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="link-status-row">
+          <span class="link-status idle" id="linkStatus">
+            <span class="dot-indicator"></span>
+            <span id="linkStatusText">3–20 символов: латиница, цифры, «_» и «-»</span>
+          </span>
+          <span class="link-counter" id="linkCounter">0 / 20</span>
+        </div>
+
+        <div class="link-preview" id="linkPreview" style="display:none;">
+          <span class="pv-icon">🌐</span>
+          <span class="pv-url" id="linkPreviewUrl"></span>
+          <span class="pv-copy" onclick="copyProfileUrl()">Копировать</span>
+        </div>
+
+        <div class="link-save-row">
+          <button class="link-save-btn" id="linkSaveBtn" onclick="saveProfileLink()" disabled>
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Сохранить ссылку
+          </button>
+        </div>
       </div>
-      <div class="form-hint" id="linkHint">3–20 символов: латиница, цифры, «_» и «-»</div>
 
       <label class="form-label">Привязка Discord</label>
       <div class="discord-link-box" id="discordBox">
@@ -108,7 +408,7 @@
       <label class="form-label">Введите VK</label>
       <input class="form-input" id="vkInput" placeholder="https://vk.com/username">
 
-      <button class="form-save-btn" style="width:100%;" id="saveAllBtn" onclick="saveAllSettings()">Сохранить</button>
+      <button class="form-save-btn" style="width:100%;" id="saveAllBtn" onclick="saveAllSettings()">Сохранить все изменения</button>
     </div>
   </div>
 </main>
@@ -128,6 +428,9 @@
 <script src="/js/auth.js"></script>
 <script>
 let currentUserData = null;
+let linkCheckTimer = null;
+let lastCheckedLink = '';
+let linkStatus = 'idle';
 
 window.addEventListener('auth:changed', async (e) => {
   const user = e.detail.user;
@@ -136,11 +439,10 @@ window.addEventListener('auth:changed', async (e) => {
   document.getElementById('profileMenuContent').innerHTML = renderProfileMenu('settings');
   currentUserData = user;
 
-  try {
-    const hasPlus = (user.roles || []).some(r => r.toLowerCase().startsWith('fernodd+'));
-    const badge = document.getElementById('plusBadge');
-    if (badge) badge.style.display = hasPlus ? 'inline-block' : 'none';
-  } catch (err) { console.error(err); }
+  const allRoles = [...(user.roles || []), ...(user.siteRoles || [])];
+  const hasPlus = allRoles.some(r => r && r.toLowerCase().startsWith('fernodd+'));
+  const badge = document.getElementById('plusBadge');
+  if (badge) badge.style.display = hasPlus ? 'inline-block' : 'none';
 
   loadProfileData();
   loadDiscordInfo(user.discordId);
@@ -155,8 +457,140 @@ async function loadProfileData() {
     document.getElementById('linkInput').value = u.profileLink || '';
     document.getElementById('tgInput').value = u.telegram || '';
     document.getElementById('vkInput').value = u.vk || '';
+    updateLinkUI();
   } catch (e) { console.error(e); }
 }
+
+const linkInput = document.getElementById('linkInput');
+linkInput.addEventListener('input', () => {
+  let v = linkInput.value.replace(/[^a-zA-Z0-9_\-]/g, '').toLowerCase().slice(0, 20);
+  if (v !== linkInput.value) linkInput.value = v;
+  updateLinkUI();
+});
+
+async function updateLinkUI() {
+  const v = linkInput.value.trim();
+  const block = document.getElementById('linkBlock');
+  const statusEl = document.getElementById('linkStatus');
+  const statusText = document.getElementById('linkStatusText');
+  const counter = document.getElementById('linkCounter');
+  const preview = document.getElementById('linkPreview');
+  const previewUrl = document.getElementById('linkPreviewUrl');
+  const saveBtn = document.getElementById('linkSaveBtn');
+
+  counter.textContent = `${v.length} / 20`;
+  counter.className = 'link-counter';
+  if (v.length >= 20) counter.classList.add('max');
+  else if (v.length >= 16) counter.classList.add('warn');
+
+  block.classList.remove('valid', 'error');
+
+  if (!v) {
+    statusEl.className = 'link-status idle';
+    statusText.textContent = '3–20 символов: латиница, цифры, «_» и «-»';
+    statusEl.querySelector('.dot-indicator').style.display = '';
+    preview.style.display = 'none';
+    saveBtn.disabled = true;
+    linkStatus = 'idle';
+    lastCheckedLink = '';
+    return;
+  }
+
+  if (v.length < 3 || !/^[a-zA-Z0-9_\-]{3,20}$/.test(v)) {
+    statusEl.className = 'link-status err';
+    statusText.textContent = v.length < 3 ? 'Минимум 3 символа' : 'Неверный формат';
+    statusEl.querySelector('.dot-indicator').style.display = '';
+    preview.style.display = 'none';
+    block.classList.add('error');
+    saveBtn.disabled = true;
+    linkStatus = 'err';
+    return;
+  }
+
+  preview.style.display = 'flex';
+  const origin = window.location.origin;
+  previewUrl.innerHTML = `${origin}/profile/<b>${escapeHtml(v)}</b>`;
+
+  if (v === lastCheckedLink) return;
+  clearTimeout(linkCheckTimer);
+  linkStatus = 'checking';
+  statusEl.className = 'link-status checking';
+  statusText.textContent = 'Проверяем доступность...';
+  statusEl.querySelector('.dot-indicator').style.display = 'none';
+
+  linkCheckTimer = setTimeout(async () => {
+    try {
+      const r = await api('/api/profile/check-link?link=' + encodeURIComponent(v));
+      lastCheckedLink = v;
+      if (r.available) {
+        linkStatus = 'ok';
+        statusEl.className = 'link-status ok';
+        statusEl.innerHTML = '<span class="dot-indicator"></span><span>Свободно · можно сохранить</span>';
+        block.classList.add('valid');
+        block.classList.remove('error');
+        saveBtn.disabled = false;
+      } else {
+        linkStatus = 'err';
+        statusEl.className = 'link-status err';
+        const reason = r.reason === 'taken' ? 'Уже занято' : 'Неверный формат';
+        statusEl.innerHTML = `<span class="dot-indicator"></span><span>${reason}</span>`;
+        block.classList.add('error');
+        block.classList.remove('valid');
+        saveBtn.disabled = true;
+      }
+    } catch (e) {
+      linkStatus = 'ok';
+      statusEl.className = 'link-status ok';
+      statusEl.innerHTML = '<span class="dot-indicator"></span><span>Готово к сохранению</span>';
+      block.classList.add('valid');
+      saveBtn.disabled = false;
+    }
+  }, 500);
+}
+
+window.clearProfileLink = function () {
+  linkInput.value = '';
+  updateLinkUI();
+  linkInput.focus();
+};
+
+window.copyProfileUrl = function () {
+  const v = linkInput.value.trim();
+  if (!v) { showToast('Введите ссылку', 'error'); return; }
+  const url = `${window.location.origin}/profile/${v}`;
+  navigator.clipboard.writeText(url)
+    .then(() => showToast('✅ Ссылка скопирована', 'success'))
+    .catch(() => showToast('Не удалось скопировать', 'error'));
+};
+
+window.saveProfileLink = async function () {
+  const v = linkInput.value.trim();
+  if (!v || linkStatus !== 'ok') { showToast('Проверьте ссылку', 'error'); return; }
+
+  const btn = document.getElementById('linkSaveBtn');
+  btn.disabled = true;
+  const oldHTML = btn.innerHTML;
+  btn.innerHTML = '<span class="spin-mini" style="width:12px;height:12px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;display:inline-block;animation:spin 0.7s linear infinite;"></span> Сохранение...';
+
+  try {
+    await api('/api/profile/update', {
+      method: 'POST',
+      body: JSON.stringify({ profileLink: v }),
+    });
+    showToast('✅ Ссылка сохранена', 'success');
+  } catch (e) {
+    const errors = {
+      bad_link_format: 'Неверный формат ссылки',
+      link_taken: 'Эта ссылка уже занята',
+      no_db: 'Ошибка базы данных',
+    };
+    const key = e.message.split(' — ')[0];
+    showToast('❌ ' + (errors[key] || e.message), 'error');
+  } finally {
+    btn.innerHTML = oldHTML;
+    btn.disabled = false;
+  }
+};
 
 async function loadDiscordInfo(discordId) {
   const box = document.getElementById('discordBox');
@@ -186,48 +620,41 @@ async function unlinkDiscord() {
   } catch (e) { showToast('Ошибка: ' + e.message, 'error'); }
 }
 
-function removeProfileLink() { document.getElementById('linkInput').value = ''; }
-
-function saveProfileLink() {
-  const link = document.getElementById('linkInput').value.trim();
-  const hint = document.getElementById('linkHint');
-  if (link && !/^[a-zA-Z0-9_\-]{3,20}$/.test(link)) {
-    hint.textContent = '❌ 3–20 символов: латиница, цифры, _ и -';
-    hint.classList.add('warn');
-    return;
-  }
-  hint.textContent = '3–20 символов: латиница, цифры, «_» и «-»';
-  hint.classList.remove('warn');
-  showToast('✅ Ссылка сохранена', 'success');
-}
-
 async function saveAllSettings() {
   const btn = document.getElementById('saveAllBtn');
   btn.disabled = true;
   btn.textContent = 'Сохранение...';
+
+  const linkVal = linkInput.value.trim();
+  if (linkVal && linkStatus !== 'ok') {
+    showToast('❌ Ссылка профиля не прошла проверку', 'error');
+    btn.disabled = false;
+    btn.textContent = 'Сохранить все изменения';
+    return;
+  }
+
   const payload = {
     description: document.getElementById('descInput').value.trim(),
     backgroundUrl: document.getElementById('bgInput').value.trim(),
-    profileLink: document.getElementById('linkInput').value.trim(),
+    profileLink: linkVal,
     telegram: document.getElementById('tgInput').value.trim(),
     vk: document.getElementById('vkInput').value.trim(),
   };
-  if (payload.profileLink && !/^[a-zA-Z0-9_\-]{3,20}$/.test(payload.profileLink)) {
-    showToast('❌ Неверный формат ссылки профиля', 'error');
-    btn.disabled = false;
-    btn.textContent = 'Сохранить';
-    return;
-  }
+
   try {
     await api('/api/profile/update', { method: 'POST', body: JSON.stringify(payload) });
     showToast('✅ Настройки сохранены', 'success');
   } catch (e) {
-    const errors = { bad_link_format: 'Неверный формат ссылки профиля', no_db: 'Ошибка базы данных' };
+    const errors = {
+      bad_link_format: 'Неверный формат ссылки профиля',
+      link_taken: 'Ссылка уже занята',
+      no_db: 'Ошибка базы данных',
+    };
     const key = e.message.split(' — ')[0];
     showToast('❌ ' + (errors[key] || e.message), 'error');
   } finally {
     btn.disabled = false;
-    btn.textContent = 'Сохранить';
+    btn.textContent = 'Сохранить все изменения';
   }
 }
 </script>

@@ -12,21 +12,9 @@
 * { box-sizing: border-box; }
 body > .auth-widget { display: none !important; }
 
-.admin-wrap { min-height: 100vh; position: relative; z-index: 1; padding: 84px 24px 60px; max-width: 1400px; margin: 0 auto; overflow: visible; }
+.admin-wrap { min-height: 100vh; position: relative; z-index: 1; padding: 84px clamp(16px, 2.5vw, 56px) 60px; width: 100%; max-width: 1920px; margin: 0 auto; overflow: visible; }
 
-.admin-top {
-  position: absolute;
-  top: 20px;
-  right: 24px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  z-index: 1000;
-}
+.admin-top { position: absolute; top: 20px; right: 24px; display: flex; align-items: center; gap: 12px; padding: 0; background: transparent; border: none; box-shadow: none; z-index: 1000; }
 .admin-brand { display: none !important; }
 .admin-exit { display: none !important; }
 .admin-user { display: flex; align-items: center; gap: 8px; position: relative; z-index: 200; }
@@ -139,7 +127,6 @@ body > .auth-widget { display: none !important; }
 .role-checkbox.checked::after { content: '✓'; color: #fff; font-size: 13px; font-weight: 900; line-height: 1; }
 .role-simple-name { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500; color: var(--text); flex: 1; }
 
-/* График */
 .chart-card { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
 .chart-title { font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 16px; letter-spacing: -0.3px; }
 .line-chart { width: 100%; height: 220px; display: block; }
@@ -154,6 +141,26 @@ body > .auth-widget { display: none !important; }
 .top-staff-avatar { width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0; object-fit: cover; }
 .top-staff-name { flex: 1; font-weight: 600; color: #fff; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .top-staff-count { font-family: 'Unbounded'; color: var(--red); font-weight: 900; font-size: 14px; }
+
+.balances-table { display: flex; flex-direction: column; gap: 8px; }
+.balance-row { display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 12px; transition: all 0.25s; }
+.balance-row:hover { border-color: rgba(225,6,0,0.4); transform: translateX(4px); }
+.balance-avatar { width: 44px; height: 44px; border-radius: 11px; object-fit: cover; flex-shrink: 0; border: 2px solid var(--border-bright); }
+.balance-body { flex: 1; min-width: 0; }
+.balance-name { font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 13.5px; color: #fff; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.balance-steam-id { font-size: 11px; color: var(--text-dim); font-family: monospace; }
+.balance-amount { font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: 16px; color: #4ade80; white-space: nowrap; flex-shrink: 0; margin-right: 12px; }
+.balance-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.balance-btn { padding: 7px 12px; border-radius: 8px; border: 1px solid var(--border-bright); background: rgba(255,255,255,0.04); color: var(--text); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 5px; }
+.balance-btn:hover { border-color: var(--red); background: rgba(225,6,0,0.08); }
+.balance-btn.green { color: #4ade80; border-color: rgba(74,222,128,0.4); background: rgba(74,222,128,0.08); }
+.balance-btn.green:hover { background: rgba(74,222,128,0.18); border-color: #4ade80; }
+.balance-btn.red { color: #ef4444; border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.08); }
+.balance-btn.red:hover { background: rgba(239,68,68,0.18); border-color: #ef4444; }
+.balance-btn.blue { color: #60a5fa; border-color: rgba(96,165,250,0.4); background: rgba(96,165,250,0.08); }
+.balance-btn.blue:hover { background: rgba(96,165,250,0.18); border-color: #60a5fa; }
+.balance-search-row { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.balance-search-row .search-wrap { flex: 1; margin: 0; min-width: 200px; }
 
 .fd-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; }
 .fd-modal-overlay.visible { display: flex; }
@@ -184,6 +191,8 @@ body > .auth-widget { display: none !important; }
   .app-avatar { width: 48px; height: 48px; }
   .fd-modal { padding: 22px; }
   .admin-top { top: 12px; right: 12px; }
+  .balance-row { flex-wrap: wrap; }
+  .balance-actions { width: 100%; justify-content: flex-end; margin-top: 8px; }
 }
 </style>
 </head>
@@ -268,25 +277,8 @@ let ticketPoll = null;
 let lastMessages = '';
 let selectedMember = null;
 let availableRoles = [];
-
-function getToken() { return localStorage.getItem('fernodd_token') || ''; }
-
-async function api(path, options = {}) {
-  const base = window.API_BASE || '';
-  const r = await fetch(base + path, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + getToken(),
-      ...(options.headers || {})
-    }
-  });
-  const text = await r.text();
-  let data;
-  try { data = JSON.parse(text); } catch { data = { error: text }; }
-  if (!r.ok) throw new Error((data.error || 'error') + ' — ' + (data.details || ''));
-  return data;
-}
+let balancesCache = [];
+let balancesSearch = '';
 
 function esc(s) {
   return String(s == null ? '' : s)
@@ -294,16 +286,22 @@ function esc(s) {
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-function toast(text, type = 'info') {
-  const wrap = document.getElementById('toastWrap');
-  if (!wrap) return;
-  const icons = { success: '✓', error: '✕', info: 'ℹ' };
-  const el = document.createElement('div');
-  el.className = 'toast ' + type;
-  el.innerHTML = `<span style="font-weight:900;">${icons[type] || 'ℹ'}</span><span>${esc(text)}</span>`;
-  wrap.appendChild(el);
-  setTimeout(() => { el.classList.add('fade'); setTimeout(() => el.remove(), 300); }, 3000);
+function isOwner() { return !!(window.currentUser && window.currentUser.isOwner); }
+function isHeadAdminOrOwner() {
+  const u = window.currentUser;
+  if (!u) return false;
+  if (u.isHeadAdmin || u.isOwner) return true;
+  const allRoles = [...(u.roles || []), ...(u.siteRoles || [])];
+  return allRoles.includes('Главная администрация');
 }
+function isWatcherOrAbove() {
+  const u = window.currentUser;
+  if (!u) return false;
+  if (u.isHeadAdmin || u.isOwner) return true;
+  const allRoles = [...(u.roles || []), ...(u.siteRoles || [])];
+  return allRoles.includes('Следящий');
+}
+function canApprove() { return isWatcherOrAbove(); }
 
 function closeModal() {
   document.getElementById('fdModal').classList.remove('visible');
@@ -392,16 +390,6 @@ function radioModal({ icon = '❓', title, desc, options = [], confirmText = 'П
   };
 }
 
-function isOwner() { return !!(window.currentUser && window.currentUser.isOwner); }
-function isHeadAdminOrOwner() { return !!(window.currentUser && (window.currentUser.isHeadAdmin || window.currentUser.isOwner)); }
-function isWatcherOrAbove() {
-  const u = window.currentUser;
-  if (!u) return false;
-  if (u.isHeadAdmin || u.isOwner) return true;
-  return (u.roles || []).some(r => r === 'Следящий');
-}
-function canApprove() { return isWatcherOrAbove(); }
-
 window.addEventListener('auth:changed', (e) => {
   const user = e.detail.user;
   isAuthorized = window.canAccessAdmin ? window.canAccessAdmin(user) : false;
@@ -426,13 +414,14 @@ setTimeout(() => {
 }, 2000);
 
 function switchTab(tab) {
+  if (tab === 'manage' && !isHeadAdminOrOwner()) {
+    toast('Раздел доступен только главной администрации.', 'error');
+    return;
+  }
   currentTab = tab;
   document.querySelectorAll('.tab-block').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
   if (tab === 'moderator') { renderModerator(); loadModeratorCounts(); }
-  else {
-    if (!isHeadAdminOrOwner()) { toast('Раздел доступен только главной администрации.', 'error'); switchTab('moderator'); return; }
-    renderManage();
-  }
+  else renderManage();
 }
 
 async function loadModeratorCounts() {
@@ -739,6 +728,7 @@ function renderManage() {
     <div class="subtabs">
       <button class="subtab ${manageSub === 'staff' ? 'active' : ''}" onclick="setMgSub('staff')">👥 Персонал</button>
       <button class="subtab ${manageSub === 'analytics' ? 'active' : ''}" onclick="setMgSub('analytics')">📊 Статистика</button>
+      <button class="subtab ${manageSub === 'balances' ? 'active' : ''}" onclick="setMgSub('balances')">💰 Баланс</button>
       <button class="subtab ${manageSub === 'roles' ? 'active' : ''}" onclick="setMgSub('roles')">👑 Выдача ролей</button>
       <button class="subtab ${manageSub === 'promo' ? 'active' : ''}" onclick="setMgSub('promo')">🎟️ Промокоды</button>
       <button class="subtab ${manageSub === 'orders' ? 'active' : ''}" onclick="setMgSub('orders')">🛒 Заказы</button>
@@ -757,6 +747,7 @@ async function loadMgBody() {
   if (!body) return;
   if (manageSub === 'staff') return loadStaffBlock(body);
   if (manageSub === 'analytics') return loadAnalyticsBlock(body);
+  if (manageSub === 'balances') return loadBalancesBlock(body);
   if (manageSub === 'settings') return loadSettingsBlock(body);
   if (manageSub === 'roles') return loadRolesBlock(body);
   if (manageSub === 'promo') return loadPromoBlock(body);
@@ -800,17 +791,28 @@ function renderStaffGrid() {
   if (!grid) return;
   const list = staffData[staffFilter] || [];
   if (!list.length) { grid.innerHTML = '<div class="empty-state">Нет участников.</div>'; return; }
+
   grid.innerHTML = list.map(s => {
     const status = (s.presence && s.presence.status) || 'offline';
     const color = ROLE_COLOR_OVERRIDE[s.topRole] || s.topRoleColor;
-    return `<div class="staff-tile" style="--role-color:${color};" onclick="window.open('/profile/${s.id}', '_blank')">
-      <div class="staff-avatar-wrap"><img class="staff-avatar" src="${s.avatar}" alt=""><span class="staff-presence ${status}"></span></div>
-      <div class="staff-info"><h3>${esc(s.nickname || s.global_name || s.username)}</h3><span class="staff-role" style="background:${color}22;color:${color};border:1px solid ${color}66;">${esc(s.topRole)}</span></div>
+    const profileId = s.steamId;
+    const clickAttr = profileId
+      ? `onclick="window.open('/profile/${profileId}', '_blank')" style="--role-color:${color};cursor:pointer;"`
+      : `style="--role-color:${color};cursor:default;opacity:0.85;"`;
+    return `<div class="staff-tile" ${clickAttr}>
+      <div class="staff-avatar-wrap">
+        <img class="staff-avatar" src="${s.avatar}" alt="">
+        <span class="staff-presence ${status}"></span>
+      </div>
+      <div class="staff-info">
+        <h3>${esc(s.nickname || s.global_name || s.username)}</h3>
+        <span class="staff-role" style="background:${color}22;color:${color};border:1px solid ${color}66;">${esc(s.topRole)}</span>
+        ${!s.steamId ? '<div style="font-size:10px;color:var(--text-dim);margin-top:3px;">Steam не привязан</div>' : ''}
+      </div>
     </div>`;
   }).join('');
 }
 
-/* ============ СТАТИСТИКА ============ */
 async function loadAnalyticsBlock(body) {
   body.innerHTML = '<div class="skeleton"></div>';
   try {
@@ -890,11 +892,123 @@ async function loadAnalyticsBlock(body) {
   }
 }
 
+async function loadBalancesBlock(body) {
+  if (!isHeadAdminOrOwner()) {
+    body.innerHTML = '<div class="empty-state"><div class="ico">🔒</div>Доступно только главной администрации.</div>';
+    return;
+  }
+  body.innerHTML = '<div class="skeleton"></div><div class="skeleton"></div>';
+  try {
+    const data = await api('/api/admin/balances');
+    balancesCache = data.users || [];
+    renderBalancesBlock(body);
+  } catch (e) {
+    body.innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${esc(e.message)}</div>`;
+  }
+}
+
+function renderBalancesBlock(body) {
+  const totalBalance = balancesCache.reduce((s, u) => s + (u.balance || 0), 0);
+  const withBalance = balancesCache.filter(u => u.balance > 0).length;
+
+  body.innerHTML = `
+    <div class="section-block">
+      <div class="section-block-head">
+        <div>
+          <div class="section-block-title"><span class="ico">💰</span> Управление балансом</div>
+          <div class="section-block-sub">
+            Всего пользователей: <b>${balancesCache.length}</b> · С балансом: <b>${withBalance}</b> · Общий баланс: <b style="color:#4ade80;">${totalBalance.toLocaleString('ru-RU')} ₽</b>
+          </div>
+        </div>
+        <button class="btn-act ghost" onclick="loadBalancesBlock(document.getElementById('mgBody'))">↻ Обновить</button>
+      </div>
+
+      <div class="balance-search-row">
+        <div class="search-wrap">
+          <input class="search-input" id="balanceSearch" placeholder="Поиск по нику или Steam ID..." oninput="onBalanceSearch(this.value)">
+        </div>
+      </div>
+
+      <div class="balances-table" id="balancesTable"></div>
+    </div>
+  `;
+  renderBalancesTable();
+}
+
+function onBalanceSearch(val) {
+  balancesSearch = (val || '').toLowerCase().trim();
+  renderBalancesTable();
+}
+
+function renderBalancesTable() {
+  const el = document.getElementById('balancesTable');
+  if (!el) return;
+  let list = balancesCache;
+  if (balancesSearch) {
+    list = list.filter(u =>
+      (u.username || '').toLowerCase().includes(balancesSearch) ||
+      (u.steamId || '').includes(balancesSearch) ||
+      (u.discordId || '').includes(balancesSearch)
+    );
+  }
+  if (!list.length) {
+    el.innerHTML = '<div class="empty-state"><div class="ico">👥</div>Никого не найдено</div>';
+    return;
+  }
+  el.innerHTML = list.map(u => `
+    <div class="balance-row">
+      <img class="balance-avatar" src="${esc(u.avatar)}" alt="" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
+      <div class="balance-body">
+        <div class="balance-name">${esc(u.username)}</div>
+        <div class="balance-steam-id">${esc(u.steamId)}</div>
+      </div>
+      <div class="balance-amount">${(u.balance || 0).toLocaleString('ru-RU')} ₽</div>
+      <div class="balance-actions">
+        <button class="balance-btn green" onclick="openBalanceModal('${u.steamId}', '${(u.username || '').replace(/'/g, "\\'")}', 'add')">+ Выдать</button>
+        <button class="balance-btn red" onclick="openBalanceModal('${u.steamId}', '${(u.username || '').replace(/'/g, "\\'")}', 'subtract')">− Снять</button>
+        <button class="balance-btn blue" onclick="openBalanceModal('${u.steamId}', '${(u.username || '').replace(/'/g, "\\'")}', 'set')">= Установить</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openBalanceModal(steamId, userName, mode) {
+  const titles = { add: '💰 Выдать баланс', subtract: '💸 Снять баланс', set: '⚙️ Установить баланс' };
+  const confirmClass = mode === 'add' ? 'green' : '';
+  const confirmText = mode === 'add' ? '+ Выдать' : mode === 'subtract' ? '− Снять' : '✓ Установить';
+  const icon = mode === 'add' ? '💰' : mode === 'subtract' ? '💸' : '⚙️';
+
+  formModal({
+    icon, title: titles[mode],
+    fields: [{ id: 'amount', label: 'Сумма (₽)', placeholder: '100', type: 'number' }],
+    confirmText,
+    onConfirm: async (values) => {
+      const amount = Number(values.amount);
+      if (!amount || amount <= 0) { toast('Введите положительное число', 'error'); return; }
+      try {
+        const r = await api('/api/admin/balance/change', {
+          method: 'POST',
+          body: JSON.stringify({ steamId, mode, amount }),
+        });
+        toast(`✓ ${userName}: баланс ${r.oldBalance}₽ → ${r.newBalance}₽`, 'success');
+        const idx = balancesCache.findIndex(u => u.steamId === steamId);
+        if (idx >= 0) balancesCache[idx].balance = r.newBalance;
+        const body = document.getElementById('mgBody');
+        if (body) renderBalancesBlock(body);
+      } catch (e) {
+        const errors = { bad_amount: 'Некорректная сумма', bad_mode: 'Некорректный режим', missing_fields: 'Заполните поля', no_db: 'Ошибка базы данных' };
+        const key = e.message.split(' — ')[0];
+        toast('❌ ' + (errors[key] || e.message), 'error');
+      }
+    }
+  });
+}
+
 async function loadRolesBlock(body) {
   if (!isWatcherOrAbove()) { body.innerHTML = '<div class="empty-state"><div class="ico">🔒</div>Доступно только следящим и выше.</div>'; return; }
   body.innerHTML = `
     <div class="section-block">
-      <div class="section-block-head"><div><div class="section-block-title"><span class="ico">👑</span> Выдача ролей</div><div class="section-block-sub">Роль выдаётся на сайте. В Discord применится после привязки.</div></div></div>
+      <div class="section-block-head"><div><div class="section-block-title"><span class="ico">👑</span> Выдача ролей</div><div class="section-block-sub">Роль выдаётся на сайте сразу. В Discord применится автоматически при привязке.</div></div></div>
       <div class="search-wrap"><input class="search-input" id="steamSearch" placeholder="Steam ID" oninput="searchSteamUsers()"></div>
       <div class="cards-list" id="steamResults"><div class="empty-state">Введите Steam ID</div></div>
       <div id="rolePickArea" style="display:none;margin-top:20px;">
@@ -919,11 +1033,10 @@ async function searchSteamUsers() {
       if (!users.length) { list.innerHTML = '<div class="empty-state">Никого не найдено</div>'; return; }
       list.innerHTML = users.map(u => {
         const roleLabel = u.currentRole ? `<span style="background:rgba(74,222,128,0.15);color:#4ade80;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;">${esc(u.currentRole)}</span>` : '';
-        const pendingLabel = u.pendingRole ? `<span style="background:rgba(251,191,36,0.15);color:#fbbf24;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;">Ожидает: ${esc(u.pendingRole)}</span>` : '';
         return `<div class="app-card compact" style="cursor:pointer;" onclick="pickSteamUser('${u.steamId}', '${(u.personaName || '').replace(/'/g, "\\'")}', '${u.discordId || ''}')">
           <img class="app-avatar" src="${u.avatar}" alt="">
           <div class="app-body">
-            <div class="app-head"><span class="app-name">${esc(u.personaName)}</span> ${roleLabel} ${pendingLabel}</div>
+            <div class="app-head"><span class="app-name">${esc(u.personaName)}</span> ${roleLabel}</div>
             <div class="app-row"><span>Steam: <b>${esc(u.steamId)}</b></span>${u.discordId ? `<span>Discord: <b>${esc(u.discordId)}</b></span>` : '<span style="color:var(--text-dim);">Discord не привязан</span>'}</div>
           </div>
         </div>`;
@@ -950,15 +1063,23 @@ async function pickSteamUser(steamId, name, discordId) {
 
 function giveRole(roleId, roleName) {
   if (!selectedMember) return;
-  const warn = selectedMember.discordId ? 'Discord привязан — роль выдастся сразу.' : 'Discord не привязан — роль сохранится до привязки.';
+  const warn = selectedMember.discordId
+    ? 'Роль будет выдана на сайте и сразу в Discord.'
+    : 'Роль будет выдана на сайте. В Discord она применится автоматически после привязки аккаунта.';
   confirmModal({
     icon: '👑', title: `Выдать роль "${roleName}"?`,
     desc: `Пользователь: ${selectedMember.name}. ${warn}`,
     confirmText: '✓ Выдать', confirmClass: 'green',
     onConfirm: async () => {
       try {
-        await api('/api/give-role', { method: 'POST', body: JSON.stringify({ steamId: selectedMember.steamId, discordId: selectedMember.discordId, roleId }) });
+        const result = await api('/api/give-role', {
+          method: 'POST',
+          body: JSON.stringify({ steamId: selectedMember.steamId, discordId: selectedMember.discordId, roleId })
+        });
         toast(`✓ Роль "${roleName}" выдана`, 'success');
+        if (!result.appliedToDiscord) {
+          setTimeout(() => toast('ℹ В Discord применится после привязки', 'info'), 1200);
+        }
         document.getElementById('rolePickArea').style.display = 'none';
         selectedMember = null;
         document.getElementById('steamSearch').value = '';
@@ -972,7 +1093,7 @@ async function loadPromoBlock(body) {
   if (!isOwner()) { body.innerHTML = '<div class="empty-state"><div class="ico">🔒</div>Только для владельца</div>'; return; }
   body.innerHTML = `
     <div class="section-block">
-      <div class="section-block-head"><div><div class="section-block-title"><span class="ico">🎟️</span> Промокоды</div></div><button class="btn-act green" onclick="openPromoCreate()">+ Создать</button></div>
+      <div class="section-block-head"><div><div class="section-block-title"><span class="ico">🎟️</span> Промокоды</div><div class="section-block-sub">Поддерживается кириллица</div></div><button class="btn-act green" onclick="openPromoCreate()">+ Создать</button></div>
       <div class="cards-list" id="promoList"><div class="loading-state"><div class="spinner"></div> Загрузка...</div></div>
     </div>
   `;
@@ -989,7 +1110,7 @@ async function loadPromoList() {
       <div class="app-card compact">
         <div style="width:40px;height:40px;border-radius:10px;background:rgba(225,6,0,0.12);border:1px solid rgba(225,6,0,0.3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🎟️</div>
         <div class="app-body">
-          <div class="app-head"><span class="app-name" style="font-family:monospace;letter-spacing:1px;">${esc(p.code)}</span><span class="app-date">${new Date(p.createdAt).toLocaleDateString('ru-RU')}</span></div>
+          <div class="app-head"><span class="app-name" style="font-family:'Unbounded',monospace;letter-spacing:1.5px;font-size:13px;">${esc(p.code)}</span><span class="app-date">${new Date(p.createdAt).toLocaleDateString('ru-RU')}</span></div>
           <div class="app-row"><span>💰 <b>${p.amount}</b></span><span>👥 <b>${p.usedCount}</b>${p.maxUses > 0 ? ' / ' + p.maxUses : ''}</span></div>
           <div class="app-actions"><button class="btn-act red" onclick="deletePromo('${esc(p.code)}')">🗑 Удалить</button></div>
         </div>
@@ -999,36 +1120,150 @@ async function loadPromoList() {
 }
 
 function openPromoCreate() {
-  formModal({
-    icon: '🎟️', title: 'Новый промокод',
-    fields: [
-      { id: 'code', label: 'Код', placeholder: 'FERM100' },
-      { id: 'amount', label: 'Сумма (₽)', placeholder: '100', type: 'number' },
-      { id: 'maxUses', label: 'Лимит (0 = ∞)', placeholder: '0', type: 'number', value: '0' },
-    ],
-    confirmText: '+ Создать',
-    onConfirm: async (values) => {
-      if (!values.code || !values.amount) { toast('Заполните поля', 'error'); return; }
-      try {
-        await api('/api/promocodes', { method: 'POST', body: JSON.stringify({ code: values.code, amount: Number(values.amount), maxUses: Number(values.maxUses) || 0 }) });
-        toast('✓ Промокод создан', 'success');
-        loadPromoList();
-      } catch (e) {
-        const errors = { already_exists: 'Такой уже есть', bad_code_format: 'Неверный формат' };
-        const key = e.message.split(' — ')[0];
-        toast(errors[key] || e.message, 'error');
-      }
+  const box = document.getElementById('fdModalBox');
+  box.innerHTML = `
+    <div class="fd-modal-icon">🎟️</div>
+    <h3>Новый промокод</h3>
+    <p style="margin-bottom:14px;">Код автоматически переводится в верхний регистр. Поддерживаются латиница, <b style="color:#fff;">кириллица</b>, цифры, «_» и «-».</p>
+
+    <label class="fd-modal-label">Код промокода</label>
+    <input type="text" class="fd-modal-input" id="fd_code" placeholder="НАПРИМЕР: FERM100 или СКИДКА" maxlength="32" autocomplete="off" spellcheck="false" style="margin-bottom:6px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;min-height:18px;">
+      <span id="fd_code_status" style="font-size:11px;color:var(--text-dim);">3–32 символа · латиница, кириллица, цифры, «_», «-»</span>
+      <span id="fd_code_counter" style="font-size:10.5px;color:var(--text-dim);font-family:'Unbounded';font-weight:600;">0 / 32</span>
+    </div>
+
+    <div id="fd_code_preview" style="display:none;padding:10px 14px;background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.3);border-radius:10px;margin-bottom:14px;font-family:monospace;letter-spacing:1.5px;font-size:14px;color:#4ade80;font-weight:700;">
+      <span style="opacity:0.6;font-size:10px;letter-spacing:0.5px;display:block;margin-bottom:3px;font-family:'Unbounded';">ИТОГОВЫЙ КОД</span>
+      <span id="fd_code_preview_value">—</span>
+    </div>
+
+    <label class="fd-modal-label">Сумма (₽)</label>
+    <input type="number" class="fd-modal-input" id="fd_amount" placeholder="100" min="1">
+
+    <label class="fd-modal-label">Лимит активаций (0 = ∞)</label>
+    <input type="number" class="fd-modal-input" id="fd_maxUses" placeholder="0" value="0" min="0">
+
+    <div style="margin-bottom:14px;">
+      <div style="font-size:10.5px;color:var(--text-dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:1.2px;font-weight:700;">Быстрые пресеты</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button type="button" class="btn-act ghost" style="font-size:11px;" onclick="fdPresetCode('ПРОМО')">ПРОМО</button>
+        <button type="button" class="btn-act ghost" style="font-size:11px;" onclick="fdPresetCode('СКИДКА')">СКИДКА</button>
+        <button type="button" class="btn-act ghost" style="font-size:11px;" onclick="fdPresetCode('БОНУС')">БОНУС</button>
+        <button type="button" class="btn-act ghost" style="font-size:11px;" onclick="fdPresetCode('НОВЫЙГОД')">НОВЫЙГОД</button>
+        <button type="button" class="btn-act ghost" style="font-size:11px;" onclick="fdPresetCode('ЛЕТО')">ЛЕТО</button>
+        <button type="button" class="btn-act ghost" style="font-size:11px;" onclick="fdPresetCode('FERM')">FERM</button>
+      </div>
+    </div>
+
+    <div class="fd-modal-actions">
+      <button class="fd-btn-cancel" onclick="closeModal()">Отмена</button>
+      <button class="fd-btn-confirm" id="fdConfirmBtn" disabled>+ Создать</button>
+    </div>
+  `;
+  document.getElementById('fdModal').classList.add('visible');
+
+  const codeEl = document.getElementById('fd_code');
+  const statusEl = document.getElementById('fd_code_status');
+  const counterEl = document.getElementById('fd_code_counter');
+  const previewEl = document.getElementById('fd_code_preview');
+  const previewValEl = document.getElementById('fd_code_preview_value');
+  const confirmBtn = document.getElementById('fdConfirmBtn');
+
+  function validate() {
+    const raw = codeEl.value;
+    const cleaned = raw.replace(/[^a-zA-Zа-яА-ЯёЁ0-9_\-]/g, '');
+    if (cleaned !== raw) codeEl.value = cleaned;
+
+    const upper = cleaned.toUpperCase();
+    counterEl.textContent = `${upper.length} / 32`;
+
+    if (!upper) {
+      statusEl.textContent = '3–32 символа · латиница, кириллица, цифры, «_», «-»';
+      statusEl.style.color = 'var(--text-dim)';
+      previewEl.style.display = 'none';
+      confirmBtn.disabled = true;
+      return;
     }
-  });
+
+    if (upper.length < 3) {
+      statusEl.textContent = `Минимум 3 символа (сейчас ${upper.length})`;
+      statusEl.style.color = '#fbbf24';
+      previewEl.style.display = 'none';
+      confirmBtn.disabled = true;
+      return;
+    }
+
+    if (/^[A-ZА-ЯЁ0-9_\-]{3,32}$/.test(upper)) {
+      const hasCyr = /[А-ЯЁ]/.test(upper);
+      statusEl.textContent = hasCyr ? '✓ Кириллица разрешена · код валиден' : '✓ Код валиден';
+      statusEl.style.color = '#4ade80';
+      previewEl.style.display = 'block';
+      previewValEl.textContent = upper;
+      confirmBtn.disabled = false;
+    } else {
+      statusEl.textContent = 'Недопустимые символы';
+      statusEl.style.color = '#ef4444';
+      previewEl.style.display = 'none';
+      confirmBtn.disabled = true;
+    }
+  }
+
+  codeEl.addEventListener('input', validate);
+  validate();
+  setTimeout(() => codeEl.focus(), 100);
+
+  confirmBtn.onclick = async () => {
+    const code = codeEl.value.trim().toUpperCase();
+    const amount = Number(document.getElementById('fd_amount').value);
+    const maxUses = Number(document.getElementById('fd_maxUses').value) || 0;
+
+    if (!code || !amount) { toast('Заполните код и сумму', 'error'); return; }
+    if (!/^[A-ZА-ЯЁ0-9_\-]{3,32}$/.test(code)) { toast('Неверный формат кода', 'error'); return; }
+
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = 'Создание...';
+    try {
+      await api('/api/promocodes', {
+        method: 'POST',
+        body: JSON.stringify({ code, amount, maxUses })
+      });
+      toast(`✓ Промокод «${code}» создан`, 'success');
+      closeModal();
+      loadPromoList();
+    } catch (e) {
+      const errors = {
+        already_exists: 'Такой промокод уже существует',
+        bad_code_format: 'Неверный формат кода',
+        missing_fields: 'Заполните все поля',
+        no_db: 'Ошибка базы данных',
+      };
+      const key = e.message.split(' — ')[0];
+      toast('❌ ' + (errors[key] || e.message), 'error');
+      confirmBtn.disabled = false;
+      confirmBtn.textContent = '+ Создать';
+    }
+  };
 }
+
+window.fdPresetCode = function(prefix) {
+  const el = document.getElementById('fd_code');
+  if (!el) return;
+  el.value = prefix + Math.floor(10 + Math.random() * 90);
+  el.dispatchEvent(new Event('input'));
+  el.focus();
+};
 
 function deletePromo(code) {
   confirmModal({
-    icon: '🗑', title: `Удалить "${code}"?`, confirmText: '🗑 Удалить',
+    icon: '🗑',
+    title: `Удалить «${code}»?`,
+    desc: 'Промокод будет удалён безвозвратно.',
+    confirmText: '🗑 Удалить',
     onConfirm: async () => {
       try {
         await api('/api/promocodes/' + encodeURIComponent(code), { method: 'DELETE' });
-        toast('✓ Удалён', 'success');
+        toast(`🗑 Промокод «${code}» удалён`, 'success');
         loadPromoList();
       } catch (e) { toast('Ошибка: ' + e.message, 'error'); }
     }
@@ -1051,7 +1286,7 @@ async function loadOrdersBlock(body) {
               <div style="width:40px;height:40px;border-radius:10px;background:rgba(225,6,0,0.12);border:1px solid rgba(225,6,0,0.3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🛒</div>
               <div class="app-body">
                 <div class="app-head"><span class="app-name">${esc(o.userName)}</span><span class="app-date">${new Date(o.createdAt).toLocaleDateString('ru-RU')}</span></div>
-                <div class="app-row"><span>Товар: <b>${esc(o.itemName)}</b></span><span>Цена: <b>${o.price} ₽</b></span></div>
+                <div class="app-row"><span>Товар: <b>${esc(o.itemName)}${o.tariffLabel ? ' — ' + esc(o.tariffLabel) : ''}</b></span><span>Цена: <b>${o.price} ₽</b></span></div>
               </div>
             </div>
           `).join('')}
@@ -1099,6 +1334,17 @@ async function loadMonitorBlock(body) {
       </div>
     </div>
   `;
+}
+
+function toast(text, type = 'info') {
+  const wrap = document.getElementById('toastWrap');
+  if (!wrap) return;
+  const icons = { success: '✓', error: '✕', info: 'ℹ' };
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.innerHTML = `<span style="font-weight:900;">${icons[type] || 'ℹ'}</span><span>${esc(text)}</span>`;
+  wrap.appendChild(el);
+  setTimeout(() => { el.classList.add('fade'); setTimeout(() => el.remove(), 300); }, 3000);
 }
 </script>
 </body>

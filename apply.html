@@ -87,11 +87,11 @@
         <p class="form-card-subtitle">Заполни все поля честно</p>
         <form id="applyForm">
           <div class="form-row">
-            <div class="form-group"><label>Ваш возраст <span class="req">*</span></label><input type="text" id="age" required></div>
-            <div class="form-group"><label>Онлайн в день <span class="req">*</span></label><input type="text" id="online" required></div>
+            <div class="form-group"><label>Ваш возраст <span class="req">*</span></label><input type="text" id="age" name="age" required></div>
+            <div class="form-group"><label>Онлайн в день <span class="req">*</span></label><input type="text" id="online" name="online" required></div>
           </div>
-          <div class="form-group"><label>Опыт модерации <span class="req">*</span></label><input type="text" id="experience" required></div>
-          <div class="form-group"><label>Почему именно вы? <span class="req">*</span></label><textarea id="motivation" required></textarea></div>
+          <div class="form-group"><label>Опыт модерации <span class="req">*</span></label><input type="text" id="experience" name="experience" required></div>
+          <div class="form-group"><label>Почему именно вы? <span class="req">*</span></label><textarea id="motivation" name="motivation" required></textarea></div>
           <button type="submit" class="submit-btn" id="submitBtn">Отправить заявку →</button>
           <div class="form-note" id="formNote"></div>
         </form>
@@ -169,8 +169,7 @@ window.addEventListener('auth:changed', async (e) => {
 
 async function loadMyApplicationsCount() {
   try {
-    const token = localStorage.getItem('fernodd_token') || '';
-    const r = await fetch(API + '/api/my-applications', { headers: { Authorization: 'Bearer ' + token } });
+    const r = await fetch(API + '/api/my-applications', { headers: { Authorization: 'Bearer ' + getToken() } });
     if (!r.ok) { myAppsCount.textContent = '0'; return; }
     const data = await r.json();
     myAppsCache = data.applications || [];
@@ -200,8 +199,7 @@ async function loadMyApplications() {
   const list = document.getElementById('myList');
   list.innerHTML = '<p class="my-empty">Загрузка…</p>';
   try {
-    const token = localStorage.getItem('fernodd_token') || '';
-    const r = await fetch(API + '/api/my-applications', { headers: { Authorization: 'Bearer ' + token } });
+    const r = await fetch(API + '/api/my-applications', { headers: { Authorization: 'Bearer ' + getToken() } });
     if (!r.ok) { list.innerHTML = '<p class="my-empty" style="color:var(--red);">Не удалось загрузить.</p>'; return; }
     const data = await r.json();
     myAppsCache = data.applications || [];
@@ -250,10 +248,9 @@ form.addEventListener('submit', async (e) => {
   submitBtn.disabled = true;
   submitBtn.textContent = 'Отправка...';
   try {
-    const token = localStorage.getItem('fernodd_token') || '';
     const r = await fetch(API + '/api/apply', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() },
       body: JSON.stringify(payload)
     });
     if (r.ok) {
@@ -264,7 +261,8 @@ form.addEventListener('submit', async (e) => {
     } else if (r.status === 401) {
       showToast('Необходимо войти через Steam.', 'error');
     } else {
-      showToast('Не удалось отправить заявку.', 'error');
+      const data = await r.json().catch(() => ({}));
+      showToast('Не удалось отправить: ' + (data.error || r.status), 'error');
     }
   } catch { showToast('Ошибка сети.', 'error'); }
   finally { submitBtn.disabled = false; submitBtn.textContent = 'Отправить заявку →'; }

@@ -10,8 +10,8 @@
 <script src="/js/config.js"></script>
 <style>
   body > .auth-widget { display: none !important; }
-  .shop-page { min-height: 100vh; padding: 80px 24px 140px; position: relative; z-index: 1; }
-  .shop-container { max-width: 1200px; margin: 0 auto; }
+  .shop-page { min-height: 100vh; padding: 80px clamp(16px, 2.5vw, 56px) 140px; position: relative; z-index: 1; }
+  .shop-container { width: 100%; max-width: 1920px; margin: 0 auto; }
   .shop-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
   .shop-title { font-family: 'Unbounded', sans-serif; font-size: clamp(28px, 5vw, 44px); font-weight: 900; letter-spacing: -1.5px; color: #fff; }
   .shop-tabs { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
@@ -20,22 +20,75 @@
   .shop-tab.active { color: #fff; border-bottom-color: var(--red); text-shadow: 0 0 20px rgba(225,6,0,0.5); }
   .shop-tab .tab-count { padding: 2px 9px; background: rgba(255,255,255,0.06); border-radius: 100px; font-size: 11px; font-weight: 700; font-family: 'Unbounded', sans-serif; }
   .shop-tab.active .tab-count { background: rgba(225,6,0,0.25); color: #fff; }
-  .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
-  .shop-card { background: linear-gradient(145deg, #0e0e0e, #060606); border: 1px solid var(--border); border-radius: 20px; padding: 26px 22px 22px; position: relative; overflow: hidden; transition: all 0.35s cubic-bezier(0.22,1,0.36,1); display: flex; flex-direction: column; }
-  .shop-card:hover { transform: translateY(-8px); border-color: var(--item-color, var(--red)); box-shadow: 0 25px 60px rgba(0,0,0,0.7), 0 0 40px rgba(225,6,0,0.2); }
-  .shop-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--item-color, var(--red)); box-shadow: 0 0 20px var(--item-color, var(--red)); }
-  .shop-badge { position: absolute; top: 14px; left: 14px; padding: 5px 12px; background: linear-gradient(135deg, rgba(251,191,36,0.25), rgba(217,119,6,0.15)); border: 1px solid rgba(251,191,36,0.5); border-radius: 100px; font-family: 'Unbounded', sans-serif; font-size: 11px; font-weight: 900; color: #fbbf24; z-index: 2; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 0 20px rgba(251,191,36,0.3); }
-  .shop-icon-wrap { height: 130px; display: flex; align-items: center; justify-content: center; margin: 12px 0 8px; }
-  .shop-icon { width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; font-size: 74px; filter: drop-shadow(0 0 30px rgba(225,6,0,0.4)); transition: transform 0.4s; line-height: 1; }
-  .shop-card:hover .shop-icon { transform: scale(1.12) rotate(-3deg); }
-  .shop-name { font-family: 'Unbounded', sans-serif; font-size: 17px; font-weight: 700; color: #fff; text-align: center; margin-bottom: 6px; letter-spacing: -0.5px; }
-  .shop-desc { font-size: 12px; color: var(--text-dim); text-align: center; line-height: 1.5; margin-bottom: 14px; min-height: 36px; }
-  .shop-price { font-family: 'Unbounded', sans-serif; font-size: 22px; font-weight: 900; color: #fff; text-align: center; letter-spacing: -1px; margin-bottom: 16px; }
-  .shop-price .new { color: var(--red); }
-  .shop-price .unit { font-size: 12px; color: var(--text-dim); font-weight: 600; margin-left: 4px; }
-  .shop-buy-btn { width: 100%; padding: 14px; border: none; border-radius: 12px; background: linear-gradient(135deg, var(--red), var(--red-dark)); color: #fff; font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.3s; letter-spacing: -0.2px; box-shadow: 0 8px 24px rgba(225,6,0,0.4); }
-  .shop-buy-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(225,6,0,0.7); }
-  .shop-buy-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 22px; }
+
+  .shop-card {
+    position: relative;
+    background: radial-gradient(circle at 50% 0%, rgba(251,191,36,0.15), transparent 55%),
+                linear-gradient(165deg, #141414 0%, #0a0a0a 55%, #050505 100%);
+    border: 1px solid rgba(251,191,36,0.25);
+    border-radius: 24px;
+    padding: 32px 24px 24px;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    display: flex;
+    flex-direction: column;
+    isolation: isolate;
+  }
+  .shop-card::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 24px;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(251,191,36,0.6) 0%, rgba(225,6,0,0.4) 35%, transparent 55%, rgba(251,191,36,0.3) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0.6;
+    transition: opacity 0.4s;
+  }
+  .shop-card::after {
+    content: '';
+    position: absolute;
+    top: -60%; left: 50%;
+    transform: translateX(-50%);
+    width: 220px; height: 220px;
+    background: radial-gradient(circle, rgba(251,191,36,0.35), transparent 65%);
+    filter: blur(40px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.7;
+    animation: cardPulse 4s ease-in-out infinite;
+  }
+  @keyframes cardPulse {
+    0%,100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
+    50% { opacity: 0.9; transform: translateX(-50%) scale(1.15); }
+  }
+  .shop-card:hover { transform: translateY(-10px); border-color: rgba(251,191,36,0.6); box-shadow: 0 30px 70px rgba(0,0,0,0.8), 0 0 60px rgba(251,191,36,0.25), inset 0 1px 0 rgba(255,255,255,0.06); }
+  .shop-card:hover::before { opacity: 1; }
+
+  .shop-badge { position: absolute; top: 16px; left: 16px; padding: 6px 14px; background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); color: #000; border-radius: 100px; font-family: 'Unbounded', sans-serif; font-size: 11px; font-weight: 900; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 5px; z-index: 3; box-shadow: 0 0 25px rgba(251,191,36,0.7), inset 0 1px 0 rgba(255,255,255,0.4); }
+  .shop-badge svg { width: 12px; height: 12px; fill: #000; }
+  .shop-icon-wrap { height: 150px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; position: relative; z-index: 1; }
+  .shop-icon { width: 110px; height: 110px; display: flex; align-items: center; justify-content: center; font-size: 90px; line-height: 1; filter: drop-shadow(0 0 35px rgba(251,191,36,0.7)); transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+  .shop-card:hover .shop-icon { transform: scale(1.15) rotate(-5deg); }
+  .shop-icon svg { width: 100%; height: 100%; filter: drop-shadow(0 0 20px currentColor); }
+  .shop-name { font-family: 'Unbounded', sans-serif; font-size: 22px; font-weight: 900; text-align: center; letter-spacing: -0.8px; margin-bottom: 6px; position: relative; z-index: 1; background: linear-gradient(180deg, #ffffff 0%, #c0c0c0 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 40px rgba(255,255,255,0.15); }
+  .shop-desc { font-size: 12.5px; color: var(--text-dim); text-align: center; line-height: 1.5; margin-bottom: 16px; position: relative; z-index: 1; }
+  .shop-features { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 18px; position: relative; z-index: 1; }
+  .shop-feature { padding: 4px 10px; background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.25); border-radius: 100px; font-size: 10px; color: #fbbf24; font-weight: 600; font-family: 'Unbounded', sans-serif; letter-spacing: 0.3px; }
+  .shop-price { text-align: center; margin-bottom: 18px; position: relative; z-index: 1; display: flex; flex-direction: column; gap: 2px; }
+  .shop-price-main { font-family: 'Unbounded', sans-serif; font-size: 34px; font-weight: 900; letter-spacing: -1.5px; line-height: 1; background: linear-gradient(135deg, #ffffff 0%, #fbbf24 50%, #d97706 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 20px rgba(251,191,36,0.5)); }
+  .shop-price-sub { font-family: 'Unbounded', sans-serif; font-size: 11px; color: var(--text-dim); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+  .shop-buy-btn { width: 100%; padding: 15px; border: none; border-radius: 14px; background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); color: #000; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: 13px; letter-spacing: -0.2px; cursor: pointer; transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1); box-shadow: 0 10px 30px rgba(251,191,36,0.4), inset 0 1px 0 rgba(255,255,255,0.5); position: relative; overflow: hidden; z-index: 1; }
+  .shop-buy-btn:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 18px 50px rgba(251,191,36,0.7), inset 0 1px 0 rgba(255,255,255,0.6); }
+  .shop-buy-btn::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent); transform: translateX(-100%); transition: transform 0.6s; }
+  .shop-buy-btn:hover:not(:disabled)::after { transform: translateX(100%); }
+  .shop-buy-btn:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(0.5); }
 
   .fd-plus-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(10px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
   .fd-plus-modal.visible { display: flex; }
@@ -73,14 +126,13 @@
 
   @media (max-width: 699px) {
     .shop-page { padding: 70px 12px 120px; }
-    .shop-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .shop-card { padding: 18px 14px 14px; border-radius: 16px; }
-    .shop-icon-wrap { height: 90px; }
-    .shop-icon { width: 70px; height: 70px; font-size: 52px; }
-    .shop-name { font-size: 13px; }
-    .shop-desc { font-size: 10.5px; min-height: 30px; margin-bottom: 10px; }
-    .shop-price { font-size: 18px; margin-bottom: 12px; }
-    .shop-buy-btn { padding: 11px; font-size: 11px; }
+    .shop-grid { grid-template-columns: 1fr; gap: 16px; }
+    .shop-card { padding: 24px 18px 18px; border-radius: 20px; }
+    .shop-icon-wrap { height: 110px; }
+    .shop-icon { width: 80px; height: 80px; font-size: 65px; }
+    .shop-name { font-size: 18px; }
+    .shop-price-main { font-size: 26px; }
+    .shop-buy-btn { padding: 13px; font-size: 12px; }
     .shop-tab { padding: 10px 16px; font-size: 12px; }
     .fd-plus-inner { padding: 24px 20px; border-radius: 20px; }
     .fd-plus-header-icon { width: 60px; height: 60px; font-size: 34px; border-radius: 16px; }
@@ -112,7 +164,7 @@
     <div class="shop-tabs">
       <button class="shop-tab active" data-tab="roles">
         Роли
-        <span class="tab-count" id="rolesCount">1</span>
+        <span class="tab-count" id="rolesCount">0</span>
       </button>
     </div>
 
@@ -138,49 +190,44 @@
 <script src="/js/my-profile.js"></script>
 <script src="/js/auth.js"></script>
 <script>
-const SHOP_DATA = {
-  roles: [
-    {
-      id: 'fernodd_plus',
-      name: 'FERNODD+',
-      description: 'Премиум-подписка с уникальными возможностями',
-      icon: '⭐',
-      color: '#fbbf24',
-      badge: '-45%',
-      type: 'subscription',
-      tariffs: [
-        { id: 'month',   label: '1 месяц',   sub: 'Отличный старт',   price: 249,   days: 30,  badge: '' },
-        { id: 'q3',      label: '3 месяца',  sub: 'Экономия 30₽/мес', price: 499,   days: 90,  badge: '' },
-        { id: 'q6',      label: '6 месяцев', sub: 'Экономия 50₽/мес', price: 1199,  days: 180, badge: 'ХИТ' },
-        { id: 'year',    label: '1 год',     sub: 'Лучшая цена',      price: 2399,  days: 365, badge: 'ВЫГОДНО' },
-        { id: 'forever', label: 'Навсегда',  sub: 'Разовая покупка',  price: 24999, days: 0,   badge: 'TOP' },
-      ]
-    }
-  ]
-};
-
+let SHOP_DATA = { roles: [] };
 let currentUser = null;
 let selectedTariffId = 'month';
 
-function bootShop() {
-  renderShop();
-  if (window.currentUser) {
-    const menuBox = document.getElementById('profileMenuContent');
-    if (menuBox) menuBox.innerHTML = renderProfileMenu('shop');
+async function loadShop() {
+  const grid = document.getElementById('shopGrid');
+  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-dim);">Загрузка...</div>';
+  try {
+    const data = await api('/api/shop/items');
+    SHOP_DATA.roles = (data.items || []).map(item => ({
+      id: item.id,
+      name: item.name,
+      description: item.description,
+      color: item.color,
+      icon: '⭐',
+      iconSvg: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.5l7.1-.6L12 2z"/></svg>`,
+      badge: '-45%',
+      type: 'subscription',
+      features: ['Цветной ник', 'Закрытые каналы', 'Ивенты'],
+      tariffs: item.tariffs.map((t, i) => ({
+        id: t.id,
+        label: t.label,
+        price: t.price,
+        days: t.days,
+        sub: t.days === 0 ? 'Разовая покупка' : `${t.days} дн.`,
+        badge: i === 2 ? 'ХИТ' : (i === 3 ? 'ВЫГОДНО' : (i === 4 ? 'TOP' : '')),
+      })),
+    }));
+    renderShop();
+  } catch (e) {
+    console.error('[shop]', e);
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--red);">Не удалось загрузить магазин</div>';
   }
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', bootShop);
-} else {
-  bootShop();
-}
-
 window.addEventListener('auth:changed', (e) => {
-  const user = e.detail.user;
-  currentUser = user;
-  renderShop();
-  if (user) {
+  currentUser = e.detail.user;
+  if (currentUser) {
     const menuBox = document.getElementById('profileMenuContent');
     if (menuBox) menuBox.innerHTML = renderProfileMenu('shop');
   }
@@ -190,27 +237,35 @@ function renderShop() {
   const grid = document.getElementById('shopGrid');
   const roles = SHOP_DATA.roles;
   document.getElementById('rolesCount').textContent = roles.length;
+
+  if (!roles.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-dim);">Товаров пока нет</div>';
+    return;
+  }
+
   grid.innerHTML = roles.map(item => {
-    const priceHTML = item.type === 'subscription'
-      ? `<span class="new">от ${Math.min(...item.tariffs.map(t => t.price))}₽</span><span class="unit">/ ${item.tariffs[0].label}</span>`
-      : `<span class="new">${item.price}₽</span>`;
+    const minPrice = Math.min(...item.tariffs.map(t => t.price));
+    const firstTariff = item.tariffs[0];
     const badgeHTML = item.badge
-      ? `<div class="shop-badge">
-           <svg viewBox="0 0 24 24" style="width:12px;height:12px;fill:#fbbf24;"><path d="M12 2c-1.5 3.5-3.5 5-3.5 8a3.5 3.5 0 0 0 7 0c0-3-2-4.5-3.5-8z"/></svg>
-           ${escapeHtml(item.badge)}
-         </div>` : '';
+      ? `<div class="shop-badge"><svg viewBox="0 0 24 24"><path d="M12 2c-1.5 3.5-3.5 5-3.5 8a3.5 3.5 0 0 0 7 0c0-3-2-4.5-3.5-8z"/></svg>${escapeHtml(item.badge)}</div>` : '';
+    const iconHTML = item.iconSvg || item.icon;
+    const features = item.features || [];
+    const featuresHTML = features.length
+      ? `<div class="shop-features">${features.map(f => `<span class="shop-feature">${escapeHtml(f)}</span>`).join('')}</div>` : '';
+
     return `
       <div class="shop-card" style="--item-color:${item.color};">
         ${badgeHTML}
-        <div class="shop-icon-wrap">
-          <div class="shop-icon" style="color:${item.color};">${item.icon}</div>
-        </div>
+        <div class="shop-icon-wrap"><div class="shop-icon" style="color:${item.color};">${iconHTML}</div></div>
         <div class="shop-name">${escapeHtml(item.name)}</div>
         <div class="shop-desc">${escapeHtml(item.description)}</div>
-        <div class="shop-price">${priceHTML}</div>
+        ${featuresHTML}
+        <div class="shop-price">
+          <div class="shop-price-main">от ${minPrice}₽</div>
+          <div class="shop-price-sub">/ ${escapeHtml(firstTariff.label)}</div>
+        </div>
         <button class="shop-buy-btn" onclick="openProduct('${item.id}')">Выбрать тариф</button>
-      </div>
-    `;
+      </div>`;
   }).join('');
 }
 
@@ -250,8 +305,7 @@ function openSubscriptionModal(item) {
             <div class="fd-tariff-sub">${escapeHtml(t.sub)}</div>
           </div>
           <div class="fd-tariff-price">${t.price} ₽</div>
-        </div>
-      `).join('')}
+        </div>`).join('')}
     </div>
     <div class="fd-total">
       <div class="fd-total-label">Итого</div>
@@ -279,6 +333,7 @@ window.selectTariff = function(tariffId) {
 };
 
 function updateTotal(item) {
+  if (!item) return;
   const tariff = item.tariffs.find(t => t.id === selectedTariffId);
   if (!tariff) return;
   document.getElementById('totalPrice').textContent = `${tariff.price} ₽`;
@@ -304,13 +359,21 @@ window.buySubscription = async function(itemId) {
     currentUser = me.user;
     window.currentUser = currentUser;
   } catch (e) {
-    const errors = { insufficient_balance: 'Недостаточно средств', role_not_found: 'Роль FERNODD+ не найдена на сервере. Создай её в Discord.', item_not_found: 'Товар не найден', tariff_not_found: 'Тариф не найден' };
+    const errors = {
+      insufficient_balance: 'Недостаточно средств',
+      role_not_found: 'Роль FERNODD+ не найдена на сервере. Создай её в Discord.',
+      item_not_found: 'Товар не найден',
+      tariff_not_found: 'Тариф не найден',
+    };
     const key = e.message.split(' — ')[0];
     showToast('❌ ' + (errors[key] || e.message), 'error');
     btn.disabled = false;
     btn.textContent = 'Купить FERNODD+';
   }
 };
+
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadShop);
+else loadShop();
 </script>
 </body>
 </html>

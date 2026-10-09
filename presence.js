@@ -1,4 +1,3 @@
-// presence.js
 import { Client, GatewayIntentBits, Partials } from 'discord.js';
 
 let client = null;
@@ -7,7 +6,7 @@ const presenceCache = new Map();
 
 export function initPresence() {
   if (!process.env.DISCORD_BOT_TOKEN) {
-    console.warn('[presence] DISCORD_BOT_TOKEN не задан — presence отключён');
+    console.warn('[presence] DISCORD_BOT_TOKEN не задан');
     return;
   }
 
@@ -24,7 +23,10 @@ export function initPresence() {
     console.log(`[presence] ✅ Бот запущен: ${client.user.tag}`);
     ready = true;
     const guild = client.guilds.cache.get(process.env.DISCORD_GUILD_ID);
-    if (!guild) { console.warn('[presence] ❌ Гильдия не найдена'); return; }
+    if (!guild) {
+      console.warn('[presence] ❌ Гильдия не найдена');
+      return;
+    }
     await new Promise(r => setTimeout(r, 3000));
     try {
       const members = await guild.members.fetch();
@@ -36,7 +38,9 @@ export function initPresence() {
         });
       });
       console.log(`[presence] Загружено: ${presenceCache.size}`);
-    } catch (e) { console.error('[presence] fetch error:', e.message); }
+    } catch (e) {
+      console.error('[presence] fetch error:', e.message);
+    }
   });
 
   client.on('presenceUpdate', (oldP, newP) => {
@@ -48,32 +52,57 @@ export function initPresence() {
     });
   });
 
-  client.on('guildMemberAdd', (m) => presenceCache.set(m.id, { status: 'offline', activities: [], updatedAt: Date.now() }));
-  client.on('guildMemberRemove', (m) => presenceCache.delete(m.id));
+  client.on('guildMemberAdd', (m) => {
+    presenceCache.set(m.id, {
+      status: 'offline',
+      activities: [],
+      updatedAt: Date.now(),
+    });
+  });
+
+  client.on('guildMemberRemove', (m) => {
+    presenceCache.delete(m.id);
+  });
+
   client.on('error', (e) => console.error('[presence] error:', e));
   client.on('shardDisconnect', () => { ready = false; });
   client.on('shardResume', () => { ready = true; });
 
-  client.login(process.env.DISCORD_BOT_TOKEN).catch(e => console.error('[presence] login error:', e.message));
+  client.login(process.env.DISCORD_BOT_TOKEN).catch(e =>
+    console.error('[presence] login error:', e.message)
+  );
 }
 
 function extractActivities(presence) {
   if (!presence.activities || !presence.activities.length) return [];
   return presence.activities.map(a => ({
-    name: a.name, type: a.type, details: a.details || '', state: a.state || '',
-    url: a.url || '', applicationId: a.applicationId || '',
+    name: a.name,
+    type: a.type,
+    details: a.details || '',
+    state: a.state || '',
+    url: a.url || '',
+    applicationId: a.applicationId || '',
   }));
 }
 
-export function isPresenceReady() { return ready; }
-export function getPresence(userId) {
-  return presenceCache.get(userId) || { status: 'offline', activities: [], updatedAt: Date.now() };
+export function isPresenceReady() {
+  return ready;
 }
+
+export function getPresence(userId) {
+  return presenceCache.get(userId) || {
+    status: 'offline',
+    activities: [],
+    updatedAt: Date.now(),
+  };
+}
+
 export function getAllPresence() {
   const out = {};
   presenceCache.forEach((v, k) => { out[k] = v; });
   return out;
 }
+
 export function getPresenceStats() {
   let online = 0, idle = 0, dnd = 0, offline = 0;
   presenceCache.forEach(v => {

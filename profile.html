@@ -10,8 +10,8 @@
 <script src="/js/config.js"></script>
 <style>
   body > .auth-widget { display: none !important; }
-  .my-page { min-height: 100vh; padding: 80px 24px 140px; position: relative; z-index: 1; }
-  .my-container { max-width: 1100px; margin: 0 auto; }
+  .my-page { min-height: 100vh; padding: 80px clamp(16px, 2.5vw, 56px) 140px; position: relative; z-index: 1; }
+  .my-container { width: 100%; max-width: 1920px; margin: 0 auto; }
 
   .steam-card { background: #0e0e0e; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 16px; position: relative; }
   .steam-cover { height: 180px; background: linear-gradient(135deg, #1a1a1a 0%, #060606 100%); background-size: cover; background-position: center; position: relative; overflow: hidden; }
