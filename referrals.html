@@ -12,32 +12,17 @@
   body > .auth-widget { display: none !important; }
   .ref-page { min-height: 100vh; padding: 80px 24px 140px; position: relative; z-index: 1; }
   .ref-container { max-width: 1100px; margin: 0 auto; }
-
   .my-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
   .my-header-left { display: flex; align-items: center; gap: 12px; }
   .my-header-balance { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-bright); border-radius: 100px; font-family: 'Unbounded', sans-serif; font-size: 13px; color: #fff; font-weight: 700; }
   .my-header-right { display: flex; align-items: center; gap: 10px; }
-
   .profile-avatar-btn { position: relative; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); border-radius: 100px; transition: all 0.3s; }
   .profile-avatar-btn:hover { border-color: var(--red); }
   .profile-avatar-btn img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
   .profile-avatar-btn .chev { width: 14px; height: 14px; color: var(--text-dim); transition: transform 0.3s; }
   .profile-avatar-btn.open .chev { transform: rotate(180deg); }
 
-  .my-menu { position: absolute; top: calc(100% + 12px); right: 0; width: 320px; background: #0e0e0e; border: 1px solid var(--border-bright); border-radius: 18px; padding: 12px; box-shadow: 0 25px 70px rgba(0,0,0,0.9); opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-10px) scale(0.96); transform-origin: top right; transition: opacity 0.25s, transform 0.25s, visibility 0s linear 0.25s; z-index: 600; }
-  .profile-avatar-btn.open .my-menu { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0) scale(1); transition: opacity 0.25s, transform 0.25s, visibility 0s; }
-  .my-menu-head { display: flex; align-items: center; gap: 12px; padding: 10px 12px; min-width: 0; }
-  .my-menu-avatar { width: 52px; height: 52px; border-radius: 12px; border: 2px solid var(--red); object-fit: cover; flex-shrink: 0; }
-  .my-menu-name { font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 15px; color: #fff; margin-bottom: 3px; white-space: normal; overflow-wrap: anywhere; word-break: break-word; line-height: 1.2; max-width: 100%; }
-  .my-menu-balance { font-size: 12px; color: var(--text-dim); }
-  .my-menu-divider { height: 1px; background: var(--border); margin: 10px 8px; }
-  .my-menu-item { display: flex; align-items: center; gap: 14px; padding: 11px 14px; border-radius: 10px; color: var(--text-dim); font-size: 14px; font-weight: 500; text-decoration: none; transition: all 0.2s; }
-  .my-menu-item:hover { background: rgba(225,6,0,0.12); color: #fff; transform: translateX(3px); }
-  .my-menu-item.active { background: rgba(225,6,0,0.15); color: #fff; }
-  .my-menu-icon { width: 22px; text-align: center; font-size: 16px; }
-
   .ref-page-title { font-family: 'Unbounded', sans-serif; font-size: clamp(28px, 5vw, 42px); font-weight: 900; letter-spacing: -1.5px; color: #fff; margin-bottom: 24px; }
-
   .ref-block { background: #0e0e0e; border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; margin-bottom: 16px; }
 
   .how-info { display: flex; gap: 18px; align-items: flex-start; }
@@ -48,13 +33,11 @@
   .how-chips { display: flex; gap: 8px; flex-wrap: wrap; }
   .how-chip { padding: 5px 12px; border-radius: 100px; font-size: 11px; font-weight: 700; font-family: 'Unbounded', sans-serif; }
   .how-chip.red   { background: rgba(239,68,68,0.15); color: #ef4444; }
-  .how-chip.gold  { background: rgba(251,191,36,0.15); color: #fbbf24; }
   .how-chip.green { background: rgba(74,222,128,0.15); color: #4ade80; }
 
   .ref-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px; }
   .ref-stat-card { background: #0e0e0e; border: 1px solid var(--border); border-radius: 14px; padding: 18px 22px; }
   .ref-stat-value { font-family: 'Unbounded', sans-serif; font-size: 26px; font-weight: 900; color: #fff; line-height: 1; letter-spacing: -1px; margin-bottom: 6px; }
-  .ref-stat-value.gold { color: #fbbf24; }
   .ref-stat-value.green { color: #4ade80; }
   .ref-stat-label { font-size: 11px; color: var(--text-dim); font-weight: 500; }
 
@@ -66,12 +49,10 @@
   .ref-code-icon { width: 36px; height: 36px; border-radius: 10px; background: rgba(96,165,250,0.12); border: 1px solid rgba(96,165,250,0.4); display: flex; align-items: center; justify-content: center; font-size: 16px; color: #60a5fa; flex-shrink: 0; }
   .ref-code-title { font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 3px; }
   .ref-code-sub { font-size: 11px; color: var(--text-dim); }
-
   .ref-code-row { display: flex; gap: 8px; }
   .ref-code-input { flex: 1; padding: 11px 14px; background: var(--bg-elevated); border: 1px solid var(--border-bright); border-radius: 8px; color: #fff; font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 700; outline: none; min-width: 0; text-align: center; letter-spacing: 2px; }
   .ref-code-btn { padding: 11px 18px; background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; border-radius: 8px; color: #fff; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12.5px; cursor: pointer; transition: all 0.3s; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
   .ref-code-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(59,130,246,0.5); }
-
   .ref-activate-input { width: 100%; padding: 12px 14px; background: var(--bg-elevated); border: 1px solid var(--border-bright); border-radius: 8px; color: #fff; font-family: 'Inter', sans-serif; font-size: 13px; outline: none; margin-bottom: 10px; }
   .ref-activate-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59,130,246,0.12); }
   .ref-activate-btn { width: 100%; padding: 11px; background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; border-radius: 8px; color: #fff; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.3s; }
@@ -81,7 +62,7 @@
   .ref-block-title { font-family: 'Unbounded', sans-serif; font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 16px; }
   .my-refs-list { display: flex; flex-direction: column; gap: 8px; }
   .my-ref-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 10px; }
-  .my-ref-avatar { width: 36px; height: 36px; border-radius: 9px; object-fit: cover; flex-shrink: 0; background: linear-gradient(135deg,var(--red),var(--red-dark)); display: flex; align-items: center; justify-content: center; font-family: 'Unbounded'; font-weight: 900; font-size: 14px; color: #fff; }
+  .my-ref-avatar { width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0; background: linear-gradient(135deg,var(--red),var(--red-dark)); display: flex; align-items: center; justify-content: center; font-family: 'Unbounded'; font-weight: 900; font-size: 14px; color: #fff; }
   .my-ref-name { flex: 1; font-size: 13px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .my-ref-date { font-size: 11px; color: var(--text-dim); flex-shrink: 0; }
   .empty-refs { text-align: center; padding: 40px 20px; color: var(--text-dim); font-size: 13px; }
@@ -127,9 +108,7 @@
 <main class="ref-page">
   <div class="ref-container">
     <div class="my-header">
-      <div class="my-header-left">
-        <div class="my-header-balance"><span id="headerBalance">0 ₽</span></div>
-      </div>
+      <div class="my-header-left"><div class="my-header-balance"><span id="headerBalance">0 ₽</span></div></div>
       <div class="my-header-right">
         <div class="profile-avatar-btn" id="profileAvatarBtn" onclick="toggleProfileMenu(event)">
           <img id="headerAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
@@ -148,12 +127,10 @@
         </div>
         <div style="flex:1;">
           <div class="how-info-title">Как это работает?</div>
-          <div class="how-desc">
-            Приглашай друзей по своему коду. За каждого, кто наберёт 10 часов, ты получишь 100₽, а также 10% от каждого его пополнения баланса. Друг получит 50₽.
-          </div>
+          <div class="how-desc">Приглашай друзей по своему коду. За каждого приглашённого ты получишь 100₽, а друг — 50₽.</div>
           <div class="how-chips">
-            <span class="how-chip red">+100 ₽</span>
-            <span class="how-chip green">+10% с пополнений</span>
+            <span class="how-chip red">+100 ₽ за друга</span>
+            <span class="how-chip green">Друг получит 50 ₽</span>
           </div>
         </div>
       </div>
@@ -161,8 +138,7 @@
 
     <div class="ref-stats-grid" id="refStatsGrid">
       <div class="ref-stat-card"><div class="ref-stat-value">0</div><div class="ref-stat-label">Рефералов</div></div>
-      <div class="ref-stat-card"><div class="ref-stat-value">0 ₽</div><div class="ref-stat-label">Заработано рублей</div></div>
-      <div class="ref-stat-card"><div class="ref-stat-value green">0 ₽</div><div class="ref-stat-label">Кэшбэк с пополнений</div></div>
+      <div class="ref-stat-card"><div class="ref-stat-value">0 ₽</div><div class="ref-stat-label">Заработано</div></div>
     </div>
 
     <div class="ref-two-col">
@@ -173,16 +149,18 @@
           </div>
           <div>
             <div class="ref-code-title">Мой реферальный код</div>
-            <div class="ref-code-sub">Поделись этим кодом с друзьями</div>
+            <div class="ref-code-sub">Можешь изменить его на любой</div>
           </div>
         </div>
         <div class="ref-code-row">
           <input class="ref-code-input" id="myRefCode" value="..." readonly onclick="this.select()">
-          <button class="ref-code-btn" onclick="copyMyCode()">
-            <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-            Скопировать
-          </button>
+          <button class="ref-code-btn" onclick="copyMyCode()">Скопировать</button>
         </div>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <input class="ref-code-input" id="newRefCode" placeholder="Новый код" style="letter-spacing:1px;text-align:left;padding-left:14px;">
+          <button class="ref-code-btn" onclick="saveRefCode()">Сохранить</button>
+        </div>
+        <div style="font-size:11px;color:var(--text-dim);margin-top:6px;">Только латиница, цифры, «_» и «-» (3–20 симв.)</div>
       </div>
 
       <div class="ref-code-card">
@@ -202,12 +180,7 @@
 
     <div class="ref-block">
       <div class="ref-block-title">Мои рефералы</div>
-      <div class="my-refs-list" id="myRefsList">
-        <div class="empty-refs">
-          <div class="ico">👥</div>
-          Пока никого нет. Поделись своим кодом!
-        </div>
-      </div>
+      <div class="my-refs-list" id="myRefsList"><div class="empty-refs"><div class="ico">👥</div>Пока никого нет. Поделись своим кодом!</div></div>
     </div>
 
     <div class="ref-block">
@@ -233,7 +206,7 @@
   <a class="nav-btn" href="/index.html"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Главная</span></a>
   <a class="nav-btn" href="/rules.html"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Правила</span></a>
   <a class="nav-btn" href="/roles.html"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Роли</span></a>
-  <a class="nav-btn" href="/apply.html"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>Заявка</span></a>
+  <a class="nav-btn" href="/shop.html"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span>Магазин</span></a>
   <a class="nav-btn active" href="/profile.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg><span>Профиль</span></a>
 </nav>
 
@@ -245,10 +218,7 @@
 <script>
 window.addEventListener('auth:changed', async (e) => {
   const user = e.detail.user;
-  if (!user) {
-    showToast('Войдите через Steam, чтобы открыть рефералы', 'error');
-    return;
-  }
+  if (!user) { showToast('Войдите через Steam', 'error'); return; }
   document.getElementById('headerAvatar').src = user.avatar || '';
   document.getElementById('headerBalance').textContent = `${user.balance || 0} ₽`;
   document.getElementById('profileMenuContent').innerHTML = renderProfileMenu('referrals');
@@ -261,22 +231,13 @@ async function loadMyReferrals() {
     const data = await api('/api/referrals/my');
     document.getElementById('myRefCode').value = data.code || '...';
     const invited = data.invited || [];
-    const earned = data.earned || 0;
-    const cashback = data.cashback || 0;
-
     document.getElementById('refStatsGrid').innerHTML = `
       <div class="ref-stat-card"><div class="ref-stat-value">${invited.length}</div><div class="ref-stat-label">Рефералов</div></div>
-      <div class="ref-stat-card"><div class="ref-stat-value">${earned} ₽</div><div class="ref-stat-label">Заработано рублей</div></div>
-      <div class="ref-stat-card"><div class="ref-stat-value green">${cashback} ₽</div><div class="ref-stat-label">Кэшбэк с пополнений</div></div>
+      <div class="ref-stat-card"><div class="ref-stat-value green">${data.earned || 0} ₽</div><div class="ref-stat-label">Заработано</div></div>
     `;
-
     const list = document.getElementById('myRefsList');
     if (!invited.length) {
-      list.innerHTML = `
-        <div class="empty-refs">
-          <div class="ico">👥</div>
-          Пока никого нет. Поделись своим кодом!
-        </div>`;
+      list.innerHTML = `<div class="empty-refs"><div class="ico">👥</div>Пока никого нет. Поделись своим кодом!</div>`;
     } else {
       list.innerHTML = invited.map(i => `
         <div class="my-ref-item">
@@ -298,8 +259,10 @@ async function loadTopReferrals() {
       tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-dim);padding:30px;">Пока нет данных</td></tr>';
       return;
     }
-    tbody.innerHTML = top.map((t, i) => `
-      <tr>
+    tbody.innerHTML = top.map((t, i) => {
+      const linked = !!t.discordId;
+      const target = linked ? `/profile.html?id=${t.discordId}` : '#';
+      return `<tr style="cursor:${linked ? 'pointer' : 'default'};" ${linked ? `onclick="window.location.href='${target}'"` : ''}>
         <td><span class="top-rank">${i + 1}</span></td>
         <td>
           <div class="top-user">
@@ -309,8 +272,8 @@ async function loadTopReferrals() {
         </td>
         <td><span class="top-count top-count-blue">${t.count}</span></td>
         <td><span class="top-count top-count-red">${t.completed}</span></td>
-      </tr>
-    `).join('');
+      </tr>`;
+    }).join('');
   } catch (e) {
     tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--red);padding:30px;">Ошибка загрузки</td></tr>';
   }
@@ -328,20 +291,12 @@ async function activateRefCode() {
   btn.disabled = true;
   btn.textContent = 'Активация...';
   try {
-    await api('/api/referrals/activate', {
-      method: 'POST',
-      body: JSON.stringify({ code })
-    });
+    await api('/api/referrals/activate', { method: 'POST', body: JSON.stringify({ code }) });
     showToast('✅ Код активирован!', 'success');
     document.getElementById('activateInput').value = '';
     setTimeout(() => location.reload(), 1200);
   } catch (e) {
-    const errors = {
-      self_ref: 'Нельзя использовать свой код',
-      user_not_found: 'Пользователь не найден',
-      already_activated: 'Вы уже активировали код',
-      missing_code: 'Введите код'
-    };
+    const errors = { self_ref: 'Нельзя использовать свой код', user_not_found: 'Пользователь не найден', already_activated: 'Вы уже активировали код', missing_code: 'Введите код' };
     const key = e.message.split(' — ')[0];
     showToast('❌ ' + (errors[key] || e.message), 'error');
     btn.disabled = false;
@@ -349,13 +304,27 @@ async function activateRefCode() {
   }
 }
 
+async function saveRefCode() {
+  const code = document.getElementById('newRefCode').value.trim().toLowerCase();
+  if (!/^[a-z0-9_\-]{3,20}$/.test(code)) {
+    showToast('❌ Неверный формат кода', 'error'); return;
+  }
+  try {
+    await api('/api/referrals/set-code', { method: 'POST', body: JSON.stringify({ code }) });
+    showToast('✅ Код изменён', 'success');
+    document.getElementById('myRefCode').value = code;
+    document.getElementById('newRefCode').value = '';
+  } catch (e) {
+    const errors = { code_taken: 'Этот код уже занят', bad_code_format: 'Неверный формат' };
+    const key = e.message.split(' — ')[0];
+    showToast('❌ ' + (errors[key] || e.message), 'error');
+  }
+}
+
 function copyMyCode() {
   const code = document.getElementById('myRefCode').value;
-  navigator.clipboard.writeText(code).then(() => {
-    showToast('✅ Код скопирован', 'success');
-  }).catch(() => {
-    showToast('Не удалось скопировать', 'error');
-  });
+  navigator.clipboard.writeText(code).then(() => showToast('✅ Код скопирован', 'success'))
+    .catch(() => showToast('Не удалось скопировать', 'error'));
 }
 </script>
 </body>

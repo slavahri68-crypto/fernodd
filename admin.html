@@ -12,15 +12,15 @@
 * { box-sizing: border-box; }
 body > .auth-widget { display: none !important; }
 
-.admin-wrap { min-height: 100vh; position: relative; z-index: 1; padding: 20px 24px 60px; max-width: 1400px; margin: 0 auto; }
+.admin-wrap { min-height: 100vh; position: relative; z-index: 1; padding: 20px 24px 60px; max-width: 1400px; margin: 0 auto; overflow: visible; }
 
-.admin-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 14px 20px; background: rgba(10,10,10,0.9); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 22px; backdrop-filter: blur(20px); }
+.admin-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 14px 20px; background: rgba(10,10,10,0.9); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 22px; backdrop-filter: blur(20px); overflow: visible; }
 .admin-brand { display: flex; align-items: center; gap: 12px; }
 .admin-brand img { width: 38px; height: 38px; border-radius: 11px; object-fit: contain; background: rgba(225,6,0,0.08); border: 1px solid rgba(225,6,0,0.3); padding: 4px; }
 .admin-brand-text { font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: 16px; letter-spacing: -0.6px; background: linear-gradient(135deg, #fff 20%, var(--red) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; white-space: nowrap; }
 .admin-brand-sub { font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; margin-top: 1px; }
 
-.admin-user { display: flex; align-items: center; gap: 12px; }
+.admin-user { display: flex; align-items: center; gap: 12px; position: relative; z-index: 1000; }
 .admin-exit { padding: 9px 16px; background: rgba(225,6,0,0.12); border: 1px solid rgba(225,6,0,0.4); border-radius: 10px; color: var(--red); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12.5px; cursor: pointer; transition: all 0.3s; }
 .admin-exit:hover { background: rgba(225,6,0,0.25); border-color: var(--red); }
 
@@ -52,7 +52,7 @@ body > .auth-widget { display: none !important; }
 .subtab-count { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; padding: 2px 8px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-bright); border-radius: 100px; font-size: 10px; font-weight: 700; font-family: 'Unbounded', sans-serif; }
 .subtab.active .subtab-count { background: rgba(225,6,0,0.25); border-color: rgba(225,6,0,0.6); color: #fff; }
 
-.cards-list { display: flex; flex-direction: column; gap: 12px; }
+.cards-list { display: flex; flex-direction: column; gap: 8px; }
 .app-card { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; display: flex; gap: 16px; align-items: flex-start; transition: all 0.3s; }
 .app-card:hover { border-color: rgba(225,6,0,0.4); transform: translateX(4px); }
 .app-avatar { width: 56px; height: 56px; border-radius: 14px; flex-shrink: 0; object-fit: cover; }
@@ -128,7 +128,6 @@ body > .auth-widget { display: none !important; }
 .role-simple-item:last-child { border-bottom: none; }
 .role-simple-item:hover { background: rgba(225,6,0,0.06); }
 .role-checkbox { width: 20px; height: 20px; border: 2px solid var(--border-bright); border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-.role-simple-item:hover .role-checkbox { border-color: var(--red); }
 .role-checkbox.checked { background: var(--red); border-color: var(--red); }
 .role-checkbox.checked::after { content: '✓'; color: #fff; font-size: 13px; font-weight: 900; line-height: 1; }
 .role-simple-name { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500; color: var(--text); flex: 1; }
@@ -253,17 +252,10 @@ body > .auth-widget { display: none !important; }
 <script src="/js/auth.js"></script>
 <script>
 const ROLE_COLOR_OVERRIDE = {
-  'Главная администрация': '#e10600',
-  'Владелец': '#e10600',
-  'Разработчик': '#e10600',
-  'Следящий': '#e10600',
-  'Куратор': '#e10600',
-  'Поддержка': '#e10600',
-  'Медиа': '#e10600',
-  'Главный модератор': '#22d3ee',
-  'Старший модератор': '#4ade80',
-  'Модератор': '#3b82f6',
-  'Игрок': '#a855f7',
+  'Главная администрация': '#e10600', 'Владелец': '#e10600', 'Разработчик': '#e10600',
+  'Следящий': '#e10600', 'Куратор': '#e10600', 'Поддержка': '#e10600', 'Медиа': '#e10600',
+  'Главный модератор': '#22d3ee', 'Старший модератор': '#4ade80',
+  'Модератор': '#3b82f6', 'Игрок': '#a855f7',
 };
 
 let isAuthorized = false;
@@ -315,10 +307,7 @@ function toast(text, type = 'info') {
   el.className = 'toast ' + type;
   el.innerHTML = `<span style="font-weight:900;">${icons[type] || 'ℹ'}</span><span>${esc(text)}</span>`;
   wrap.appendChild(el);
-  setTimeout(() => {
-    el.classList.add('fade');
-    setTimeout(() => el.remove(), 300);
-  }, 3000);
+  setTimeout(() => { el.classList.add('fade'); setTimeout(() => el.remove(), 300); }, 3000);
 }
 
 function closeModal() {
@@ -361,10 +350,7 @@ function formModal({ icon = '📝', title, fields = [], confirmText = 'Созд�
     </div>
   `;
   document.getElementById('fdModal').classList.add('visible');
-  setTimeout(() => {
-    const first = box.querySelector('.fd-modal-input');
-    if (first) first.focus();
-  }, 100);
+  setTimeout(() => { const first = box.querySelector('.fd-modal-input'); if (first) first.focus(); }, 100);
   document.getElementById('fdConfirmBtn').onclick = async () => {
     const values = {};
     for (const f of fields) values[f.id] = document.getElementById('fd_' + f.id).value.trim();
@@ -430,13 +416,10 @@ window.addEventListener('auth:changed', (e) => {
   }
   document.getElementById('deniedBlock').style.display = 'none';
   document.getElementById('adminWrap').style.display = 'block';
-
   const avatar = document.getElementById('headerAvatar');
   if (avatar) avatar.src = user.avatar || '';
-
   const menuBox = document.getElementById('profileMenuContent');
   if (menuBox) menuBox.innerHTML = renderProfileMenu('');
-
   switchTab('moderator');
 });
 
@@ -446,18 +429,13 @@ setTimeout(() => {
   }
 }, 2000);
 
-function logout() {
-  localStorage.removeItem('fernodd_token');
-  window.location.reload();
-}
+function logout() { localStorage.removeItem('fernodd_token'); window.location.reload(); }
 
 function switchTab(tab) {
   currentTab = tab;
   document.querySelectorAll('.tab-block').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
-  if (tab === 'moderator') {
-    renderModerator();
-    loadModeratorCounts();
-  } else {
+  if (tab === 'moderator') { renderModerator(); loadModeratorCounts(); }
+  else {
     if (!isHeadAdminOrOwner()) {
       toast('Раздел доступен только главной администрации.', 'error');
       switchTab('moderator');
@@ -474,10 +452,7 @@ async function loadModeratorCounts() {
     const tickets = await api('/api/tickets').catch(() => ({ open: [] }));
     const total = pending + (tickets.open || []).length;
     const badge = document.getElementById('modBadge');
-    if (badge) {
-      badge.textContent = total;
-      badge.style.display = total > 0 ? 'inline-block' : 'none';
-    }
+    if (badge) { badge.textContent = total; badge.style.display = total > 0 ? 'inline-block' : 'none'; }
   } catch {}
 }
 
@@ -513,7 +488,6 @@ async function loadAppsBlock(body) {
     appsData.approved = all.filter(a => a.status === 'approved');
     appsData.rejected = all.filter(a => a.status === 'rejected');
     document.getElementById('cntApps').textContent = appsData.pending.length;
-
     body.innerHTML = `
       <div class="section-block">
         <div class="section-block-head">
@@ -528,16 +502,12 @@ async function loadAppsBlock(body) {
           <button class="subtab ${appsFilter === 'approved' ? 'active' : ''}" onclick="setAppsFilter('approved')">✓ Одобрено <span class="subtab-count">${appsData.approved.length}</span></button>
           <button class="subtab ${appsFilter === 'rejected' ? 'active' : ''}" onclick="setAppsFilter('rejected')">✕ Отклонено <span class="subtab-count">${appsData.rejected.length}</span></button>
         </div>
-        <div class="search-wrap">
-          <input class="search-input" id="appsSearch" placeholder="Поиск по нику..." oninput="renderAppsList()">
-        </div>
+        <div class="search-wrap"><input class="search-input" id="appsSearch" placeholder="Поиск по нику..." oninput="renderAppsList()"></div>
         <div class="cards-list" id="appsList"></div>
       </div>
     `;
     renderAppsList();
-  } catch (e) {
-    body.innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${esc(e.message)}</div>`;
-  }
+  } catch (e) { body.innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${esc(e.message)}</div>`; }
 }
 
 function setAppsFilter(f) {
@@ -562,22 +532,16 @@ function renderAppsList() {
     return;
   }
   el.innerHTML = list.map(a => {
-    const date = new Date(a.date).toLocaleString('ru-RU');
+    const date = new Date(a.date).toLocaleString('ru-RU', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
     const statusLabel = a.status === 'approved' ? 'Одобрено' : a.status === 'rejected' ? 'Отклонено' : 'Ожидание';
     const borderColor = a.status === 'approved' ? '#4ade80' : a.status === 'rejected' ? '#ef4444' : '#fbbf24';
     let actions = '';
     if (a.status === 'pending' && canApprove()) {
-      actions = `<div class="app-actions">
-        <button class="btn-act green" onclick="quickStatus('${a.id}','approve')">✓ Одобрить</button>
-        <button class="btn-act red" onclick="quickStatus('${a.id}','reject')">✕ Отклонить</button>
-      </div>`;
+      actions = `<div class="app-actions"><button class="btn-act green" onclick="quickStatus('${a.id}','approve')">✓ Одобрить</button><button class="btn-act red" onclick="quickStatus('${a.id}','reject')">✕ Отклонить</button></div>`;
     } else if (a.status !== 'pending' && canApprove()) {
-      actions = `<div class="app-actions">
-        <button class="btn-act blue" onclick="openChange('${a.id}')">↻ Изменить</button>
-        <button class="btn-act red" onclick="openDelete('${a.id}')">🗑 Удалить</button>
-      </div>`;
+      actions = `<div class="app-actions"><button class="btn-act blue" onclick="openChange('${a.id}')">↻ Изменить</button><button class="btn-act red" onclick="openDelete('${a.id}')">🗑 Удалить</button></div>`;
     }
-    return `<div class="app-card" style="border-left:4px solid ${borderColor};">
+    return `<div class="app-card compact" style="border-left:3px solid ${borderColor};">
       <img class="app-avatar" src="${a.avatar}" alt="">
       <div class="app-body">
         <div class="app-head">
@@ -616,9 +580,7 @@ function quickStatus(id, action) {
 
 function openChange(id) {
   radioModal({
-    icon: '↻',
-    title: 'Изменить статус',
-    desc: 'Выберите новый статус заявки',
+    icon: '↻', title: 'Изменить статус', desc: 'Выберите новый статус заявки',
     options: [
       { value: 'approved', label: '✓ Одобрить' },
       { value: 'rejected', label: '✕ Отклонить' },
@@ -637,9 +599,7 @@ function openChange(id) {
 
 function openDelete(id) {
   confirmModal({
-    icon: '🗑',
-    title: 'Удалить заявку?',
-    desc: 'Заявка будет навсегда удалена из Discord.',
+    icon: '🗑', title: 'Удалить заявку?', desc: 'Заявка будет навсегда удалена из Discord.',
     confirmText: '🗑 Удалить',
     onConfirm: async () => {
       try {
@@ -661,12 +621,7 @@ async function loadTicketsBlock(body) {
     document.getElementById('cntTickets').textContent = ticketsData.open.length;
     body.innerHTML = `
       <div class="section-block" id="ticketsMain">
-        <div class="section-block-head">
-          <div>
-            <div class="section-block-title"><span class="ico">💬</span> Жалобы игроков</div>
-            <div class="section-block-sub">Открытые и закрытые тикеты</div>
-          </div>
-        </div>
+        <div class="section-block-head"><div><div class="section-block-title"><span class="ico">💬</span> Жалобы игроков</div><div class="section-block-sub">Открытые и закрытые тикеты</div></div></div>
         <div class="subtabs">
           <button class="subtab ${ticketsFilter === 'open' ? 'active' : ''}" onclick="setTicketsFilter('open')">🟢 Открытые <span class="subtab-count">${ticketsData.open.length}</span></button>
           <button class="subtab ${ticketsFilter === 'closed' ? 'active' : ''}" onclick="setTicketsFilter('closed')">🔒 Закрытые <span class="subtab-count">${ticketsData.closed.length}</span></button>
@@ -680,9 +635,7 @@ async function loadTicketsBlock(body) {
       </div>
     `;
     renderTicketsList();
-  } catch (e) {
-    body.innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${esc(e.message)}</div>`;
-  }
+  } catch (e) { body.innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${esc(e.message)}</div>`; }
 }
 
 function setTicketsFilter(f) {
@@ -698,20 +651,14 @@ function renderTicketsList() {
   const el = document.getElementById('ticketsList');
   if (!el) return;
   const list = ticketsData[ticketsFilter] || [];
-  if (!list.length) {
-    el.innerHTML = `<div class="empty-state"><div class="ico">📭</div>Тикетов нет.</div>`;
-    return;
-  }
+  if (!list.length) { el.innerHTML = `<div class="empty-state"><div class="ico">📭</div>Тикетов нет.</div>`; return; }
   el.innerHTML = list.map(t => {
     const date = t.lastDate ? new Date(t.lastDate).toLocaleString('ru-RU') : '—';
     const icon = ticketsFilter === 'closed' ? '🔒' : '🟢';
     const safeName = (t.name || '').replace(/'/g, "\\'");
-    return `<div class="app-card" style="cursor:pointer;" onclick="openTicket('${t.id}', '${safeName}')">
+    return `<div class="app-card compact" style="cursor:pointer;" onclick="openTicket('${t.id}', '${safeName}')">
       <div class="app-body">
-        <div class="app-head">
-          <span class="app-name">${icon} #${esc(t.name)}</span>
-          <span class="app-date">${date}</span>
-        </div>
+        <div class="app-head"><span class="app-name">${icon} #${esc(t.name)}</span><span class="app-date">${date}</span></div>
         ${t.lastAuthor ? `<div class="app-row"><span>Последний: <b>${esc(t.lastAuthor)}</b></span></div>` : ''}
         <div class="app-text">${esc(t.preview || '(нет сообщений)')}</div>
       </div>
@@ -744,10 +691,7 @@ async function loadTicketMessages() {
     if (json === lastMessages) return;
     lastMessages = json;
     const el = document.getElementById('ticketChat');
-    if (!data.messages.length) {
-      el.innerHTML = '<div class="empty-state">Сообщений нет.</div>';
-      return;
-    }
+    if (!data.messages.length) { el.innerHTML = '<div class="empty-state">Сообщений нет.</div>'; return; }
     el.innerHTML = data.messages.map(m => {
       const time = new Date(m.date).toLocaleString('ru-RU');
       const body = m.content || m.embedDescription || '';
@@ -768,54 +712,35 @@ async function loadTicketMessages() {
       </div>`;
     }).join('');
     el.scrollTop = el.scrollHeight;
-  } catch (e) {
-    document.getElementById('ticketChat').innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${esc(e.message)}</div>`;
-  }
+  } catch (e) { document.getElementById('ticketChat').innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${esc(e.message)}</div>`; }
 }
 
 async function loadLogsBlock(body) {
-  if (!isHeadAdminOrOwner()) {
-    body.innerHTML = '<div class="empty-state"><div class="ico">🔒</div>Логи доступны только главной администрации.</div>';
-    return;
-  }
+  if (!isHeadAdminOrOwner()) { body.innerHTML = '<div class="empty-state"><div class="ico">🔒</div>Логи доступны только главной администрации.</div>'; return; }
   body.innerHTML = '<div class="skeleton"></div><div class="skeleton"></div>';
   try {
     const data = await api('/api/logs');
     const logs = data.logs || [];
-    if (!logs.length) {
-      body.innerHTML = '<div class="empty-state"><div class="ico">📭</div>Записей нет.</div>';
-      return;
-    }
+    if (!logs.length) { body.innerHTML = '<div class="empty-state"><div class="ico">📭</div>Записей нет.</div>'; return; }
     body.innerHTML = `
       <div class="section-block">
-        <div class="section-block-head">
-          <div>
-            <div class="section-block-title"><span class="ico">📜</span> Логи Discord</div>
-            <div class="section-block-sub">Последние 50 записей</div>
-          </div>
-        </div>
-        <div class="cards-list">
+        <div class="section-block-head"><div><div class="section-block-title"><span class="ico">📜</span> Логи Discord</div><div class="section-block-sub">Последние 50 записей</div></div></div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
           ${logs.map(l => {
-            const date = new Date(l.date).toLocaleString('ru-RU');
-            return `<div class="app-card">
-              <img class="app-avatar" src="${l.avatar}" alt="">
-              <div class="app-body">
-                <div class="app-head">
-                  <span class="app-name">${esc(l.authorName)}</span>
-                  <span class="app-date">${date}</span>
-                </div>
-                ${l.content ? `<div style="font-size:13px;line-height:1.6;margin-bottom:6px;white-space:pre-wrap;">${esc(l.content)}</div>` : ''}
-                ${l.embedTitle ? `<div style="font-family:'Unbounded';font-weight:700;font-size:13.5px;color:var(--red);margin-bottom:4px;">${esc(l.embedTitle)}</div>` : ''}
-                ${l.embedDescription ? `<div style="font-size:12.5px;line-height:1.6;color:var(--text-dim);white-space:pre-wrap;">${esc(l.embedDescription)}</div>` : ''}
+            const date = new Date(l.date).toLocaleString('ru-RU', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+            const content = [l.content, l.embedTitle, l.embedDescription].filter(Boolean).join(' · ');
+            return `<div class="log-card">
+              <img class="log-avatar" src="${l.avatar}" alt="">
+              <div class="log-body">
+                <div class="log-head"><span class="log-author">${esc(l.authorName)}</span><span class="log-date">${date}</span></div>
+                <div class="log-content">${esc(content || '(без текста)')}</div>
               </div>
             </div>`;
           }).join('')}
         </div>
       </div>
     `;
-  } catch (e) {
-    body.innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${esc(e.message)}</div>`;
-  }
+  } catch (e) { body.innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${esc(e.message)}</div>`; }
 }
 
 /* ============ MANAGE ============ */
@@ -859,12 +784,7 @@ async function loadStaffBlock(body) {
     const online = all.filter(s => s.presence && ['online', 'idle', 'dnd'].includes(s.presence.status)).length;
     body.innerHTML = `
       <div class="section-block">
-        <div class="section-block-head">
-          <div>
-            <div class="section-block-title"><span class="ico">👥</span> Персонал сервера</div>
-            <div class="section-block-sub">Администрация и модераторы · В сети: <b>${online}</b> / ${all.length}</div>
-          </div>
-        </div>
+        <div class="section-block-head"><div><div class="section-block-title"><span class="ico">👥</span> Персонал сервера</div><div class="section-block-sub">Администрация и модераторы · В сети: <b>${online}</b> / ${all.length}</div></div></div>
         <div class="subtabs">
           <button class="subtab ${staffFilter === 'administrators' ? 'active' : ''}" onclick="setStaffFilter('administrators')">👑 Администрация <span class="subtab-count">${staffData.administrators.length}</span></button>
           <button class="subtab ${staffFilter === 'moderators' ? 'active' : ''}" onclick="setStaffFilter('moderators')">🛡️ Модераторы <span class="subtab-count">${staffData.moderators.length}</span></button>
@@ -873,9 +793,7 @@ async function loadStaffBlock(body) {
       </div>
     `;
     renderStaffGrid();
-  } catch (e) {
-    body.innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${esc(e.message)}</div>`;
-  }
+  } catch (e) { body.innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${esc(e.message)}</div>`; }
 }
 
 function setStaffFilter(f) {
@@ -891,22 +809,13 @@ function renderStaffGrid() {
   const grid = document.getElementById('staffGrid');
   if (!grid) return;
   const list = staffData[staffFilter] || [];
-  if (!list.length) {
-    grid.innerHTML = '<div class="empty-state">Нет участников.</div>';
-    return;
-  }
+  if (!list.length) { grid.innerHTML = '<div class="empty-state">Нет участников.</div>'; return; }
   grid.innerHTML = list.map(s => {
     const status = (s.presence && s.presence.status) || 'offline';
     const color = ROLE_COLOR_OVERRIDE[s.topRole] || s.topRoleColor;
     return `<div class="staff-tile" style="--role-color:${color};" onclick="window.location.href='/profile.html?id=${s.id}'">
-      <div class="staff-avatar-wrap">
-        <img class="staff-avatar" src="${s.avatar}" alt="">
-        <span class="staff-presence ${status}"></span>
-      </div>
-      <div class="staff-info">
-        <h3>${esc(s.nickname || s.global_name || s.username)}</h3>
-        <span class="staff-role" style="background:${color}22;color:${color};border:1px solid ${color}66;">${esc(s.topRole)}</span>
-      </div>
+      <div class="staff-avatar-wrap"><img class="staff-avatar" src="${s.avatar}" alt=""><span class="staff-presence ${status}"></span></div>
+      <div class="staff-info"><h3>${esc(s.nickname || s.global_name || s.username)}</h3><span class="staff-role" style="background:${color}22;color:${color};border:1px solid ${color}66;">${esc(s.topRole)}</span></div>
     </div>`;
   }).join('');
 }
@@ -917,14 +826,9 @@ async function loadAnalyticsBlock(body) {
     const data = await api('/api/analytics-data');
     const { days, topStaff, stats } = data;
     const maxApps = Math.max(...days.map(d => d.apps), 1);
-
     body.innerHTML = `
       <div class="section-block">
-        <div class="section-block-head">
-          <div>
-            <div class="section-block-title"><span class="ico">📊</span> Аналитика проекта</div>
-          </div>
-        </div>
+        <div class="section-block-head"><div><div class="section-block-title"><span class="ico">📊</span> Аналитика проекта</div></div></div>
         <div class="stats-grid" style="margin-bottom:20px;">
           <div class="stat-tile" style="--tile-color:#fbbf24;"><div class="stat-tile-icon">🕒</div><div class="stat-tile-value">${stats.pending}</div><div class="stat-tile-label">Ожидание</div></div>
           <div class="stat-tile" style="--tile-color:#4ade80;"><div class="stat-tile-icon">✓</div><div class="stat-tile-value">${stats.approved}</div><div class="stat-tile-label">Одобрено</div></div>
@@ -937,8 +841,8 @@ async function loadAnalyticsBlock(body) {
               const h = (d.apps / maxApps) * 100;
               return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;">
                 <div style="font-family:'Unbounded';font-size:10px;color:#fff;">${d.apps}</div>
-                <div style="width:100%;background:linear-gradient(to top,var(--red),var(--red-glow));border-radius:5px 5px 3px 3px;min-height:4px;height:${Math.max(h,4)}%;box-shadow:0 0 10px rgba(225,6,0,0.25);"></div>
-                <div style="font-size:9px;color:var(--text-dim);text-transform:uppercase;font-weight:600;">${d.label}</div>
+                <div style="width:100%;background:linear-gradient(to top,var(--red),var(--red-glow));border-radius:5px 5px 3px 3px;min-height:4px;height:${Math.max(h,4)}%;"></div>
+                <div style="font-size:9px;color:var(--text-dim);font-weight:600;">${d.label}</div>
               </div>`;
             }).join('')}
           </div>
@@ -956,32 +860,18 @@ async function loadAnalyticsBlock(body) {
         </div>
       </div>
     `;
-  } catch (e) {
-    body.innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${esc(e.message)}</div>`;
-  }
+  } catch (e) { body.innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${esc(e.message)}</div>`; }
 }
 
 async function loadRolesBlock(body) {
-  if (!isWatcherOrAbove()) {
-    body.innerHTML = '<div class="empty-state"><div class="ico">🔒</div>Доступно только следящим и выше.</div>';
-    return;
-  }
+  if (!isWatcherOrAbove()) { body.innerHTML = '<div class="empty-state"><div class="ico">🔒</div>Доступно только следящим и выше.</div>'; return; }
   body.innerHTML = `
     <div class="section-block">
-      <div class="section-block-head">
-        <div>
-          <div class="section-block-title"><span class="ico">👑</span> Выдача ролей Discord</div>
-          <div class="section-block-sub">Роль выдаётся на сайте. В Discord применится после привязки.</div>
-        </div>
-      </div>
-      <div class="search-wrap">
-        <input class="search-input" id="steamSearch" placeholder="Steam ID или ник" oninput="searchSteamUsers()">
-      </div>
+      <div class="section-block-head"><div><div class="section-block-title"><span class="ico">👑</span> Выдача ролей</div><div class="section-block-sub">Роль выдаётся на сайте. В Discord применится после привязки.</div></div></div>
+      <div class="search-wrap"><input class="search-input" id="steamSearch" placeholder="Steam ID" oninput="searchSteamUsers()"></div>
       <div class="cards-list" id="steamResults"><div class="empty-state">Введите Steam ID</div></div>
       <div id="rolePickArea" style="display:none;margin-top:20px;">
-        <div class="section-block-title" style="font-size:14px;margin-bottom:12px;">
-          <span class="ico">🎭</span> Роль для <b id="selectedUserName" style="margin-left:6px;"></b>
-        </div>
+        <div class="section-block-title" style="font-size:14px;margin-bottom:12px;"><span class="ico">🎭</span> Роль для <b id="selectedUserName" style="margin-left:6px;"></b></div>
         <div id="rolePickList"></div>
       </div>
     </div>
@@ -1001,18 +891,13 @@ async function searchSteamUsers() {
       const users = data.users || [];
       if (!users.length) { list.innerHTML = '<div class="empty-state">Никого не найдено</div>'; return; }
       list.innerHTML = users.map(u => {
-        const linked = !!u.discordId;
         const roleLabel = u.currentRole ? `<span style="background:rgba(74,222,128,0.15);color:#4ade80;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;">${esc(u.currentRole)}</span>` : '';
         const pendingLabel = u.pendingRole ? `<span style="background:rgba(251,191,36,0.15);color:#fbbf24;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;">Ожидает: ${esc(u.pendingRole)}</span>` : '';
-        return `<div class="app-card" style="cursor:${linked ? 'pointer' : 'not-allowed'};opacity:${linked ? 1 : 0.5};"
-               ${linked ? `onclick="pickSteamUser('${u.discordId}', '${(u.personaName || '').replace(/'/g, "\\'")}')"` : ''}>
+        return `<div class="app-card compact" style="cursor:pointer;" onclick="pickSteamUser('${u.steamId}', '${(u.personaName || '').replace(/'/g, "\\'")}', '${u.discordId || ''}')">
           <img class="app-avatar" src="${u.avatar}" alt="">
           <div class="app-body">
             <div class="app-head"><span class="app-name">${esc(u.personaName)}</span> ${roleLabel} ${pendingLabel}</div>
-            <div class="app-row">
-              <span>Steam: <b>${esc(u.steamId)}</b></span>
-              ${linked ? `<span>Discord: <b>${esc(u.discordId)}</b></span>` : '<span style="color:var(--red);">Discord не привязан</span>'}
-            </div>
+            <div class="app-row"><span>Steam: <b>${esc(u.steamId)}</b></span>${u.discordId ? `<span>Discord: <b>${esc(u.discordId)}</b></span>` : '<span style="color:var(--text-dim);">Discord не привязан</span>'}</div>
           </div>
         </div>`;
       }).join('');
@@ -1020,46 +905,33 @@ async function searchSteamUsers() {
   }, 400);
 }
 
-async function pickSteamUser(discordId, name) {
-  selectedMember = { id: discordId, name };
+async function pickSteamUser(steamId, name, discordId) {
+  selectedMember = { steamId, name, discordId };
   document.getElementById('selectedUserName').textContent = name;
   document.getElementById('rolePickArea').style.display = 'block';
   const roleList = document.getElementById('rolePickList');
   roleList.innerHTML = '<div class="loading-state"><div class="spinner"></div> Загрузка...</div>';
   try {
-    const [rolesData, currentData] = await Promise.all([
-      api('/api/roles-list'),
-      api('/api/user-current-role/' + discordId),
-    ]);
+    const rolesData = await api('/api/roles-list');
     availableRoles = rolesData.roles || [];
-    const currentRole = currentData.currentRole || null;
     if (!availableRoles.length) { roleList.innerHTML = '<div class="empty-state">Нет ролей</div>'; return; }
-    roleList.innerHTML = `
-      <div class="role-simple-list">
-        ${availableRoles.map(r => {
-          const isCurrent = currentRole && currentRole.toLowerCase() === r.name.toLowerCase();
-          return `<div class="role-simple-item" onclick="giveRole('${r.id}','${r.name.replace(/'/g, "\\'")}')">
-            <div class="role-checkbox ${isCurrent ? 'checked' : ''}"></div>
-            <div class="role-simple-name">${esc(r.name)}</div>
-            ${isCurrent ? '<span style="font-size:11px;color:var(--red);font-weight:700;margin-left:auto;">ТЕКУЩАЯ</span>' : ''}
-          </div>`;
-        }).join('')}
-      </div>`;
+    roleList.innerHTML = `<div class="role-simple-list">
+      ${availableRoles.map(r => `<div class="role-simple-item" onclick="giveRole('${r.id}','${r.name.replace(/'/g, "\\'")}')"><div class="role-checkbox"></div><div class="role-simple-name">${esc(r.name)}</div></div>`).join('')}
+    </div>`;
   } catch (e) { roleList.innerHTML = `<div class="empty-state" style="color:var(--red);">${esc(e.message)}</div>`; }
 }
 
 function giveRole(roleId, roleName) {
   if (!selectedMember) return;
+  const warn = selectedMember.discordId ? 'Discord привязан — роль выдастся сразу.' : 'Discord не привязан — роль сохранится до привязки.';
   confirmModal({
-    icon: '👑',
-    title: `Выдать роль "${roleName}"?`,
-    desc: `Пользователь: ${selectedMember.name}. Роль будет выдана на сайте. В Discord она применится после привязки аккаунта.`,
-    confirmText: '✓ Выдать',
-    confirmClass: 'green',
+    icon: '👑', title: `Выдать роль "${roleName}"?`,
+    desc: `Пользователь: ${selectedMember.name}. ${warn}`,
+    confirmText: '✓ Выдать', confirmClass: 'green',
     onConfirm: async () => {
       try {
-        await api('/api/give-role', { method: 'POST', body: JSON.stringify({ discordId: selectedMember.id, roleId }) });
-        toast(`✓ Роль "${roleName}" выдана на сайте`, 'success');
+        await api('/api/give-role', { method: 'POST', body: JSON.stringify({ steamId: selectedMember.steamId, discordId: selectedMember.discordId, roleId }) });
+        toast(`✓ Роль "${roleName}" выдана`, 'success');
         document.getElementById('rolePickArea').style.display = 'none';
         selectedMember = null;
         document.getElementById('steamSearch').value = '';
@@ -1070,16 +942,10 @@ function giveRole(roleId, roleName) {
 }
 
 async function loadPromoBlock(body) {
-  if (!isOwner()) {
-    body.innerHTML = '<div class="empty-state"><div class="ico">🔒</div>Только для владельца</div>';
-    return;
-  }
+  if (!isOwner()) { body.innerHTML = '<div class="empty-state"><div class="ico">🔒</div>Только для владельца</div>'; return; }
   body.innerHTML = `
     <div class="section-block">
-      <div class="section-block-head">
-        <div><div class="section-block-title"><span class="ico">🎟️</span> Промокоды</div></div>
-        <button class="btn-act green" onclick="openPromoCreate()">+ Создать</button>
-      </div>
+      <div class="section-block-head"><div><div class="section-block-title"><span class="ico">🎟️</span> Промокоды</div></div><button class="btn-act green" onclick="openPromoCreate()">+ Создать</button></div>
       <div class="cards-list" id="promoList"><div class="loading-state"><div class="spinner"></div> Загрузка...</div></div>
     </div>
   `;
@@ -1093,20 +959,12 @@ async function loadPromoList() {
     const list = data.promocodes || [];
     if (!list.length) { el.innerHTML = '<div class="empty-state"><div class="ico">🎟️</div>Промокодов нет</div>'; return; }
     el.innerHTML = list.map(p => `
-      <div class="app-card">
-        <div style="width:56px;height:56px;border-radius:14px;background:rgba(225,6,0,0.12);border:1px solid rgba(225,6,0,0.3);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🎟️</div>
+      <div class="app-card compact">
+        <div style="width:40px;height:40px;border-radius:10px;background:rgba(225,6,0,0.12);border:1px solid rgba(225,6,0,0.3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🎟️</div>
         <div class="app-body">
-          <div class="app-head">
-            <span class="app-name" style="font-family:monospace;">${esc(p.code)}</span>
-            <span class="app-date">${new Date(p.createdAt).toLocaleString('ru-RU')}</span>
-          </div>
-          <div class="app-row">
-            <span>💰 Сумма: <b>${p.amount}</b></span>
-            <span>👥 Использован: <b>${p.usedCount}</b>${p.maxUses > 0 ? ' / ' + p.maxUses : ''}</span>
-          </div>
-          <div class="app-actions">
-            <button class="btn-act red" onclick="deletePromo('${esc(p.code)}')">🗑 Удалить</button>
-          </div>
+          <div class="app-head"><span class="app-name" style="font-family:monospace;letter-spacing:1px;">${esc(p.code)}</span><span class="app-date">${new Date(p.createdAt).toLocaleDateString('ru-RU')}</span></div>
+          <div class="app-row"><span>💰 <b>${p.amount}</b></span><span>👥 <b>${p.usedCount}</b>${p.maxUses > 0 ? ' / ' + p.maxUses : ''}</span></div>
+          <div class="app-actions"><button class="btn-act red" onclick="deletePromo('${esc(p.code)}')">🗑 Удалить</button></div>
         </div>
       </div>
     `).join('');
@@ -1115,8 +973,7 @@ async function loadPromoList() {
 
 function openPromoCreate() {
   formModal({
-    icon: '🎟️',
-    title: 'Новый промокод',
+    icon: '🎟️', title: 'Новый промокод',
     fields: [
       { id: 'code', label: 'Код', placeholder: 'FERM100' },
       { id: 'amount', label: 'Сумма (₽)', placeholder: '100', type: 'number' },
@@ -1140,9 +997,7 @@ function openPromoCreate() {
 
 function deletePromo(code) {
   confirmModal({
-    icon: '🗑',
-    title: `Удалить "${code}"?`,
-    confirmText: '🗑 Удалить',
+    icon: '🗑', title: `Удалить "${code}"?`, confirmText: '🗑 Удалить',
     onConfirm: async () => {
       try {
         await api('/api/promocodes/' + encodeURIComponent(code), { method: 'DELETE' });
@@ -1154,36 +1009,22 @@ function deletePromo(code) {
 }
 
 async function loadOrdersBlock(body) {
-  if (!isOwner()) {
-    body.innerHTML = '<div class="empty-state"><div class="ico">🔒</div>Только для владельца</div>';
-    return;
-  }
+  if (!isOwner()) { body.innerHTML = '<div class="empty-state"><div class="ico">🔒</div>Только для владельца</div>'; return; }
   body.innerHTML = '<div class="loading-state"><div class="spinner"></div> Загрузка...</div>';
   try {
     const data = await api('/api/shop/orders/all');
     const orders = data.orders || [];
-    if (!orders.length) {
-      body.innerHTML = '<div class="empty-state"><div class="ico">🛒</div>Заказов нет</div>';
-      return;
-    }
+    if (!orders.length) { body.innerHTML = '<div class="empty-state"><div class="ico">🛒</div>Заказов нет</div>'; return; }
     body.innerHTML = `
       <div class="section-block">
-        <div class="section-block-head">
-          <div><div class="section-block-title"><span class="ico">🛒</span> Заказы магазина</div></div>
-        </div>
+        <div class="section-block-head"><div><div class="section-block-title"><span class="ico">🛒</span> Заказы магазина</div></div></div>
         <div class="cards-list">
           ${orders.map(o => `
-            <div class="app-card">
-              <div style="width:56px;height:56px;border-radius:14px;background:rgba(225,6,0,0.12);border:1px solid rgba(225,6,0,0.3);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🛒</div>
+            <div class="app-card compact">
+              <div style="width:40px;height:40px;border-radius:10px;background:rgba(225,6,0,0.12);border:1px solid rgba(225,6,0,0.3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🛒</div>
               <div class="app-body">
-                <div class="app-head">
-                  <span class="app-name">${esc(o.userName)}</span>
-                  <span class="app-date">${new Date(o.createdAt).toLocaleString('ru-RU')}</span>
-                </div>
-                <div class="app-row">
-                  <span>Товар: <b>${esc(o.itemName)}</b></span>
-                  <span>Цена: <b>${o.price} ₽</b></span>
-                </div>
+                <div class="app-head"><span class="app-name">${esc(o.userName)}</span><span class="app-date">${new Date(o.createdAt).toLocaleDateString('ru-RU')}</span></div>
+                <div class="app-row"><span>Товар: <b>${esc(o.itemName)}</b></span><span>Цена: <b>${o.price} ₽</b></span></div>
               </div>
             </div>
           `).join('')}
@@ -1200,9 +1041,7 @@ async function loadSettingsBlock(body) {
     const s = data.settings || {};
     body.innerHTML = `
       <div class="section-block">
-        <div class="section-block-head">
-          <div><div class="section-block-title"><span class="ico">⚙️</span> Настройки</div></div>
-        </div>
+        <div class="section-block-head"><div><div class="section-block-title"><span class="ico">⚙️</span> Настройки</div></div></div>
         <div class="settings-grid">
           <div class="setting-card"><div class="setting-label">Discord сервер</div><div class="setting-value">${esc(s.guildId)}</div></div>
           <div class="setting-card"><div class="setting-label">Канал заявок</div><div class="setting-value">${esc(s.applyChannel)}</div></div>
@@ -1219,22 +1058,13 @@ async function loadMonitorBlock(body) {
   body.innerHTML = '<div class="loading-state"><div class="spinner"></div> Проверка...</div>';
   const start = performance.now();
   let apiStatus = 'err', apiText = 'Недоступен', ping = '—';
-  try {
-    await api('/api/me');
-    ping = Math.round(performance.now() - start) + ' ms';
-    apiStatus = 'ok'; apiText = 'Работает';
-  } catch { apiText = 'Ошибка'; }
+  try { await api('/api/me'); ping = Math.round(performance.now() - start) + ' ms'; apiStatus = 'ok'; apiText = 'Работает'; }
+  catch { apiText = 'Ошибка'; }
   let presenceStatus = 'err', presenceText = 'Не подключён';
-  try {
-    const p = await api('/api/presence');
-    if (p.ready) { presenceStatus = 'ok'; presenceText = `Активен · ${p.online + p.idle + p.dnd}/${p.total}`; }
-  } catch {}
+  try { const p = await api('/api/presence'); if (p.ready) { presenceStatus = 'ok'; presenceText = `Активен · ${p.online + p.idle + p.dnd}/${p.total}`; } } catch {}
   body.innerHTML = `
     <div class="section-block">
-      <div class="section-block-head">
-        <div><div class="section-block-title"><span class="ico">💓</span> Мониторинг</div></div>
-        <button class="btn-act ghost" onclick="loadMonitorBlock(document.getElementById('mgBody'))">↻ Обновить</button>
-      </div>
+      <div class="section-block-head"><div><div class="section-block-title"><span class="ico">💓</span> Мониторинг</div></div><button class="btn-act ghost" onclick="loadMonitorBlock(document.getElementById('mgBody'))">↻ Обновить</button></div>
       <div class="settings-grid">
         <div class="setting-card"><div class="setting-label">API</div><div class="setting-value ${apiStatus}">${apiStatus === 'ok' ? '✅' : '❌'} ${apiText}</div></div>
         <div class="setting-card"><div class="setting-label">Ping</div><div class="setting-value">${ping}</div></div>

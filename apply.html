@@ -62,11 +62,11 @@
 
         <div class="info-list">
           <div class="info-item"><div class="info-icon">🎂</div><div><h4>Возраст от 14 лет</h4><p>Адекватность и ответственность важнее возраста.</p></div></div>
-          <div class="info-item"><div class="info-icon">⏰</div><div><h4>Хороший онлайн</h4><p>Модератор должен быть активным и оперативно реагировать.</p></div></div>
-          <div class="info-item"><div class="info-icon">🎤</div><div><h4>Discord и микрофон</h4><p>Обязательно наличие Discord и голосового общения.</p></div></div>
-          <div class="info-item"><div class="info-icon">📚</div><div><h4>Знание правил сервера</h4><p>Ты должен знать правила наизусть и уметь применять их.</p></div></div>
+          <div class="info-item"><div class="info-icon">⏰</div><div><h4>Хороший онлайн</h4><p>Модератор должен быть активным.</p></div></div>
+          <div class="info-item"><div class="info-icon">🎤</div><div><h4>Discord и микрофон</h4><p>Обязательно наличие Discord.</p></div></div>
+          <div class="info-item"><div class="info-icon">📚</div><div><h4>Знание правил</h4><p>Ты должен знать правила наизусть.</p></div></div>
           <div class="info-item"><div class="info-icon">🧠</div><div><h4>Стрессоустойчивость</h4><p>Умение сохранять спокойствие в конфликтах.</p></div></div>
-          <div class="info-item"><div class="info-icon">📝</div><div><h4>Грамотная речь</h4><p>Писать без ошибок и корректно общаться с игроками.</p></div></div>
+          <div class="info-item"><div class="info-icon">📝</div><div><h4>Грамотная речь</h4><p>Писать без ошибок и корректно общаться.</p></div></div>
         </div>
 
         <div class="apply-cta">
@@ -74,9 +74,7 @@
           <p id="applyCtaText">Войдите через Steam, чтобы подать заявку.</p>
           <div class="apply-row">
             <button class="apply-open-btn" id="openFormBtn" disabled>Подать заявку <span class="arrow">→</span></button>
-            <button class="my-apps-btn" id="myAppsBtn" style="display:none;" onclick="openMyApplications()">
-              📄 Мои заявки <span class="my-apps-count" id="myAppsCount">0</span>
-            </button>
+            <button class="my-apps-btn" id="myAppsBtn" style="display:none;" onclick="openMyApplications()">📄 Мои заявки <span class="my-apps-count" id="myAppsCount">0</span></button>
           </div>
         </div>
       </div>
@@ -84,30 +82,16 @@
 
     <div class="form-container" id="formContainer">
       <button class="form-back-btn" id="backBtn">← Назад к требованиям</button>
-
       <div class="form-card">
         <h3 class="form-card-title">Анкета кандидата</h3>
         <p class="form-card-subtitle">Заполни все поля честно</p>
-
         <form id="applyForm">
           <div class="form-row">
-            <div class="form-group">
-              <label for="age">Ваш возраст <span class="req">*</span></label>
-              <input type="text" id="age" name="age" placeholder="Ответ" required>
-            </div>
-            <div class="form-group">
-              <label for="online">Онлайн в день <span class="req">*</span></label>
-              <input type="text" id="online" name="online" placeholder="Ответ" required>
-            </div>
+            <div class="form-group"><label>Ваш возраст <span class="req">*</span></label><input type="text" id="age" required></div>
+            <div class="form-group"><label>Онлайн в день <span class="req">*</span></label><input type="text" id="online" required></div>
           </div>
-          <div class="form-group">
-            <label for="experience">Опыт модерации <span class="req">*</span></label>
-            <input type="text" id="experience" name="experience" placeholder="Ответ" required>
-          </div>
-          <div class="form-group">
-            <label for="motivation">Почему именно вы? <span class="req">*</span></label>
-            <textarea id="motivation" name="motivation" placeholder="Ответ" required></textarea>
-          </div>
+          <div class="form-group"><label>Опыт модерации <span class="req">*</span></label><input type="text" id="experience" required></div>
+          <div class="form-group"><label>Почему именно вы? <span class="req">*</span></label><textarea id="motivation" required></textarea></div>
           <button type="submit" class="submit-btn" id="submitBtn">Отправить заявку →</button>
           <div class="form-note" id="formNote"></div>
         </form>
@@ -134,7 +118,7 @@
   <a class="nav-btn" href="/index.html"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Главная</span></a>
   <a class="nav-btn" href="/rules.html"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Правила</span></a>
   <a class="nav-btn" href="/roles.html"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Роли</span></a>
-  <a class="nav-btn active" href="/apply.html"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>Заявка</span></a>
+  <a class="nav-btn" href="/shop.html"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span>Магазин</span></a>
   <a class="nav-btn" href="/profile.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg><span>Профиль</span></a>
 </nav>
 
@@ -155,17 +139,13 @@ const API = window.API_BASE || '';
 let myAppsCache = [];
 let myTab = 'pending';
 
-function resetApplyView() {
-  applyIntro.classList.remove('hidden');
-  formContainer.classList.remove('visible');
-}
+function resetApplyView() { applyIntro.classList.remove('hidden'); formContainer.classList.remove('visible'); }
 
 openFormBtn.addEventListener('click', () => {
   applyIntro.classList.add('hidden');
   formContainer.classList.add('visible');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
-
 backBtn.addEventListener('click', () => {
   formContainer.classList.remove('visible');
   applyIntro.classList.remove('hidden');
@@ -190,9 +170,7 @@ window.addEventListener('auth:changed', async (e) => {
 async function loadMyApplicationsCount() {
   try {
     const token = localStorage.getItem('fernodd_token') || '';
-    const r = await fetch(API + '/api/my-applications', {
-      headers: { Authorization: 'Bearer ' + token }
-    });
+    const r = await fetch(API + '/api/my-applications', { headers: { Authorization: 'Bearer ' + token } });
     if (!r.ok) { myAppsCount.textContent = '0'; return; }
     const data = await r.json();
     myAppsCache = data.applications || [];
@@ -209,18 +187,12 @@ function closeMyApplications() {
   document.getElementById('myModal').classList.remove('visible');
   document.body.style.overflow = '';
 }
-document.getElementById('myModal').addEventListener('click', (e) => {
-  if (e.target.id === 'myModal') closeMyApplications();
-});
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') closeMyApplications();
-});
+document.getElementById('myModal').addEventListener('click', (e) => { if (e.target.id === 'myModal') closeMyApplications(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMyApplications(); });
 
 function switchMyTab(name) {
   myTab = name;
-  document.querySelectorAll('.my-tab').forEach(t => {
-    if (t.dataset.tab) t.classList.toggle('active', t.dataset.tab === name);
-  });
+  document.querySelectorAll('.my-tab').forEach(t => { if (t.dataset.tab) t.classList.toggle('active', t.dataset.tab === name); });
   renderMyList();
 }
 
@@ -229,10 +201,8 @@ async function loadMyApplications() {
   list.innerHTML = '<p class="my-empty">Загрузка…</p>';
   try {
     const token = localStorage.getItem('fernodd_token') || '';
-    const r = await fetch(API + '/api/my-applications', {
-      headers: { Authorization: 'Bearer ' + token }
-    });
-    if (!r.ok) { list.innerHTML = '<p class="my-empty" style="color:var(--red);">Не удалось загрузить заявки.</p>'; return; }
+    const r = await fetch(API + '/api/my-applications', { headers: { Authorization: 'Bearer ' + token } });
+    if (!r.ok) { list.innerHTML = '<p class="my-empty" style="color:var(--red);">Не удалось загрузить.</p>'; return; }
     const data = await r.json();
     myAppsCache = data.applications || [];
     myAppsCount.textContent = myAppsCache.length;
@@ -240,9 +210,7 @@ async function loadMyApplications() {
     document.getElementById('myCountApproved').textContent = myAppsCache.filter(a => a.status === 'approved').length;
     document.getElementById('myCountRejected').textContent = myAppsCache.filter(a => a.status === 'rejected').length;
     renderMyList();
-  } catch {
-    list.innerHTML = '<p class="my-empty" style="color:var(--red);">Ошибка сети.</p>';
-  }
+  } catch { list.innerHTML = '<p class="my-empty" style="color:var(--red);">Ошибка сети.</p>'; }
 }
 
 function renderMyList() {
@@ -256,19 +224,15 @@ function renderMyList() {
   list.innerHTML = items.map(a => {
     const date = new Date(a.date).toLocaleString('ru-RU');
     const statusLabel = a.status === 'approved' ? 'Одобрено' : a.status === 'rejected' ? 'Отклонено' : 'На рассмотрении';
-    return `
-      <div class="my-card ${a.status}">
-        <div class="my-card-head">
-          <span class="status ${a.status}">${statusLabel}</span>
-          <span style="font-size:12px;color:var(--text-dim);">${date}</span>
-        </div>
-        <div class="my-card-row">
-          <span>Возраст: <b>${escapeHtml(a.age || '—')}</b></span>
-          <span>Онлайн: <b>${escapeHtml(a.online || '—')}</b></span>
-          <span>Опыт: <b>${escapeHtml(a.experience || '—')}</b></span>
-        </div>
-        <div class="my-card-text">${escapeHtml(a.motivation || '—')}</div>
-      </div>`;
+    return `<div class="my-card ${a.status}">
+      <div class="my-card-head"><span class="status ${a.status}">${statusLabel}</span><span style="font-size:12px;color:var(--text-dim);">${date}</span></div>
+      <div class="my-card-row">
+        <span>Возраст: <b>${escapeHtml(a.age || '—')}</b></span>
+        <span>Онлайн: <b>${escapeHtml(a.online || '—')}</b></span>
+        <span>Опыт: <b>${escapeHtml(a.experience || '—')}</b></span>
+      </div>
+      <div class="my-card-text">${escapeHtml(a.motivation || '—')}</div>
+    </div>`;
   }).join('');
 }
 
@@ -281,8 +245,7 @@ form.addEventListener('submit', async (e) => {
     motivation: form.motivation.value.trim()
   };
   if (!payload.age || !payload.online || !payload.experience || !payload.motivation) {
-    showToast('Заполните все поля.', 'error');
-    return;
+    showToast('Заполните все поля.', 'error'); return;
   }
   submitBtn.disabled = true;
   submitBtn.textContent = 'Отправка...';
@@ -303,12 +266,8 @@ form.addEventListener('submit', async (e) => {
     } else {
       showToast('Не удалось отправить заявку.', 'error');
     }
-  } catch {
-    showToast('Ошибка сети.', 'error');
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Отправить заявку →';
-  }
+  } catch { showToast('Ошибка сети.', 'error'); }
+  finally { submitBtn.disabled = false; submitBtn.textContent = 'Отправить заявку →'; }
 });
 </script>
 </body>

@@ -68,12 +68,12 @@ const {
 console.log('========================================');
 console.log('  FERNODD API STARTUP');
 console.log('========================================');
-console.log('PORT:                  ', PORT);
-console.log('MONGO_URL:             ', MONGO_URL ? '✅' : '❌');
-console.log('STEAM_API_KEY:         ', STEAM_API_KEY ? '✅' : '❌');
-console.log('JWT_SECRET:            ', JWT_SECRET ? '✅' : '❌');
-console.log('DISCORD_BOT_TOKEN:     ', DISCORD_BOT_TOKEN ? '✅' : '❌');
-console.log('DISCORD_CLIENT_ID:     ', DISCORD_CLIENT_ID ? '✅' : '❌');
+console.log('PORT:              ', PORT);
+console.log('MONGO_URL:         ', MONGO_URL ? '✅' : '❌');
+console.log('STEAM_API_KEY:     ', STEAM_API_KEY ? '✅' : '❌');
+console.log('JWT_SECRET:        ', JWT_SECRET ? '✅' : '❌');
+console.log('DISCORD_BOT_TOKEN: ', DISCORD_BOT_TOKEN ? '✅' : '❌');
+console.log('DISCORD_CLIENT_ID: ', DISCORD_CLIENT_ID ? '✅' : '❌');
 console.log('========================================\n');
 
 const ADMIN_ROLES = [ROLE_CURATOR, ROLE_WATCHER, ROLE_HEADADMIN].filter(Boolean);
@@ -88,29 +88,36 @@ const STAFF_ROLE_NAMES_ALL = [
   'куратор', 'следящий', 'главная администрация',
 ];
 
+/* ============ ТОВАРЫ МАГАЗИНА ============ */
 const SHOP_ITEMS = [
-  { id: 'moderator',        name: 'Модератор',          price: 5000,  roleName: 'модератор',        color: '#3b82f6', icon: '🛡️' },
-  { id: 'senior_moderator', name: 'Старший модератор',  price: 15000, roleName: 'старший модератор', color: '#4ade80', icon: '⚔️' },
-  { id: 'chief_moderator',  name: 'Главный модератор',  price: 30000, roleName: 'главный модератор', color: '#22d3ee', icon: '👑' },
+  {
+    id: 'fernodd_plus',
+    name: 'FERNODD+',
+    description: 'Премиум-подписка с уникальными возможностями',
+    color: '#fbbf24',
+    roleName: 'fernodd+',
+    tariffs: [
+      { id: 'month',   label: '1 месяц',   price: 249,   days: 30  },
+      { id: 'q3',      label: '3 месяца',  price: 499,   days: 90  },
+      { id: 'q6',      label: '6 месяцев', price: 1199,  days: 180 },
+      { id: 'year',    label: '1 год',     price: 2399,  days: 365 },
+      { id: 'forever', label: 'Навсегда',  price: 24999, days: 0   },
+    ]
+  },
 ];
 
 /* ============ MongoDB ============ */
 let mongoDb = null;
 
 async function initMongo() {
-  if (!MONGO_URL) {
-    console.warn('[mongo] MONGO_URL не задан');
-    return;
-  }
+  if (!MONGO_URL) { console.warn('[mongo] MONGO_URL не задан'); return; }
   try {
     const client = new MongoClient(MONGO_URL);
     await client.connect();
     mongoDb = client.db('fernodd');
     console.log('[mongo] ✅ Подключено');
     await ensureIndexes();
-  } catch (e) {
-    console.error('[mongo] ❌', e.message);
-  }
+  } catch (e) { console.error('[mongo] ❌', e.message); }
 }
 
 async function ensureIndexes() {
@@ -126,10 +133,11 @@ async function ensureIndexes() {
     await mongoDb.collection('referrals').createIndex({ referrerId: 1 });
     await mongoDb.collection('referrals').createIndex({ invitedId: 1 });
     await mongoDb.collection('pendingRoles').createIndex({ userId: 1 }, { unique: true });
+    await mongoDb.collection('referralCodes').createIndex({ steamId: 1 }, { unique: true });
+    await mongoDb.collection('referralCodes').createIndex({ code: 1 }, { unique: true });
+    await mongoDb.collection('subscriptions').createIndex({ steamId: 1 }, { unique: true });
     console.log('[mongo] ✅ Индексы готовы');
-  } catch (e) {
-    console.error('[mongo]', e.message);
-  }
+  } catch (e) { console.error('[mongo]', e.message); }
 }
 
 /* ============ Утилиты БД ============ */
@@ -172,7 +180,6 @@ async function delLink(steamId) {
   if (!mongoDb) return;
   await mongoDb.collection('links').deleteOne({ steamId });
 }
-
 async function setPendingRole(userId, roleName) {
   if (!mongoDb) return;
   await mongoDb.collection('pendingRoles').updateOne(
@@ -190,7 +197,6 @@ async function clearPendingRole(userId) {
   if (!mongoDb) return;
   await mongoDb.collection('pendingRoles').deleteOne({ userId });
 }
-
 async function loadHistory() {
   if (!mongoDb) return [];
   const items = await mongoDb.collection('history').find({}).sort({ performedAt: -1 }).limit(500).toArray();
@@ -203,12 +209,7 @@ async function appendHistory(entry) {
 async function logTransaction(steamId, userName, type, amount, currency, description) {
   if (!mongoDb) return;
   await mongoDb.collection('transactions').insertOne({
-    userId: steamId,
-    userName,
-    type,
-    amount,
-    currency,
-    description,
+    userId: steamId, userName, type, amount, currency, description,
     createdAt: new Date().toISOString(),
   });
 }
@@ -245,9 +246,7 @@ async function discordDelete(p) {
 
 let rolesCache = { data: null, time: 0 };
 async function getGuildRoles() {
-  if (rolesCache.data && Date.now() - rolesCache.time < 300000) {
-    return rolesCache.data;
-  }
+  if (rolesCache.data && Date.now() - rolesCache.time < 300000) return rolesCache.data;
   const roles = await discordGet(`/guilds/${DISCORD_GUILD_ID}/roles`);
   rolesCache = { data: roles, time: Date.now() };
   return roles;
@@ -264,9 +263,7 @@ async function getUserStaffRoles(id) {
     return (member.roles || [])
       .map(rid => roleMap[rid])
       .filter(name => name && STAFF_ROLE_NAMES_ALL.includes(name.toLowerCase()));
-  } catch {
-    return [];
-  }
+  } catch { return []; }
 }
 async function removeAllStaffRoles(id, keep = []) {
   try {
@@ -281,9 +278,7 @@ async function removeAllStaffRoles(id, keep = []) {
       .map(r => r.id);
     const userSet = new Set(member.roles || []);
     for (const rid of removeIds.filter(x => userSet.has(x))) {
-      try {
-        await discordDelete(`/guilds/${DISCORD_GUILD_ID}/members/${id}/roles/${rid}`);
-      } catch (e) {}
+      try { await discordDelete(`/guilds/${DISCORD_GUILD_ID}/members/${id}/roles/${rid}`); } catch (e) {}
     }
   } catch (e) {}
 }
@@ -395,19 +390,23 @@ app.get('/auth/steam/callback', async (req, res) => {
       };
     } catch {}
 
-    if (refCode && refCode !== steamId && mongoDb) {
+    // Реферальная ссылка по коду
+    if (refCode && mongoDb) {
       try {
-        const existing = await mongoDb.collection('referrals').findOne({ invitedId: steamId });
-        if (!existing) {
-          await mongoDb.collection('referrals').insertOne({
-            referrerId: refCode,
-            invitedId: steamId,
-            invitedName: profile.personaname,
-            createdAt: new Date().toISOString(),
-          });
-          await addBalance(refCode, 100);
+        const refDoc = await mongoDb.collection('referralCodes').findOne({ code: refCode.toLowerCase() });
+        if (refDoc && refDoc.steamId !== steamId) {
+          const existing = await mongoDb.collection('referrals').findOne({ invitedId: steamId });
+          if (!existing) {
+            await mongoDb.collection('referrals').insertOne({
+              referrerId: refDoc.steamId,
+              invitedId: steamId,
+              invitedName: profile.personaname,
+              createdAt: new Date().toISOString(),
+            });
+            await addBalance(refDoc.steamId, 100);
+          }
         }
-      } catch (e) {}
+      } catch (e) { console.error('[ref]', e); }
     }
 
     const isOwner = profile.steamid === OWNER_STEAM_ID;
@@ -467,9 +466,7 @@ app.get('/auth/discord/callback', async (req, res) => {
   const { code, state } = req.query;
   if (!code) return res.redirect(`${FRONTEND_URL}/profile.html?discord_error=no_code`);
   let userToken = null;
-  try {
-    userToken = JSON.parse(Buffer.from(state, 'base64').toString()).token;
-  } catch {}
+  try { userToken = JSON.parse(Buffer.from(state, 'base64').toString()).token; } catch {}
   if (!userToken) return res.redirect(`${FRONTEND_URL}/profile.html?discord_error=bad_state`);
   let user;
   try { user = jwt.verify(userToken, JWT_SECRET); }
@@ -509,7 +506,7 @@ app.get('/auth/discord/callback', async (req, res) => {
 
     await setLink(user.steamId, discordUser.id);
 
-    // ★ Pending role sync
+    // Синхронизация pending-роли
     try {
       const pending = await getPendingRole(discordUser.id) || await getPendingRole(user.steamId);
       if (pending) {
@@ -669,46 +666,81 @@ app.get('/api/transactions', requireAuth, async (req, res) => {
 /* ============ РЕФЕРАЛЫ ============ */
 app.get('/api/referrals/my', requireAuth, async (req, res) => {
   if (!mongoDb) return res.json({ code: '', invited: [], earned: 0, cashback: 0 });
+  let refDoc = await mongoDb.collection('referralCodes').findOne({ steamId: req.user.steamId });
+  if (!refDoc) {
+    let base = (req.user.username || 'user').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 12) || 'user';
+    let code = base;
+    let tries = 0;
+    while (await mongoDb.collection('referralCodes').findOne({ code }) && tries < 20) {
+      code = base + Math.floor(100 + Math.random() * 900);
+      tries++;
+    }
+    await mongoDb.collection('referralCodes').insertOne({
+      steamId: req.user.steamId,
+      code,
+      createdAt: new Date().toISOString(),
+    });
+    refDoc = { code };
+  }
   const invited = await mongoDb.collection('referrals')
     .find({ referrerId: req.user.steamId })
     .sort({ createdAt: -1 })
     .toArray();
-  const earnedR = invited.length * 100;
   res.json({
-    code: req.user.steamId ? String(req.user.steamId) : 'me',
+    code: refDoc.code,
     fullCode: req.user.steamId,
-    link: `${FRONTEND_URL}/auth/steam?ref=${req.user.steamId}`,
+    link: `${FRONTEND_URL}/auth/steam?ref=${refDoc.code}`,
     invited: invited.map(i => ({
       steamId: i.invitedId,
       name: i.invitedName,
       at: i.createdAt,
     })),
-    earned: earnedR,
+    earned: invited.length * 100,
     cashback: 0,
   });
+});
+
+app.post('/api/referrals/set-code', requireAuth, async (req, res) => {
+  if (!mongoDb) return res.status(500).json({ error: 'no_db' });
+  const { code } = req.body || {};
+  if (!code) return res.status(400).json({ error: 'missing_code' });
+  const clean = String(code).trim().toLowerCase();
+  if (!/^[a-z0-9_\-]{3,20}$/.test(clean)) {
+    return res.status(400).json({ error: 'bad_code_format' });
+  }
+  const existing = await mongoDb.collection('referralCodes').findOne({ code: clean });
+  if (existing && existing.steamId !== req.user.steamId) {
+    return res.status(400).json({ error: 'code_taken' });
+  }
+  await mongoDb.collection('referralCodes').updateOne(
+    { steamId: req.user.steamId },
+    { $set: { code: clean, updatedAt: new Date().toISOString() } },
+    { upsert: true }
+  );
+  res.json({ ok: true, code: clean });
 });
 
 app.post('/api/referrals/activate', requireAuth, async (req, res) => {
   if (!mongoDb) return res.status(500).json({ error: 'no_db' });
   const { code } = req.body || {};
   if (!code) return res.status(400).json({ error: 'missing_code' });
-  const clean = String(code).trim();
-  if (clean === req.user.steamId) return res.status(400).json({ error: 'self_ref' });
+  const clean = String(code).trim().toLowerCase();
 
-  const referrer = await mongoDb.collection('links').findOne({ steamId: clean });
-  if (!referrer) return res.status(404).json({ error: 'user_not_found' });
+  const refDoc = await mongoDb.collection('referralCodes').findOne({ code: clean });
+  if (!refDoc) return res.status(404).json({ error: 'user_not_found' });
+  if (refDoc.steamId === req.user.steamId) return res.status(400).json({ error: 'self_ref' });
 
   const existing = await mongoDb.collection('referrals').findOne({ invitedId: req.user.steamId });
   if (existing) return res.status(400).json({ error: 'already_activated' });
 
   await mongoDb.collection('referrals').insertOne({
-    referrerId: clean,
+    referrerId: refDoc.steamId,
     invitedId: req.user.steamId,
     invitedName: req.user.global_name || req.user.username,
     createdAt: new Date().toISOString(),
   });
 
-  await addBalance(clean, 100);
+  await addBalance(refDoc.steamId, 100);
   await addBalance(req.user.steamId, 50);
 
   res.json({ ok: true });
@@ -729,7 +761,9 @@ app.get('/api/referrals/top', requireAuth, async (req, res) => {
       const link = await mongoDb.collection('links').findOne({ steamId: r._id });
       let name = 'Неизвестный';
       let avatar = 'https://cdn.discordapp.com/embed/avatars/0.png';
+      let discordId = null;
       if (link && link.discordId && DISCORD_BOT_TOKEN && DISCORD_GUILD_ID) {
+        discordId = link.discordId;
         try {
           const m = await getGuildMember(link.discordId);
           name = m.nick || m.user.global_name || m.user.username;
@@ -740,6 +774,7 @@ app.get('/api/referrals/top', requireAuth, async (req, res) => {
       }
       top.push({
         steamId: r._id,
+        discordId,
         name,
         avatar,
         count: r.count,
@@ -859,66 +894,165 @@ app.post('/api/promocodes/activate', requireAuth, async (req, res) => {
 
 /* ============ SHOP ============ */
 app.get('/api/shop/items', async (req, res) => {
-  res.json({ items: SHOP_ITEMS });
+  res.json({
+    items: SHOP_ITEMS.map(i => ({
+      id: i.id,
+      name: i.name,
+      description: i.description,
+      color: i.color,
+      tariffs: i.tariffs.map(t => ({
+        id: t.id,
+        label: t.label,
+        price: t.price,
+        days: t.days,
+      })),
+    }))
+  });
 });
 
+/* ============ ПОКУПКА ПОДПИСКИ FERNODD+ ============ */
+app.post('/api/shop/buy-subscription', requireAuth, async (req, res) => {
+  const { itemId, tariffId } = req.body || {};
+  const item = SHOP_ITEMS.find(i => i.id === itemId);
+  if (!item) return res.status(400).json({ error: 'item_not_found' });
+
+  const tariff = item.tariffs.find(t => t.id === tariffId);
+  if (!tariff) return res.status(400).json({ error: 'tariff_not_found' });
+
+  const balance = await getBalance(req.user.steamId);
+  if (balance < tariff.price) {
+    return res.status(400).json({ error: 'insufficient_balance' });
+  }
+
+  // Списываем баланс
+  await addBalance(req.user.steamId, -tariff.price);
+
+  // ЕДИНАЯ РОЛЬ для всех тарифов
+  const roleName = item.roleName; // 'fernodd+'
+
+  // Дата окончания (или null для "Навсегда")
+  const expiresAt = tariff.days > 0
+    ? new Date(Date.now() + tariff.days * 24 * 60 * 60 * 1000).toISOString()
+    : null;
+
+  // Проверяем Discord
+  const discordId = await getLink(req.user.steamId);
+  let roleApplied = false;
+
+  if (discordId && DISCORD_BOT_TOKEN && DISCORD_GUILD_ID) {
+    try {
+      const roles = await getGuildRoles();
+      const role = roles.find(r => r.name.toLowerCase() === roleName.toLowerCase());
+
+      if (!role) {
+        console.error(`[shop] Роль "${roleName}" не найдена в Discord`);
+      } else {
+        await discordPut(`/guilds/${DISCORD_GUILD_ID}/members/${discordId}/roles/${role.id}`);
+        roleApplied = true;
+
+        // Сохраняем подписку
+        if (mongoDb) {
+          await mongoDb.collection('subscriptions').updateOne(
+            { steamId: req.user.steamId },
+            {
+              $set: {
+                itemId: item.id,
+                tariffId: tariff.id,
+                tariffLabel: tariff.label,
+                roleId: role.id,
+                roleName: role.name,
+                purchasedAt: new Date().toISOString(),
+                expiresAt,
+                active: true,
+                pending: false,
+              }
+            },
+            { upsert: true }
+          );
+        }
+      }
+    } catch (e) {
+      console.error('[subscription discord]', e);
+    }
+  } else {
+    // Discord не привязан — сохраняем pending-роль
+    await setPendingRole(req.user.steamId, roleName);
+    if (mongoDb) {
+      await mongoDb.collection('subscriptions').updateOne(
+        { steamId: req.user.steamId },
+        {
+          $set: {
+            itemId: item.id,
+            tariffId: tariff.id,
+            tariffLabel: tariff.label,
+            roleName,
+            purchasedAt: new Date().toISOString(),
+            expiresAt,
+            active: true,
+            pending: true,
+          }
+        },
+        { upsert: true }
+      );
+    }
+  }
+
+  // Заказ
+  if (mongoDb) {
+    await mongoDb.collection('orders').insertOne({
+      userId: req.user.steamId,
+      userName: req.user.global_name || req.user.username,
+      itemId: item.id,
+      itemName: `${item.name} — ${tariff.label}`,
+      price: tariff.price,
+      tariffId: tariff.id,
+      days: tariff.days,
+      createdAt: new Date().toISOString(),
+    });
+  }
+
+  // Транзакция
+  await logTransaction(
+    req.user.steamId,
+    req.user.global_name || req.user.username,
+    'outcome',
+    tariff.price,
+    'RUB',
+    `Покупка ${item.name} (${tariff.label})`
+  );
+
+  // История
+  await appendHistory({
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
+    action: 'shop_buy_subscription',
+    itemName: item.name,
+    tariffLabel: tariff.label,
+    price: tariff.price,
+    roleApplied,
+    performedBy: req.user.id,
+    performedByName: req.user.global_name || req.user.username,
+    performedByAvatar: req.user.avatar,
+    performedAt: new Date().toISOString(),
+  });
+
+  const newBalance = await getBalance(req.user.steamId);
+  res.json({
+    ok: true,
+    item: item.name,
+    tariff: tariff.label,
+    newBalance,
+    roleApplied,
+    pending: !roleApplied,
+  });
+});
+
+/* ============ СТАРЫЙ МАГАЗИН (опционально) ============ */
 app.post('/api/shop/buy', requireAuth, async (req, res) => {
   const { itemId } = req.body || {};
   const item = SHOP_ITEMS.find(i => i.id === itemId);
   if (!item) return res.status(400).json({ error: 'item_not_found' });
-
-  const discordId = await getLink(req.user.steamId);
-  if (!discordId) return res.status(400).json({ error: 'discord_not_linked' });
-
-  const balance = await getBalance(req.user.steamId);
-  if (balance < item.price) return res.status(400).json({ error: 'insufficient_balance' });
-
-  try {
-    const roles = await getGuildRoles();
-    const role = roles.find(r => r.name.toLowerCase() === item.roleName.toLowerCase());
-    if (!role) return res.status(500).json({ error: 'role_not_found' });
-
-    await removeAllStaffRoles(discordId, [item.roleName]);
-    await discordPut(`/guilds/${DISCORD_GUILD_ID}/members/${discordId}/roles/${role.id}`);
-
-    await addBalance(req.user.steamId, -item.price);
-
-    if (mongoDb) {
-      await mongoDb.collection('orders').insertOne({
-        userId: req.user.steamId,
-        userName: req.user.global_name || req.user.username,
-        itemId: item.id,
-        itemName: item.name,
-        price: item.price,
-        createdAt: new Date().toISOString(),
-      });
-    }
-
-    await logTransaction(
-      req.user.steamId,
-      req.user.global_name || req.user.username,
-      'outcome',
-      item.price,
-      'RUB',
-      `Покупка ${item.name}`
-    );
-
-    await appendHistory({
-      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
-      action: 'shop_buy',
-      itemName: item.name,
-      price: item.price,
-      performedBy: req.user.id,
-      performedByName: req.user.global_name || req.user.username,
-      performedByAvatar: req.user.avatar,
-      performedAt: new Date().toISOString(),
-    });
-
-    const newBalance = await getBalance(req.user.steamId);
-    res.json({ ok: true, role: item.name, newBalance });
-  } catch (e) {
-    res.status(500).json({ error: 'server_error', details: String(e) });
-  }
+  // Роли-товары старого формата больше не поддерживаются
+  return res.status(400).json({ error: 'use_buy_subscription' });
 });
 
 app.get('/api/shop/orders/my', requireAuth, async (req, res) => {
@@ -982,7 +1116,7 @@ app.get('/api/steam-search', requireAdmin, async (req, res) => {
           const roles = await getUserStaffRoles(discordId);
           if (roles.length) currentRole = roles[0];
         }
-        const pendingRole = discordId ? await getPendingRole(discordId) : null;
+        const pendingRole = await getPendingRole(p.steamid);
         results.push({
           steamId: p.steamid,
           personaName: p.personaname,
@@ -1036,8 +1170,10 @@ app.get('/api/user-current-role/:discordId', requireAdmin, async (req, res) => {
 app.post('/api/give-role', requireAdmin, async (req, res) => {
   const allowed = getAssignableRolesFor(req.user);
   if (!allowed.length) return res.status(403).json({ error: 'forbidden' });
-  const { discordId, roleId } = req.body || {};
-  if (!roleId) return res.status(400).json({ error: 'missing_fields' });
+  const { steamId, discordId, roleId } = req.body || {};
+  if (!roleId || (!steamId && !discordId)) {
+    return res.status(400).json({ error: 'missing_fields' });
+  }
 
   try {
     const roles = await getGuildRoles();
@@ -1049,22 +1185,36 @@ app.post('/api/give-role', requireAdmin, async (req, res) => {
       return res.status(403).json({ error: 'role_not_assignable' });
     }
 
-    const key = discordId || 'unknown';
+    const key = steamId || discordId;
     await setPendingRole(key, role.name);
+
+    let appliedToDiscord = false;
+    const linkedDiscord = steamId ? await getLink(steamId) : discordId;
+    if (linkedDiscord && DISCORD_BOT_TOKEN && DISCORD_GUILD_ID) {
+      try {
+        await removeAllStaffRoles(linkedDiscord, [role.name.toLowerCase()]);
+        await discordPut(`/guilds/${DISCORD_GUILD_ID}/members/${linkedDiscord}/roles/${roleId}`);
+        await clearPendingRole(key);
+        appliedToDiscord = true;
+      } catch (e) {
+        console.error('[give-role discord]', e);
+      }
+    }
 
     await appendHistory({
       id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
       action: 'give_role',
-      targetDiscordId: discordId || null,
+      targetSteamId: steamId || null,
+      targetDiscordId: linkedDiscord || null,
       roleName: role.name,
       performedBy: req.user.id,
       performedByName: req.user.global_name || req.user.username,
       performedByAvatar: req.user.avatar,
       performedAt: new Date().toISOString(),
-      appliedToDiscord: false,
+      appliedToDiscord,
     });
 
-    res.json({ ok: true, role: role.name, pending: true });
+    res.json({ ok: true, role: role.name, pending: !appliedToDiscord, appliedToDiscord });
   } catch (e) {
     res.status(500).json({ error: 'server_error', details: String(e) });
   }
@@ -1659,6 +1809,8 @@ app.get('/api/settings', requireOwner, (req, res) => {
       guildId: DISCORD_GUILD_ID || '—',
       applyChannel: DISCORD_APPLY_CHANNEL_ID || '—',
       logsChannel: DISCORD_LOGS_CHANNEL_ID || '—',
+      openTicketsCategory: DISCORD_OPEN_TICKETS_CATEGORY_ID || '—',
+      closedTicketsCategory: DISCORD_CLOSED_TICKETS_CATEGORY_ID || '—',
       adminRoles: ADMIN_ROLES,
       moderatorRoles: MODERATOR_ROLES,
       botConnected: !!DISCORD_BOT_TOKEN,
@@ -1741,9 +1893,45 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+/* ============ АВТОСНЯТИЕ ПОДПИСОК ============ */
+async function checkExpiredSubscriptions() {
+  if (!mongoDb || !DISCORD_BOT_TOKEN || !DISCORD_GUILD_ID) return;
+
+  try {
+    const now = new Date().toISOString();
+    const expired = await mongoDb.collection('subscriptions').find({
+      active: true,
+      pending: false,
+      expiresAt: { $ne: null, $lte: now }
+    }).toArray();
+
+    for (const sub of expired) {
+      try {
+        const discordId = await getLink(sub.steamId);
+        if (discordId && sub.roleId) {
+          await discordDelete(`/guilds/${DISCORD_GUILD_ID}/members/${discordId}/roles/${sub.roleId}`);
+        }
+        await mongoDb.collection('subscriptions').updateOne(
+          { _id: sub._id },
+          { $set: { active: false, expiredAt: new Date().toISOString() } }
+        );
+        console.log(`[subscription] Подписка истекла: ${sub.steamId}`);
+      } catch (e) {
+        console.error('[subscription expire]', e);
+      }
+    }
+  } catch (e) {
+    console.error('[checkExpiredSubscriptions]', e);
+  }
+}
+
 /* ============ INIT ============ */
 initPresence();
 initMongo().then(() => {
+  // Проверяем истёкшие подписки каждые 30 минут
+  setInterval(checkExpiredSubscriptions, 30 * 60 * 1000);
+  setTimeout(checkExpiredSubscriptions, 10000); // первая проверка через 10 сек после старта
+
   app.listen(PORT, () => {
     console.log(`\n✅ Fernodd API: http://localhost:${PORT}\n`);
   });

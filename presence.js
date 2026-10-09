@@ -27,17 +27,13 @@ export function initPresence() {
     const guild = client.guilds.cache.get(process.env.DISCORD_GUILD_ID);
     if (!guild) {
       console.warn('[presence] ❌ Гильдия не найдена. GUILD_ID:', process.env.DISCORD_GUILD_ID);
-      console.warn('[presence] Доступные гильдии:', client.guilds.cache.map(g => `${g.name} (${g.id})`).join(', '));
       return;
     }
 
     console.log(`[presence] Гильдия: ${guild.name}, участников в кэше: ${guild.members.cache.size}`);
 
-    // ★ Ждём 3 секунды — Discord успевает прислать presences
-    console.log('[presence] Ждём 3 сек для получения presences...');
     await new Promise(r => setTimeout(r, 3000));
 
-    // ★ Принудительно подгружаем ВСЕХ участников
     try {
       const members = await guild.members.fetch();
       console.log(`[presence] Загружено участников: ${members.size}`);
@@ -58,20 +54,8 @@ export function initPresence() {
       });
 
       console.log(`[presence] Кэш: ${presenceCache.size} | 🟢 ${online} | 🟡 ${idle} | 🔴 ${dnd}`);
-
-      if (online + idle + dnd === 0) {
-        console.warn('[presence] ⚠️ Все offline! Проверь PRESENCE INTENT в Developer Portal.');
-      }
     } catch (e) {
       console.error('[presence] fetch members error:', e.message);
-    }
-  });
-
-  // Также оставляем on('ready') как fallback для v14
-  client.once('ready', () => {
-    if (!ready) {
-      // в v15 не сработает, но для совместимости
-      console.log('[presence] ready event (legacy)');
     }
   });
 
