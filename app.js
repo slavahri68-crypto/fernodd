@@ -123,9 +123,34 @@ async function ensureIndexes() {
     await mongoDb.collection('referralCodes').createIndex({ steamId: 1 }, { unique: true });
     await mongoDb.collection('referralCodes').createIndex({ code: 1 }, { unique: true });
     await mongoDb.collection('subscriptions').createIndex({ steamId: 1 }, { unique: true });
+    await mongoDb.collection('presence').createIndex({ steamId: 1 }, { unique: true });
     console.log('[mongo] ✅ Индексы готовы');
   } catch (e) { console.error('[mongo]', e.message); }
 }
+
+/* ============ ТРЕКИНГ ОНЛАЙНА ============ */
+app.use(async (req, res, next) => {
+  try {
+    const auth = req.headers.authorization || '';
+    const token = auth.startsWith('Bearer ') ? auth.slice(7) : null;
+    if (token) {
+      const p = jwt.verify(token, JWT_SECRET);
+      if (p && p.steamId && mongoDb) {
+        await mongoDb.collection('presence').updateOne(
+          { steamId: p.steamId },
+          { $set: { lastSeen: new Date().toISOString() } },
+          { upsert: true }
+        );
+      }
+    }
+  } catch {}
+  next();
+});
+
+/* ============ Presence (заглушки для serverless) ============ */
+async function getPresence(id) { return { status: 'offline', activities: [], updatedAt: Date.now() }; }
+async function getAllPresence() { return {}; }
+async function getPresenceStats() { return { online: 0, idle: 0, dnd: 0, offline: 0, total: 0, ready: false }; }
 
 /* ============ Утилиты БД ============ */
 async function getBalance(steamId) {
@@ -314,15 +339,6 @@ function getAssignableRolesFor(user) {
   return [];
 }
 
-/* ============ Presence stub (Netlify) ============ */
-async function getPresence(id) {
-  return { status: 'offline', activities: [], updatedAt: Date.now() };
-}
-async function getAllPresence() { return {}; }
-async function getPresenceStats() {
-  return { online: 0, idle: 0, dnd: 0, offline: 0, total: 0, ready: false };
-}
-
 /* ============ STEAM OPENID ============ */
 const STEAM_OPENID_URL = 'https://steamcommunity.com/openid/login';
 
@@ -435,7 +451,7 @@ app.get('/auth/steam/callback', async (req, res) => {
 
 /* ============ DISCORD OAUTH ============ */
 app.get('/auth/discord', (req, res) => {
-  if (!DISCORD_CLIENT_ID) return res.redirect(`${FRONTEND_URL}/profile.html?discord_error=not_configured`);
+  if (!DISCORD_CLIENT_ID) return res.redirect(`${FRONTEND_URL}/profile?discord_error=not_configured`);
   const token = req.query.token || '';
   const state = Buffer.from(JSON.stringify({ token, t: Date.now() })).toString('base64');
   const params = new URLSearchParams({
@@ -451,13 +467,13 @@ app.get('/auth/discord', (req, res) => {
 
 app.get('/auth/discord/callback', async (req, res) => {
   const { code, state } = req.query;
-  if (!code) return res.redirect(`${FRONTEND_URL}/profile.html?discord_error=no_code`);
+  if (!code) return res.redirect(`${FRONTEND_URL}/profile?discord_error=no_code`);
   let userToken = null;
   try { userToken = JSON.parse(Buffer.from(state, 'base64').toString()).token; } catch {}
-  if (!userToken) return res.redirect(`${FRONTEND_URL}/profile.html?discord_error=bad_state`);
+  if (!userToken) return res.redirect(`${FRONTEND_URL}/profile?discord_error=bad_state`);
   let user;
   try { user = jwt.verify(userToken, JWT_SECRET); }
-  catch { return res.redirect(`${FRONTEND_URL}/profile.html?discord_error=bad_token`); }
+  catch { return res.redirect(`${FRONTEND_URL}/profile?discord_error=bad_token`); }
 
   try {
     const params = new URLSearchParams({
@@ -472,13 +488,13 @@ app.get('/auth/discord/callback', async (req, res) => {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: params.toString()
     });
-    if (!tokenRes.ok) return res.redirect(`${FRONTEND_URL}/profile.html?discord_error=token_failed`);
+    if (!tokenRes.ok) return res.redirect(`${FRONTEND_URL}/profile?discord_error=token_failed`);
     const tokenData = await tokenRes.json();
 
     const userRes = await fetch('https://discord.com/api/users/@me', {
       headers: { Authorization: `Bearer ${tokenData.access_token}` }
     });
-    if (!userRes.ok) return res.redirect(`${FRONTEND_URL}/profile.html?discord_error=user_failed`);
+    if (!userRes.ok) return res.redirect(`${FRONTEND_URL}/profile?discord_error=user_failed`);
     const discordUser = await userRes.json();
 
     try {
@@ -486,9 +502,9 @@ app.get('/auth/discord/callback', async (req, res) => {
         `https://discord.com/api/guilds/${DISCORD_GUILD_ID}/members/${discordUser.id}`,
         { headers: { Authorization: `Bot ${DISCORD_BOT_TOKEN}` } }
       );
-      if (!memberRes.ok) return res.redirect(`${FRONTEND_URL}/profile.html?discord_error=not_in_guild`);
+      if (!memberRes.ok) return res.redirect(`${FRONTEND_URL}/profile?discord_error=not_in_guild`);
     } catch {
-      return res.redirect(`${FRONTEND_URL}/profile.html?discord_error=guild_check_failed`);
+      return res.redirect(`${FRONTEND_URL}/profile?discord_error=guild_check_failed`);
     }
 
     await setLink(user.steamId, discordUser.id);
@@ -517,9 +533,9 @@ app.get('/auth/discord/callback', async (req, res) => {
       }
     } catch {}
 
-    return res.redirect(`${FRONTEND_URL}/profile.html?discord_linked=1`);
+    return res.redirect(`${FRONTEND_URL}/profile?discord_linked=1`);
   } catch (e) {
-    return res.redirect(`${FRONTEND_URL}/profile.html?discord_error=unknown`);
+    return res.redirect(`${FRONTEND_URL}/profile?discord_error=unknown`);
   }
 });
 
@@ -921,7 +937,6 @@ app.post('/api/shop/buy-subscription', requireAuth, async (req, res) => {
     try {
       const roles = await getGuildRoles();
       const role = roles.find(r => r.name.toLowerCase() === roleName.toLowerCase());
-
       if (!role) {
         console.error(`[shop] Роль "${roleName}" не найдена в Discord`);
       } else {
@@ -1191,67 +1206,41 @@ app.post('/api/give-role', requireAdmin, async (req, res) => {
   }
 });
 
-/* ============ PRESENCE (заглушка для Netlify) ============ */
-app.get('/api/presence', requireAdmin, async (req, res) => {
-  res.json(await getPresenceStats());
-});
-app.get('/api/presence/:id', requireAdmin, async (req, res) => {
-  res.json(await getPresence(req.params.id));
-});
-app.get('/api/presence-all', requireAdmin, async (req, res) => {
-  res.json({ presence: await getAllPresence() });
-});
+/* ============ PRESENCE (заглушка) ============ */
+app.get('/api/presence', requireAdmin, async (req, res) => res.json(await getPresenceStats()));
+app.get('/api/presence/:id', requireAdmin, async (req, res) => res.json(await getPresence(req.params.id)));
+app.get('/api/presence-all', requireAdmin, async (req, res) => res.json({ presence: await getAllPresence() }));
 
-/* ============ ПРОФИЛЬ ============ */
-app.get('/api/users/:id', requireAdmin, async (req, res) => {
+/* ============ ПРОФИЛЬ (публичный) ============ */
+app.get('/api/users/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    if (/^\d{17,20}$/.test(id)) {
-      try {
-        const m = await getGuildMember(id);
-        const roles = await getGuildRoles();
-        const roleMap = {};
-        roles.forEach(r => { roleMap[r.id] = r; });
-        const userRoles = m.roles.map(rid => roleMap[rid]).filter(Boolean)
-          .filter(r => r.name !== '@everyone')
-          .sort((a, b) => b.position - a.position);
-        const topRole = userRoles[0] || { name: 'Участник', color: 0 };
-        return res.json({
-          user: {
-            id: m.user.id,
-            username: m.user.username,
-            global_name: m.user.global_name,
-            nickname: m.nick,
-            avatar: m.user.avatar
-              ? `https://cdn.discordapp.com/avatars/${m.user.id}/${m.user.avatar}.png`
-              : `https://cdn.discordapp.com/embed/avatars/0.png`,
-            joinedAt: m.joined_at,
-            roles: userRoles.map(r => r.name),
-            topRole: topRole.name,
-            topRoleColor: topRole.color ? '#' + topRole.color.toString(16).padStart(6, '0') : '#ffffff',
-            presence: await getPresence(m.user.id),
-            provider: 'discord',
-          }
-        });
-      } catch {}
+    let steamId = null;
+    if (/^\d{17}$/.test(id)) steamId = id;
+    else if (/^\d{18,20}$/.test(id) && mongoDb) {
+      const link = await mongoDb.collection('links').findOne({ discordId: id });
+      if (link) steamId = link.steamId;
     }
+    if (!steamId) return res.status(404).json({ error: 'not_found' });
 
-    let profile = { steamid: id, personaname: 'Steam User', avatar: '' };
-    const r = await fetch(
-      `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${STEAM_API_KEY}&steamids=${id}`
-    );
-    const data = await r.json();
-    const p = data.response?.players?.[0];
-    if (p) profile = {
-      steamid: p.steamid,
-      personaname: p.personaname,
-      avatar: p.avatarfull || p.avatarmedium || p.avatar,
-      profileurl: p.profileurl,
-    };
+    let profile = { steamid: steamId, personaname: 'Steam User', avatar: '' };
+    try {
+      const r = await fetch(
+        `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${STEAM_API_KEY}&steamids=${steamId}`
+      );
+      const data = await r.json();
+      const p = data.response?.players?.[0];
+      if (p) profile = {
+        steamid: p.steamid,
+        personaname: p.personaname,
+        avatar: p.avatarfull || p.avatarmedium || p.avatar,
+        profileurl: p.profileurl,
+      };
+    } catch {}
 
     const discordId = await getLink(profile.steamid);
     let discordInfo = null;
-    if (discordId) {
+    if (discordId && DISCORD_BOT_TOKEN && DISCORD_GUILD_ID) {
       try {
         const m = await getGuildMember(discordId);
         const roles = await getGuildRoles();
@@ -1277,12 +1266,24 @@ app.get('/api/users/:id', requireAdmin, async (req, res) => {
       } catch {}
     }
 
+    let siteStatus = 'offline';
+    let lastSeen = null;
+    if (mongoDb) {
+      const presence = await mongoDb.collection('presence').findOne({ steamId: profile.steamid });
+      if (presence?.lastSeen) {
+        lastSeen = presence.lastSeen;
+        const diff = Date.now() - new Date(presence.lastSeen).getTime();
+        if (diff < 5 * 60 * 1000) siteStatus = 'online';
+      }
+    }
+
     const balance = await getBalance(profile.steamid);
     const profileExtra = await getProfileExtra(profile.steamid);
 
     res.json({
       user: {
         id: profile.steamid,
+        steamId: profile.steamid,
         username: profile.personaname,
         global_name: profile.personaname,
         nickname: profile.personaname,
@@ -1293,7 +1294,8 @@ app.get('/api/users/:id', requireAdmin, async (req, res) => {
         roles: discordInfo ? discordInfo.roles : [],
         topRole: discordInfo ? discordInfo.topRole : 'Участник',
         topRoleColor: discordInfo ? discordInfo.topRoleColor : '#ffffff',
-        presence: { status: 'offline', activities: [] },
+        siteStatus,
+        lastSeen,
         provider: 'steam',
         balance,
         description: profileExtra.description || 'Is it worth it?',

@@ -12,15 +12,6 @@
   body > .auth-widget { display: none !important; }
   .my-page { min-height: 100vh; padding: 80px 24px 140px; position: relative; z-index: 1; }
   .my-container { max-width: 1100px; margin: 0 auto; }
-  .my-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
-  .my-header-left { display: flex; align-items: center; gap: 12px; }
-  .my-header-balance { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-bright); border-radius: 100px; font-family: 'Unbounded', sans-serif; font-size: 13px; color: #fff; font-weight: 700; }
-  .my-header-right { display: flex; align-items: center; gap: 10px; }
-  .profile-avatar-btn { position: relative; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); border-radius: 100px; transition: all 0.3s; }
-  .profile-avatar-btn:hover { border-color: var(--red); }
-  .profile-avatar-btn img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-  .profile-avatar-btn .chev { width: 14px; height: 14px; color: var(--text-dim); transition: transform 0.3s; }
-  .profile-avatar-btn.open .chev { transform: rotate(180deg); }
 
   .steam-card { background: #0e0e0e; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 16px; position: relative; }
   .steam-cover { height: 180px; background: linear-gradient(135deg, #1a1a1a 0%, #060606 100%); background-size: cover; background-position: center; position: relative; overflow: hidden; }
@@ -34,18 +25,19 @@
   .steam-body { padding: 0 24px 24px; position: relative; }
   .steam-avatar-wrap { position: relative; width: 130px; height: 130px; margin-top: -65px; margin-bottom: 12px; border: 4px solid #0e0e0e; border-radius: 6px; overflow: hidden; z-index: 2; background: #060606; }
   .steam-avatar { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .steam-status { position: absolute; bottom: 6px; right: 6px; width: 24px; height: 24px; border: 4px solid #0e0e0e; border-radius: 4px; z-index: 3; }
-  .steam-status.online  { background: #57cbde; }
-  .steam-status.idle    { background: #fbbf24; }
-  .steam-status.dnd     { background: #ef4444; }
-  .steam-status.offline { background: #898989; }
+
+  .steam-site-status { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; margin-bottom: 10px; padding: 4px 12px; border-radius: 100px; font-family: 'Unbounded', sans-serif; letter-spacing: -0.2px; }
+  .steam-site-status.online { color: #4ade80; background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.3); }
+  .steam-site-status.offline { color: #8a8a8a; background: rgba(255,255,255,0.03); border: 1px solid var(--border-bright); }
+  .steam-site-status .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
+  .steam-site-status.online .dot { animation: blink 1.8s infinite; }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
 
   .steam-name-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; min-width: 0; }
   .steam-name { font-family: 'Unbounded', sans-serif; font-size: 26px; font-weight: 700; color: #fff; letter-spacing: -0.5px; word-break: break-word; overflow-wrap: anywhere; line-height: 1.15; max-width: 100%; }
   .steam-badge { width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(135deg, #fbbf24, #d97706); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; }
   .steam-role-badge { display: inline-flex; padding: 5px 14px; background: rgba(96,165,250,0.12); border: 1px solid rgba(96,165,250,0.5); border-radius: 100px; font-family: 'Unbounded', sans-serif; font-size: 12px; font-weight: 700; color: #60a5fa; margin-bottom: 8px; }
   .steam-status-text { font-size: 13px; color: var(--text-dim); margin-bottom: 14px; }
-  .steam-status-text b { color: #57cbde; }
 
   .steam-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
   .steam-btn { padding: 9px 18px; border-radius: 8px; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; cursor: pointer; border: 1px solid var(--border-bright); background: rgba(255,255,255,0.04); color: var(--text); transition: all 0.25s; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
@@ -67,7 +59,6 @@
     .steam-role-badge { margin: 0 auto 8px; }
     .steam-actions { justify-content: center; }
     .my-page { padding: 70px 12px 120px; }
-    .my-menu { width: 280px; right: -50px; }
   }
   .loading-state { display: flex; align-items: center; justify-content: center; padding: 40px 20px; gap: 10px; color: var(--text-dim); font-size: 13px; }
   .spinner { width: 20px; height: 20px; border: 2px solid var(--border-bright); border-top-color: var(--red); border-radius: 50%; animation: spin 0.8s linear infinite; }
@@ -88,10 +79,7 @@
 
 <main class="my-page">
   <div class="my-container">
-    <div class="my-header">
-      <div class="my-header-left">
-        <div class="my-header-balance"><span id="headerBalance">0 ₽</span></div>
-      </div>
+    <div class="my-header" style="justify-content:flex-end;">
       <div class="my-header-right">
         <div class="profile-avatar-btn" id="profileAvatarBtn" onclick="toggleProfileMenu(event)">
           <img id="headerAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
@@ -116,7 +104,6 @@
       <div class="steam-body">
         <div class="steam-avatar-wrap">
           <img class="steam-avatar" id="steamAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
-          <span class="steam-status offline" id="steamStatus"></span>
         </div>
         <div class="steam-content" id="steamContent">
           <div class="loading-state"><div class="spinner"></div> Загрузка профиля...</div>
@@ -127,11 +114,11 @@
 </main>
 
 <nav class="bottom-nav">
-  <a class="nav-btn" href="/index.html"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Главная</span></a>
-  <a class="nav-btn" href="/rules.html"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Правила</span></a>
-  <a class="nav-btn" href="/roles.html"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Роли</span></a>
-  <a class="nav-btn" href="/shop.html"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span>Магазин</span></a>
-  <a class="nav-btn active" href="/profile.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg><span>Профиль</span></a>
+  <a class="nav-btn" href="/"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Главная</span></a>
+  <a class="nav-btn" href="/rules"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Правила</span></a>
+  <a class="nav-btn" href="/roles"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Роли</span></a>
+  <a class="nav-btn" href="/shop"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span>Магазин</span></a>
+  <a class="nav-btn active" href="/profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg><span>Профиль</span></a>
 </nav>
 
 <div class="toast-wrap" id="toastWrap"></div>
@@ -149,10 +136,14 @@ window.addEventListener('auth:changed', (e) => {
     return;
   }
   document.getElementById('headerAvatar').src = user.avatar || '';
-  document.getElementById('headerBalance').textContent = `${user.balance || 0} ₽`;
   document.getElementById('profileMenuContent').innerHTML = renderProfileMenu('profile');
+
+  // Определяем targetUserId
+  const pathParts = window.location.pathname.split('/').filter(Boolean);
+  let urlId = null;
+  if (pathParts[0] === 'profile' && pathParts[1]) urlId = pathParts[1];
   const params = new URLSearchParams(window.location.search);
-  targetUserId = params.get('id') || user.steamId || user.id;
+  targetUserId = urlId || params.get('id') || user.steamId || user.id;
   loadProfile();
 });
 
@@ -160,7 +151,10 @@ async function loadProfile() {
   try {
     const r = await api(`/api/users/${targetUserId}`);
     const user = r.user;
-    if (!user) { document.getElementById('steamContent').innerHTML = '<div class="empty-state"><div class="ico">🔍</div>Не найден</div>'; return; }
+    if (!user) {
+      document.getElementById('steamContent').innerHTML = '<div class="empty-state"><div class="ico">🔍</div>Не найден</div>';
+      return;
+    }
     renderSteamCard(user);
   } catch (e) {
     document.getElementById('steamContent').innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${escapeHtml(e.message)}</div>`;
@@ -170,15 +164,14 @@ async function loadProfile() {
 function renderSteamCard(user) {
   const avatar = user.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png';
   const name = user.nickname || user.global_name || user.username || 'Пользователь';
-  const status = (user.presence && user.presence.status) || 'offline';
-  const statusText = { online: 'В сети', idle: 'Неактивен', dnd: 'Не беспокоить', offline: 'Не в сети' }[status] || 'Не в сети';
   document.getElementById('steamAvatar').src = avatar;
-  document.getElementById('steamStatus').className = 'steam-status ' + status;
+
   if (user.backgroundUrl) {
     const cover = document.getElementById('steamCover');
     cover.style.background = `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('${user.backgroundUrl}') center/cover`;
     document.getElementById('coverText').style.display = 'none';
   }
+
   const topRole = user.topRole || (user.roles || [])[0];
   const ROLE_COLORS = {
     'Главная администрация': '#e10600', 'Владелец': '#e10600', 'Разработчик': '#e10600',
@@ -190,26 +183,34 @@ function renderSteamCard(user) {
   const steamLink = user.profileUrl || (user.steamId ? `https://steamcommunity.com/profiles/${user.steamId}` : '#');
   document.getElementById('steamLinkBtn').href = steamLink;
   const desc = user.description || 'Is it worth it?';
+
+  const siteStatus = user.siteStatus || 'offline';
+  const siteStatusText = siteStatus === 'online' ? 'В сети' : 'Не в сети';
+
   let socialLinks = '';
   if (user.telegram) socialLinks += `<a class="steam-btn" href="${escapeHtml(user.telegram)}" target="_blank" rel="noopener">Telegram</a>`;
   if (user.vk) socialLinks += `<a class="steam-btn" href="${escapeHtml(user.vk)}" target="_blank" rel="noopener">VK</a>`;
+
   document.getElementById('steamContent').innerHTML = `
     ${topRole ? `<div class="steam-role-badge" style="background:${roleColor}22;border-color:${roleColor}88;color:${roleColor};">${escapeHtml(topRole)}</div>` : ''}
     <div class="steam-name-row">
       <div class="steam-name">${escapeHtml(name)}</div>
       ${user.isOwner ? '<div class="steam-badge">👑</div>' : ''}
     </div>
-    <div class="steam-status-text"><b>${statusText}</b> · ${escapeHtml(desc)}</div>
+    <div class="steam-site-status ${siteStatus}">
+      <span class="dot"></span>${siteStatusText} на сайте
+    </div>
+    <div class="steam-status-text">${escapeHtml(desc)}</div>
     <div class="steam-actions">
       <a class="steam-btn primary" href="${steamLink}" target="_blank" rel="noopener">Steam профиль</a>
-      <a class="steam-btn" href="/settings.html">Настройки</a>
+      <a class="steam-btn" href="/settings">Настройки</a>
       ${socialLinks}
     </div>
   `;
 }
 
 function copyProfileLink() {
-  const url = `${window.location.origin}/profile.html?id=${targetUserId}`;
+  const url = `${window.location.origin}/profile/${targetUserId}`;
   navigator.clipboard.writeText(url).then(() => showToast('✅ Скопировано', 'success'))
     .catch(() => showToast('Не удалось', 'error'));
 }

@@ -12,15 +12,6 @@
   body > .auth-widget { display: none !important; }
   .my-page { min-height: 100vh; padding: 80px 24px 140px; position: relative; z-index: 1; }
   .my-container { max-width: 1100px; margin: 0 auto; }
-  .my-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
-  .my-header-left { display: flex; align-items: center; gap: 12px; }
-  .my-header-balance { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-bright); border-radius: 100px; font-family: 'Unbounded', sans-serif; font-size: 13px; color: #fff; font-weight: 700; }
-  .my-header-right { display: flex; align-items: center; gap: 10px; }
-  .profile-avatar-btn { position: relative; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); border-radius: 100px; transition: all 0.3s; }
-  .profile-avatar-btn:hover { border-color: var(--red); }
-  .profile-avatar-btn img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-  .profile-avatar-btn .chev { width: 14px; height: 14px; color: var(--text-dim); transition: transform 0.3s; }
-  .profile-avatar-btn.open .chev { transform: rotate(180deg); }
   .tx-card { background: #0e0e0e; border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; }
   .tx-list { display: flex; flex-direction: column; }
   .tx-item { display: flex; align-items: center; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--border); }
@@ -29,22 +20,14 @@
   .tx-arrow.income { background: rgba(74,222,128,0.12); color: #4ade80; }
   .tx-arrow.outcome { background: rgba(239,68,68,0.12); color: #ef4444; }
   .tx-body { flex: 1; min-width: 0; }
-  .tx-title { font-size: 13.5px; color: #fff; font-weight: 500; margin-bottom: 3px; }
+  .tx-title { font-size: 13.5px; color: #fff; font-weight: 500; }
   .tx-amount { font-family: 'Unbounded', sans-serif; font-size: 13.5px; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
   .tx-amount.income { color: #4ade80; }
   .tx-amount.outcome { color: #ef4444; }
   .tx-date { font-size: 11px; color: var(--text-dim); white-space: nowrap; flex-shrink: 0; margin-left: 8px; }
   .tx-empty { text-align: center; padding: 60px 20px; color: var(--text-dim); font-size: 13px; }
   .tx-empty .ico { font-size: 48px; margin-bottom: 12px; opacity: 0.35; }
-  @media (max-width: 699px) {
-    .my-page { padding: 70px 12px 120px; }
-    .my-menu { width: 280px; right: -50px; }
-    .tx-card { padding: 14px 16px; }
-    .tx-item { gap: 10px; padding: 12px 0; }
-    .tx-title { font-size: 12px; }
-    .tx-amount { font-size: 12px; }
-    .tx-date { font-size: 10px; }
-  }
+  @media (max-width: 699px) { .my-page { padding: 70px 12px 120px; } .tx-card { padding: 14px 16px; } .tx-item { gap: 10px; padding: 12px 0; } .tx-title { font-size: 12px; } .tx-amount { font-size: 12px; } .tx-date { font-size: 10px; } }
   .loading-state { display: flex; align-items: center; justify-content: center; padding: 60px 20px; gap: 10px; color: var(--text-dim); font-size: 13px; }
   .spinner { width: 20px; height: 20px; border: 2px solid var(--border-bright); border-top-color: var(--red); border-radius: 50%; animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
@@ -62,8 +45,7 @@
 
 <main class="my-page">
   <div class="my-container">
-    <div class="my-header">
-      <div class="my-header-left"><div class="my-header-balance"><span id="headerBalance">0 ₽</span></div></div>
+    <div class="my-header" style="justify-content:flex-end;">
       <div class="my-header-right">
         <div class="profile-avatar-btn" id="profileAvatarBtn" onclick="toggleProfileMenu(event)">
           <img id="headerAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
@@ -79,11 +61,11 @@
 </main>
 
 <nav class="bottom-nav">
-  <a class="nav-btn" href="/index.html"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Главная</span></a>
-  <a class="nav-btn" href="/rules.html"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Правила</span></a>
-  <a class="nav-btn" href="/roles.html"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Роли</span></a>
-  <a class="nav-btn" href="/shop.html"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span>Магазин</span></a>
-  <a class="nav-btn active" href="/profile.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg><span>Профиль</span></a>
+  <a class="nav-btn" href="/"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Главная</span></a>
+  <a class="nav-btn" href="/rules"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Правила</span></a>
+  <a class="nav-btn" href="/roles"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Роли</span></a>
+  <a class="nav-btn" href="/shop"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span>Магазин</span></a>
+  <a class="nav-btn active" href="/profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg><span>Профиль</span></a>
 </nav>
 
 <div class="toast-wrap" id="toastWrap"></div>
@@ -96,7 +78,6 @@ window.addEventListener('auth:changed', (e) => {
   const user = e.detail.user;
   if (!user) return;
   document.getElementById('headerAvatar').src = user.avatar || '';
-  document.getElementById('headerBalance').textContent = `${user.balance || 0} ₽`;
   document.getElementById('profileMenuContent').innerHTML = renderProfileMenu('transactions');
   loadTransactions();
 });

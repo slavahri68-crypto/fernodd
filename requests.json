@@ -1,18 +1,4 @@
 {
   "changes": [],
-  "deletes": [
-    {
-      "id": "mue4vheqozk45d",
-      "applicationId": "1546565104844152954",
-      "comment": "",
-      "requestedBy": "1441424461252526166",
-      "requestedByName": "herooo",
-      "requestedByAvatar": "https://cdn.discordapp.com/avatars/1441424461252526166/656c95bd6233120c33095d3c3af81852.png",
-      "createdAt": "2026-09-23T13:23:14.018Z",
-      "status": "approved",
-      "resolvedBy": "1441424461252526166",
-      "resolvedByName": "herooo",
-      "resolvedAt": "2026-09-23T13:38:36.339Z"
-    }
-  ]
+  "deletes": []
 }

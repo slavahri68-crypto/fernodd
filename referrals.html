@@ -12,19 +12,8 @@
   body > .auth-widget { display: none !important; }
   .ref-page { min-height: 100vh; padding: 80px 24px 140px; position: relative; z-index: 1; }
   .ref-container { max-width: 1100px; margin: 0 auto; }
-  .my-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
-  .my-header-left { display: flex; align-items: center; gap: 12px; }
-  .my-header-balance { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-bright); border-radius: 100px; font-family: 'Unbounded', sans-serif; font-size: 13px; color: #fff; font-weight: 700; }
-  .my-header-right { display: flex; align-items: center; gap: 10px; }
-  .profile-avatar-btn { position: relative; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); border-radius: 100px; transition: all 0.3s; }
-  .profile-avatar-btn:hover { border-color: var(--red); }
-  .profile-avatar-btn img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-  .profile-avatar-btn .chev { width: 14px; height: 14px; color: var(--text-dim); transition: transform 0.3s; }
-  .profile-avatar-btn.open .chev { transform: rotate(180deg); }
-
   .ref-page-title { font-family: 'Unbounded', sans-serif; font-size: clamp(28px, 5vw, 42px); font-weight: 900; letter-spacing: -1.5px; color: #fff; margin-bottom: 24px; }
   .ref-block { background: #0e0e0e; border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; margin-bottom: 16px; }
-
   .how-info { display: flex; gap: 18px; align-items: flex-start; }
   .how-icon { width: 48px; height: 48px; border-radius: 12px; background: rgba(96,165,250,0.12); border: 1px solid rgba(96,165,250,0.4); display: flex; align-items: center; justify-content: center; font-size: 22px; color: #60a5fa; flex-shrink: 0; }
   .how-icon svg { width: 24px; height: 24px; fill: currentColor; }
@@ -32,18 +21,15 @@
   .how-desc { font-size: 13.5px; color: var(--text-dim); line-height: 1.7; margin-bottom: 12px; }
   .how-chips { display: flex; gap: 8px; flex-wrap: wrap; }
   .how-chip { padding: 5px 12px; border-radius: 100px; font-size: 11px; font-weight: 700; font-family: 'Unbounded', sans-serif; }
-  .how-chip.red   { background: rgba(239,68,68,0.15); color: #ef4444; }
+  .how-chip.red { background: rgba(239,68,68,0.15); color: #ef4444; }
   .how-chip.green { background: rgba(74,222,128,0.15); color: #4ade80; }
-
   .ref-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px; }
   .ref-stat-card { background: #0e0e0e; border: 1px solid var(--border); border-radius: 14px; padding: 18px 22px; }
   .ref-stat-value { font-family: 'Unbounded', sans-serif; font-size: 26px; font-weight: 900; color: #fff; line-height: 1; letter-spacing: -1px; margin-bottom: 6px; }
   .ref-stat-value.green { color: #4ade80; }
   .ref-stat-label { font-size: 11px; color: var(--text-dim); font-weight: 500; }
-
   .ref-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
   @media (max-width: 700px) { .ref-two-col { grid-template-columns: 1fr; } }
-
   .ref-code-card { background: #0e0e0e; border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; }
   .ref-code-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
   .ref-code-icon { width: 36px; height: 36px; border-radius: 10px; background: rgba(96,165,250,0.12); border: 1px solid rgba(96,165,250,0.4); display: flex; align-items: center; justify-content: center; font-size: 16px; color: #60a5fa; flex-shrink: 0; }
@@ -58,22 +44,22 @@
   .ref-activate-btn { width: 100%; padding: 11px; background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; border-radius: 8px; color: #fff; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.3s; }
   .ref-activate-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(59,130,246,0.5); }
   .ref-activate-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
   .ref-block-title { font-family: 'Unbounded', sans-serif; font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 16px; }
   .my-refs-list { display: flex; flex-direction: column; gap: 8px; }
-  .my-ref-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 10px; }
+  .my-ref-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+  .my-ref-item:hover { border-color: rgba(225,6,0,0.4); transform: translateX(4px); }
   .my-ref-avatar { width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0; background: linear-gradient(135deg,var(--red),var(--red-dark)); display: flex; align-items: center; justify-content: center; font-family: 'Unbounded'; font-weight: 900; font-size: 14px; color: #fff; }
   .my-ref-name { flex: 1; font-size: 13px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .my-ref-date { font-size: 11px; color: var(--text-dim); flex-shrink: 0; }
   .empty-refs { text-align: center; padding: 40px 20px; color: var(--text-dim); font-size: 13px; }
   .empty-refs .ico { font-size: 40px; margin-bottom: 10px; opacity: 0.4; }
-
   .top-table { width: 100%; border-collapse: collapse; }
   .top-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-dim); font-weight: 700; padding: 10px 12px; border-bottom: 1px solid var(--border); }
   .top-table th:last-child, .top-table td:last-child { text-align: right; }
   .top-table td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 13px; color: #fff; }
   .top-table tr:last-child td { border-bottom: none; }
-  .top-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .top-table tbody tr { cursor: pointer; }
+  .top-table tbody tr:hover td { background: rgba(225,6,0,0.06); }
   .top-rank { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; font-family: 'Unbounded', sans-serif; font-size: 12px; font-weight: 900; color: var(--text-dim); }
   .top-user { display: flex; align-items: center; gap: 12px; }
   .top-user-avatar { width: 36px; height: 36px; border-radius: 9px; object-fit: cover; flex-shrink: 0; }
@@ -82,7 +68,6 @@
   .top-count { font-family: 'Unbounded', sans-serif; font-weight: 700; }
   .top-count-blue { color: #3b82f6; }
   .top-count-red { color: var(--red); }
-
   @media (max-width: 600px) {
     .ref-page { padding: 70px 12px 120px; }
     .ref-block { padding: 16px 18px; }
@@ -91,7 +76,6 @@
     .ref-code-input { text-align: center; }
     .top-table th:nth-child(3), .top-table td:nth-child(3) { display: none; }
     .top-table th, .top-table td { padding: 10px 6px; font-size: 12px; }
-    .my-menu { width: 280px; right: -50px; }
   }
 </style>
 </head>
@@ -107,8 +91,7 @@
 
 <main class="ref-page">
   <div class="ref-container">
-    <div class="my-header">
-      <div class="my-header-left"><div class="my-header-balance"><span id="headerBalance">0 ₽</span></div></div>
+    <div class="my-header" style="justify-content:flex-end;">
       <div class="my-header-right">
         <div class="profile-avatar-btn" id="profileAvatarBtn" onclick="toggleProfileMenu(event)">
           <img id="headerAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
@@ -122,9 +105,7 @@
 
     <div class="ref-block">
       <div class="how-info">
-        <div class="how-icon">
-          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        </div>
+        <div class="how-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
         <div style="flex:1;">
           <div class="how-info-title">Как это работает?</div>
           <div class="how-desc">Приглашай друзей по своему коду. За каждого приглашённого ты получишь 100₽, а друг — 50₽.</div>
@@ -138,15 +119,13 @@
 
     <div class="ref-stats-grid" id="refStatsGrid">
       <div class="ref-stat-card"><div class="ref-stat-value">0</div><div class="ref-stat-label">Рефералов</div></div>
-      <div class="ref-stat-card"><div class="ref-stat-value">0 ₽</div><div class="ref-stat-label">Заработано</div></div>
+      <div class="ref-stat-card"><div class="ref-stat-value green">0 ₽</div><div class="ref-stat-label">Заработано</div></div>
     </div>
 
     <div class="ref-two-col">
       <div class="ref-code-card">
         <div class="ref-code-head">
-          <div class="ref-code-icon">
-            <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-          </div>
+          <div class="ref-code-icon"><svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
           <div>
             <div class="ref-code-title">Мой реферальный код</div>
             <div class="ref-code-sub">Можешь изменить его на любой</div>
@@ -165,9 +144,7 @@
 
       <div class="ref-code-card">
         <div class="ref-code-head">
-          <div class="ref-code-icon" style="background:rgba(251,191,36,0.12);border-color:rgba(251,191,36,0.4);color:#fbbf24;">
-            <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;"><circle cx="8" cy="15" r="4"/><line x1="10.85" y1="12.15" x2="19" y2="4"/><line x1="18" y1="5" x2="20" y2="7"/><line x1="15" y1="8" x2="17" y2="10"/></svg>
-          </div>
+          <div class="ref-code-icon" style="background:rgba(251,191,36,0.12);border-color:rgba(251,191,36,0.4);color:#fbbf24;"><svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;"><circle cx="8" cy="15" r="4"/><line x1="10.85" y1="12.15" x2="19" y2="4"/><line x1="18" y1="5" x2="20" y2="7"/><line x1="15" y1="8" x2="17" y2="10"/></svg></div>
           <div>
             <div class="ref-code-title">Активировать код</div>
             <div class="ref-code-sub">Введи реферальный код друга</div>
@@ -203,11 +180,11 @@
 </main>
 
 <nav class="bottom-nav">
-  <a class="nav-btn" href="/index.html"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Главная</span></a>
-  <a class="nav-btn" href="/rules.html"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Правила</span></a>
-  <a class="nav-btn" href="/roles.html"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Роли</span></a>
-  <a class="nav-btn" href="/shop.html"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span>Магазин</span></a>
-  <a class="nav-btn active" href="/profile.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg><span>Профиль</span></a>
+  <a class="nav-btn" href="/"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Главная</span></a>
+  <a class="nav-btn" href="/rules"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Правила</span></a>
+  <a class="nav-btn" href="/roles"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Роли</span></a>
+  <a class="nav-btn" href="/shop"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span>Магазин</span></a>
+  <a class="nav-btn active" href="/profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg><span>Профиль</span></a>
 </nav>
 
 <div class="toast-wrap" id="toastWrap"></div>
@@ -218,9 +195,8 @@
 <script>
 window.addEventListener('auth:changed', async (e) => {
   const user = e.detail.user;
-  if (!user) { showToast('Войдите через Steam', 'error'); return; }
+  if (!user) return;
   document.getElementById('headerAvatar').src = user.avatar || '';
-  document.getElementById('headerBalance').textContent = `${user.balance || 0} ₽`;
   document.getElementById('profileMenuContent').innerHTML = renderProfileMenu('referrals');
   loadMyReferrals();
   loadTopReferrals();
@@ -239,13 +215,14 @@ async function loadMyReferrals() {
     if (!invited.length) {
       list.innerHTML = `<div class="empty-refs"><div class="ico">👥</div>Пока никого нет. Поделись своим кодом!</div>`;
     } else {
-      list.innerHTML = invited.map(i => `
-        <div class="my-ref-item">
+      list.innerHTML = invited.map(i => {
+        const href = i.steamId ? `/profile/${i.steamId}` : '#';
+        return `<a class="my-ref-item" href="${href}">
           <div class="my-ref-avatar">${(i.name || '?').charAt(0).toUpperCase()}</div>
           <div class="my-ref-name">${escapeHtml(i.name || i.steamId)}</div>
           <div class="my-ref-date">${new Date(i.at).toLocaleDateString('ru-RU')}</div>
-        </div>
-      `).join('');
+        </a>`;
+      }).join('');
     }
   } catch (e) { console.error('[referrals]', e); }
 }
@@ -260,9 +237,8 @@ async function loadTopReferrals() {
       return;
     }
     tbody.innerHTML = top.map((t, i) => {
-      const linked = !!t.discordId;
-      const target = linked ? `/profile.html?id=${t.discordId}` : '#';
-      return `<tr style="cursor:${linked ? 'pointer' : 'default'};" ${linked ? `onclick="window.location.href='${target}'"` : ''}>
+      const target = t.steamId ? `/profile/${t.steamId}` : '#';
+      return `<tr onclick="window.location.href='${target}'">
         <td><span class="top-rank">${i + 1}</span></td>
         <td>
           <div class="top-user">
