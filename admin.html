@@ -12,17 +12,24 @@
 * { box-sizing: border-box; }
 body > .auth-widget { display: none !important; }
 
-.admin-wrap { min-height: 100vh; position: relative; z-index: 1; padding: 20px 24px 60px; max-width: 1400px; margin: 0 auto; overflow: visible; }
+.admin-wrap { min-height: 100vh; position: relative; z-index: 1; padding: 84px 24px 60px; max-width: 1400px; margin: 0 auto; overflow: visible; }
 
-.admin-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 14px 20px; background: rgba(10,10,10,0.9); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 22px; backdrop-filter: blur(20px); overflow: visible; position: relative; z-index: 100; }
-.admin-brand { display: flex; align-items: center; gap: 12px; }
-.admin-brand img { width: 38px; height: 38px; border-radius: 11px; object-fit: contain; background: rgba(225,6,0,0.08); border: 1px solid rgba(225,6,0,0.3); padding: 4px; }
-.admin-brand-text { font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: 16px; letter-spacing: -0.6px; background: linear-gradient(135deg, #fff 20%, var(--red) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; white-space: nowrap; }
-.admin-brand-sub { font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; margin-top: 1px; }
-
-.admin-user { display: flex; align-items: center; gap: 12px; position: relative; z-index: 200; }
-.admin-exit { padding: 9px 16px; background: rgba(225,6,0,0.12); border: 1px solid rgba(225,6,0,0.4); border-radius: 10px; color: var(--red); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12.5px; cursor: pointer; transition: all 0.3s; }
-.admin-exit:hover { background: rgba(225,6,0,0.25); border-color: var(--red); }
+.admin-top {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  z-index: 1000;
+}
+.admin-brand { display: none !important; }
+.admin-exit { display: none !important; }
+.admin-user { display: flex; align-items: center; gap: 8px; position: relative; z-index: 200; }
 
 .admin-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 22px; position: relative; z-index: 50; }
 .tab-block { display: flex; align-items: center; gap: 14px; padding: 18px 22px; background: linear-gradient(145deg, var(--bg-card), rgba(14,14,14,0.5)); border: 1px solid var(--border); border-radius: 16px; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; text-align: left; }
@@ -169,13 +176,14 @@ body > .auth-widget { display: none !important; }
 .denied p { color: var(--text-dim); max-width: 460px; line-height: 1.7; font-size: 14px; }
 
 @media (max-width: 700px) {
-  .admin-wrap { padding: 14px 14px 50px; }
+  .admin-wrap { padding: 84px 14px 50px; }
   .admin-tabs { grid-template-columns: 1fr; gap: 8px; }
   .tab-block { padding: 14px 16px; }
   .tab-block-icon { width: 40px; height: 40px; font-size: 18px; }
   .tab-block-title { font-size: 14px; }
   .app-avatar { width: 48px; height: 48px; }
   .fd-modal { padding: 22px; }
+  .admin-top { top: 12px; right: 12px; }
 }
 </style>
 </head>
@@ -198,20 +206,12 @@ body > .auth-widget { display: none !important; }
 
 <div class="admin-wrap" id="adminWrap" style="display:none;">
   <div class="admin-top">
-    <div class="admin-brand">
-      <img src="/logo.png" alt="Fernodd">
-      <div>
-        <div class="admin-brand-text">Fernodd</div>
-        <div class="admin-brand-sub">Admin Panel</div>
-      </div>
-    </div>
     <div class="admin-user">
       <div class="profile-avatar-btn" id="profileAvatarBtn" onclick="toggleProfileMenu(event)" style="position:relative;">
         <img id="headerAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
         <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
         <div id="profileMenuContent"></div>
       </div>
-      <button class="admin-exit" onclick="logout()">Выйти</button>
     </div>
   </div>
 
@@ -424,8 +424,6 @@ setTimeout(() => {
     document.getElementById('deniedBlock').style.display = 'flex';
   }
 }, 2000);
-
-function logout() { localStorage.removeItem('fernodd_token'); window.location.reload(); }
 
 function switchTab(tab) {
   currentTab = tab;
@@ -812,7 +810,7 @@ function renderStaffGrid() {
   }).join('');
 }
 
-/* ============ СТАТИСТИКА (SVG-график) ============ */
+/* ============ СТАТИСТИКА ============ */
 async function loadAnalyticsBlock(body) {
   body.innerHTML = '<div class="skeleton"></div>';
   try {

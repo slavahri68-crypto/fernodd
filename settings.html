@@ -31,38 +31,10 @@
   .form-link-remove { font-size: 11px; color: var(--text-dim); cursor: pointer; text-decoration: underline; }
   .form-link-remove:hover { color: var(--red); }
 
-  /* Фикс. префикс для ссылки */
-  .refixed-input {
-    display: flex; align-items: center; flex: 1;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border-bright);
-    border-radius: 10px;
-    overflow: hidden;
-    transition: all 0.3s;
-  }
-  .refixed-input:focus-within {
-    border-color: var(--red);
-    box-shadow: 0 0 0 4px rgba(225,6,0,0.12);
-  }
-  .refixed-prefix {
-    padding: 12px 12px;
-    color: var(--text-dim);
-    font-size: 12px;
-    background: rgba(255,255,255,0.02);
-    border-right: 1px solid var(--border-bright);
-    white-space: nowrap;
-    user-select: none;
-    font-family: 'Inter', sans-serif;
-  }
-  .refixed-input .form-input {
-    border: none !important;
-    border-radius: 0 !important;
-    margin-bottom: 0 !important;
-    flex: 1;
-    box-shadow: none !important;
-    background: transparent !important;
-    min-width: 0;
-  }
+  .refixed-input { display: flex; align-items: center; flex: 1; background: var(--bg-elevated); border: 1px solid var(--border-bright); border-radius: 10px; overflow: hidden; transition: all 0.3s; }
+  .refixed-input:focus-within { border-color: var(--red); box-shadow: 0 0 0 4px rgba(225,6,0,0.12); }
+  .refixed-prefix { padding: 12px 12px; color: var(--text-dim); font-size: 12px; background: rgba(255,255,255,0.02); border-right: 1px solid var(--border-bright); white-space: nowrap; user-select: none; font-family: 'Inter', sans-serif; }
+  .refixed-input .form-input { border: none !important; border-radius: 0 !important; margin-bottom: 0 !important; flex: 1; box-shadow: none !important; background: transparent !important; min-width: 0; }
 
   .discord-link-box { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: rgba(96,165,250,0.06); border: 1px solid rgba(96,165,250,0.35); border-radius: 10px; margin-bottom: 20px; gap: 12px; flex-wrap: wrap; }
   .discord-link-info { display: flex; align-items: center; gap: 12px; }
@@ -74,7 +46,6 @@
 
   @media (max-width: 699px) {
     .my-page { padding: 70px 12px 120px; }
-    .my-menu { width: 280px; right: -50px; }
     .settings-card { padding: 18px; }
     .refixed-prefix { font-size: 10px; padding: 12px 8px; }
   }
@@ -92,7 +63,7 @@
 
 <main class="my-page">
   <div class="my-container">
-    <div class="my-header" style="justify-content:flex-end;">
+    <div class="my-header">
       <div class="my-header-right">
         <div class="profile-avatar-btn" id="profileAvatarBtn" onclick="toggleProfileMenu(event)">
           <img id="headerAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
@@ -165,7 +136,6 @@ window.addEventListener('auth:changed', async (e) => {
   document.getElementById('profileMenuContent').innerHTML = renderProfileMenu('settings');
   currentUserData = user;
 
-  // FERNODD+ badge
   try {
     const hasPlus = (user.roles || []).some(r => r.toLowerCase().startsWith('fernodd+'));
     const badge = document.getElementById('plusBadge');

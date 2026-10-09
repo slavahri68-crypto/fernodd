@@ -45,7 +45,7 @@
 
 <main class="my-page">
   <div class="my-container">
-    <div class="my-header" style="justify-content:flex-end;">
+    <div class="my-header">
       <div class="my-header-right">
         <div class="profile-avatar-btn" id="profileAvatarBtn" onclick="toggleProfileMenu(event)">
           <img id="headerAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
@@ -95,9 +95,6 @@ async function loadInventory() {
     }
     const SHOP_ICONS = {
       fernodd_plus: { icon: '⭐', color: '#fbbf24', tag: 'vip', tagLabel: 'FERNODD+' },
-      moderator: { icon: '🛡️', color: '#3b82f6', tag: 'admin', tagLabel: 'Админ-права' },
-      senior_moderator: { icon: '⚔️', color: '#4ade80', tag: 'admin', tagLabel: 'Админ-права' },
-      chief_moderator: { icon: '👑', color: '#22d3ee', tag: 'admin', tagLabel: 'Админ-права' },
     };
     grid.innerHTML = items.map(it => {
       const meta = SHOP_ICONS[it.itemId] || { icon: '🎁', color: 'var(--red)', tag: 'vip', tagLabel: 'Услуга' };

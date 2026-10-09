@@ -33,7 +33,7 @@
   .friend-badge { display: inline-block; padding: 2px 8px; background: rgba(74,222,128,0.15); color: #4ade80; border-radius: 100px; font-size: 10px; font-weight: 700; margin-left: 6px; }
   .friends-empty { text-align: center; padding: 60px 20px; color: var(--text-dim); font-size: 13px; }
   .friends-empty .ico { font-size: 48px; margin-bottom: 12px; opacity: 0.35; }
-  @media (max-width: 699px) { .my-page { padding: 70px 12px 120px; } .my-menu { width: 280px; right: -50px; } .friends-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 699px) { .my-page { padding: 70px 12px 120px; } .friends-grid { grid-template-columns: 1fr; } }
   .loading-state { display: flex; align-items: center; justify-content: center; padding: 60px 20px; gap: 10px; color: var(--text-dim); font-size: 13px; }
   .spinner { width: 20px; height: 20px; border: 2px solid var(--border-bright); border-top-color: var(--red); border-radius: 50%; animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
@@ -51,7 +51,7 @@
 
 <main class="my-page">
   <div class="my-container">
-    <div class="my-header" style="justify-content:flex-end;">
+    <div class="my-header">
       <div class="my-header-right">
         <div class="profile-avatar-btn" id="profileAvatarBtn" onclick="toggleProfileMenu(event)">
           <img id="headerAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">

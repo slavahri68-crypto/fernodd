@@ -79,7 +79,7 @@
 
 <main class="my-page">
   <div class="my-container">
-    <div class="my-header" style="justify-content:flex-end;">
+    <div class="my-header">
       <div class="my-header-right">
         <div class="profile-avatar-btn" id="profileAvatarBtn" onclick="toggleProfileMenu(event)">
           <img id="headerAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
@@ -138,7 +138,6 @@ window.addEventListener('auth:changed', (e) => {
   document.getElementById('headerAvatar').src = user.avatar || '';
   document.getElementById('profileMenuContent').innerHTML = renderProfileMenu('profile');
 
-  // Определяем targetUserId
   const pathParts = window.location.pathname.split('/').filter(Boolean);
   let urlId = null;
   if (pathParts[0] === 'profile' && pathParts[1]) urlId = pathParts[1];
