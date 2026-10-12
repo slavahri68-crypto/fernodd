@@ -13,6 +13,17 @@
   .my-page { min-height: 100vh; padding: 70px 0 100px; position: relative; z-index: 1; }
   .my-container { width: 100%; max-width: 720px; margin: 0 auto; padding: 0 14px; }
 
+  .my-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    padding: 0 4px;
+  }
+  .my-header-right { display: flex; align-items: center; gap: 10px; }
+
   /* ============ STEAM PROFILE CARD ============ */
   .steam-profile {
     position: relative;
@@ -130,6 +141,188 @@
   .steam-status-text.offline { color: #8a8a8a; }
 
   .steam-desc { font-size: 13px; color: var(--text-dim); line-height: 1.6; margin-bottom: 16px; padding: 0 8px; }
+
+  /* ============ МОДАЛКА СТРИКА ============ */
+  .streak-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 2500;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .streak-modal.visible { display: flex; }
+
+  .streak-modal-inner {
+    background: linear-gradient(145deg, #0e0e0e, #060606);
+    border: 1px solid var(--border-bright);
+    border-radius: 22px;
+    padding: 24px;
+    max-width: 380px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    animation: streakIn 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    text-align: center;
+  }
+  .streak-modal-inner::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, #ff4400, #ff8c00, #ff4400);
+  }
+  @keyframes streakIn {
+    from { opacity: 0; transform: scale(0.92) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .streak-fire-big {
+    font-size: 64px;
+    margin: 4px 0 8px;
+    filter: drop-shadow(0 0 30px rgba(255,68,0,0.6));
+    animation: fireGlow 3s ease-in-out infinite;
+  }
+  .streak-fire-big.frozen {
+    filter: drop-shadow(0 0 30px rgba(96,165,250,0.6));
+  }
+  @keyframes fireGlow {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+  }
+
+  .streak-count {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 42px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -2px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .streak-count-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+  }
+
+  .streak-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .streak-stat {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 10px;
+  }
+  .streak-stat-icon { font-size: 18px; margin-bottom: 4px; opacity: 0.7; }
+  .streak-stat-value {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.5px;
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+  .streak-stat-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .streak-today {
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 12.5px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .streak-today.ok { background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.4); color: #4ade80; }
+  .streak-today.no { background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.4); color: #fbbf24; }
+  .streak-today.frozen { background: rgba(96,165,250,0.12); border: 1px solid rgba(96,165,250,0.4); color: #60a5fa; }
+
+  .streak-desc {
+    font-size: 11.5px;
+    color: var(--text-dim);
+    line-height: 1.5;
+    margin-bottom: 16px;
+    padding: 0 8px;
+  }
+
+  .streak-freeze-btn {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #60a5fa, #2563eb);
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700;
+    font-size: 12.5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 6px 20px rgba(96,165,250,0.35);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .streak-freeze-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(96,165,250,0.55);
+  }
+  .streak-freeze-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  .streak-close-btn {
+    width: 100%;
+    padding: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border-bright);
+    border-radius: 10px;
+    color: var(--text-dim);
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 12.5px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .streak-close-btn:hover {
+    color: #fff;
+    border-color: var(--red);
+    background: rgba(225,6,0,0.08);
+  }
+
+  .streak-loading {
+    padding: 20px;
+    color: var(--text-dim);
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
 
   /* ============ MENU LIST ============ */
   .steam-menu {
@@ -459,6 +652,10 @@
     letter-spacing: 0.5px;
     font-family: 'Unbounded', sans-serif;
   }
+  .badge-tag.no-plus {
+    background: linear-gradient(135deg, #ff4400, #8b0000);
+    color: #fff;
+  }
 
   .link-input-row {
     display: flex; align-items: stretch;
@@ -704,6 +901,7 @@
           <div class="link-head">
             <div class="link-head-title"><span class="ico">🔗</span> Ссылка профиля</div>
             <span class="badge-tag" id="plusBadge" style="display:none;">FERNODD+</span>
+            <span class="badge-tag no-plus" id="noPlusBadge" style="display:none;">ТРЕБУЕТСЯ FERNODD+</span>
             <button class="link-head-clear" onclick="clearProfileLink()">Убрать</button>
           </div>
 
@@ -750,6 +948,11 @@
   </div>
 </main>
 
+<!-- МОДАЛКА СТРИКА -->
+<div class="streak-modal" id="streakModal" onclick="if(event.target.id==='streakModal')closeStreakModal()">
+  <div class="streak-modal-inner" id="streakModalInner"></div>
+</div>
+
 <nav class="bottom-nav">
   <a class="nav-btn" href="/"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Главная</span></a>
   <a class="nav-btn" href="/rules"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Правила</span></a>
@@ -765,7 +968,6 @@
 <script src="/js/my-profile.js"></script>
 <script src="/js/auth.js"></script>
 <script>
-/* ============ STATE ============ */
 let targetUserId = null;
 let currentUserData = null;
 let linkCheckTimer = null;
@@ -883,7 +1085,19 @@ function renderSteamProfile(user) {
     ? `<span class="steam-badge-item verify" title="FERNODD+">
          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4-3.9-3.8 5.4-.8z"/></svg>
        </span>` : '';
-  const activityBadge = `<span class="steam-badge-item fire" id="activityBadge" title="Активность" style="display:${user.activity > 0 ? 'inline-flex' : 'none'};">🔥 <span id="activityCount">${user.activity || 0}</span></span>`;
+
+  let activityBadge = '';
+  if (user.activity > 0) {
+    const frozen = user.streakFrozen;
+    const icon = frozen ? '🧊' : '🔥';
+    const color = frozen ? '#60a5fa' : '#ff4400';
+    const borderColor = frozen ? 'rgba(96,165,250,0.4)' : 'rgba(255,68,0,0.35)';
+    const bgColor = frozen ? 'rgba(96,165,250,0.15)' : 'rgba(255,68,0,0.15)';
+    activityBadge = `<span class="steam-badge-item fire" id="activityBadge" onclick="openStreakModal(event)" style="display:inline-flex;background:${bgColor};color:${color};border-color:${borderColor};cursor:pointer;">${icon} <span id="activityCount">${user.activity}</span></span>`;
+  } else {
+    activityBadge = `<span class="steam-badge-item fire" id="activityBadge" onclick="openStreakModal(event)" style="display:inline-flex;background:rgba(255,68,0,0.08);color:rgba(255,68,0,0.6);border-color:rgba(255,68,0,0.2);cursor:pointer;opacity:0.8;">🔥 <span id="activityCount">0</span></span>`;
+  }
+
   const tagBadge = tag ? `<span class="steam-badge-item tag">${escapeHtml(tag)}</span>` : '';
 
   document.getElementById('steamBody').innerHTML = `
@@ -901,6 +1115,126 @@ function renderSteamProfile(user) {
   `;
 }
 
+/* ============ МОДАЛКА СТРИКА ============ */
+window.openStreakModal = async function(e) {
+  if (e) e.stopPropagation();
+
+  const modal = document.getElementById('streakModal');
+  const inner = document.getElementById('streakModalInner');
+
+  inner.innerHTML = `
+    <div class="streak-loading">
+      <div class="spinner"></div> Загрузка...
+    </div>
+  `;
+  modal.classList.add('visible');
+
+  try {
+    const data = await api('/api/activity/status');
+
+    const streak = data.streak || 0;
+    const maxStreak = data.maxStreak || 0;
+    const countedToday = data.countedToday;
+    const frozen = data.frozen;
+    const hasPlus = data.hasFernoddPlus;
+
+    const fireIcon = frozen ? '🧊' : '🔥';
+    const fireCls = frozen ? 'frozen' : '';
+
+    let todayBlock = '';
+    if (frozen) {
+      todayBlock = `<div class="streak-today frozen">🧊 Стрик заморожен · пропуск 1 дня не сгорит</div>`;
+    } else if (countedToday) {
+      todayBlock = `<div class="streak-today ok">✅ Огонёк засчитан сегодня</div>`;
+    } else if (streak > 0) {
+      todayBlock = `<div class="streak-today no">⚠️ Сегодня ещё не засчитан — зайди до 00:00 МСК</div>`;
+    } else {
+      todayBlock = `<div class="streak-today no">🕒 Начни свой стрик сегодня</div>`;
+    }
+
+    let freezeBlock = '';
+    if (hasPlus && streak > 0 && !frozen && countedToday) {
+      freezeBlock = `
+        <button class="streak-freeze-btn" onclick="freezeStreakFromModal()">
+          🧊 Заморозить на 1 день
+        </button>`;
+    } else if (frozen) {
+      freezeBlock = `
+        <button class="streak-freeze-btn" disabled>
+          🧊 Заморозка активна
+        </button>`;
+    }
+
+    inner.innerHTML = `
+      <div class="streak-fire-big ${fireCls}">${fireIcon}</div>
+      <div class="streak-count">${streak}</div>
+      <div class="streak-count-label">${streak === 1 ? 'день подряд' : 'дней подряд'}</div>
+
+      <div class="streak-stats">
+        <div class="streak-stat">
+          <div class="streak-stat-icon">🔥</div>
+          <div class="streak-stat-value">${streak}</div>
+          <div class="streak-stat-label">Текущий</div>
+        </div>
+        <div class="streak-stat">
+          <div class="streak-stat-icon">🏆</div>
+          <div class="streak-stat-value">${maxStreak}</div>
+          <div class="streak-stat-label">Рекорд</div>
+        </div>
+      </div>
+
+      ${todayBlock}
+      ${freezeBlock}
+
+      <div class="streak-desc">
+        Заходи на сайт каждый день — стрик растёт.<br>
+        Пропустишь 1 день — стрик сгорит.
+      </div>
+
+      <button class="streak-close-btn" onclick="closeStreakModal()">Закрыть</button>
+    `;
+  } catch (e) {
+    inner.innerHTML = `
+      <div class="streak-loading" style="color:var(--red);">
+        Ошибка: ${escapeHtml(e.message)}
+      </div>
+      <button class="streak-close-btn" style="margin-top:10px;" onclick="closeStreakModal()">Закрыть</button>
+    `;
+  }
+};
+
+window.closeStreakModal = function() {
+  document.getElementById('streakModal').classList.remove('visible');
+};
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeStreakModal();
+});
+
+window.freezeStreakFromModal = async function() {
+  if (!confirm('Заморозить стрик?\n\nПропустишь 1 день — стрик не сгорит. Пропустишь 2 — сгорит.')) return;
+
+  try {
+    const r = await api('/api/activity/freeze', { method: 'POST' });
+    showToast(`🧊 Заморожено (🔥 ${r.streak})`, 'success');
+    closeStreakModal();
+    setTimeout(() => {
+      loadProfile();
+      openStreakModal();
+    }, 500);
+  } catch (e) {
+    const errors = {
+      fernodd_plus_required: 'Только для владельцев FERNODD+',
+      no_streak_to_freeze: 'У вас ещё нет стрика',
+      already_frozen: 'Заморозка уже активна',
+      must_visit_first: 'Сначала зайдите сегодня',
+      no_db: 'Ошибка базы данных',
+    };
+    const key = e.message.split(' — ')[0];
+    showToast('❌ ' + (errors[key] || e.message), 'error');
+  }
+};
+
 /* ============ ACTIVITY UPDATE ============ */
 window.addEventListener('activity:changed', (e) => {
   const badge = document.getElementById('activityBadge');
@@ -912,6 +1246,13 @@ window.addEventListener('activity:changed', (e) => {
     badge.style.animation = 'none';
     void badge.offsetWidth;
     badge.style.animation = 'firePulse 0.6s ease';
+
+    if (e.detail.frozen) {
+      badge.innerHTML = `🧊 <span id="activityCount">${e.detail.points}</span>`;
+      badge.style.background = 'rgba(96,165,250,0.15)';
+      badge.style.color = '#60a5fa';
+      badge.style.borderColor = 'rgba(96,165,250,0.4)';
+    }
   }
 });
 
@@ -1176,6 +1517,7 @@ function applyFernoddPlusLock(hasPlus, currentLink) {
   const clearBtn = block.querySelector('.link-head-clear');
   const iconBtns = block.querySelectorAll('.link-icon-btn');
   const badge = document.getElementById('plusBadge');
+  const noPlusBadge = document.getElementById('noPlusBadge');
 
   if (hasPlus) {
     block.classList.remove('locked');
@@ -1183,6 +1525,7 @@ function applyFernoddPlusLock(hasPlus, currentLink) {
     clearBtn.style.display = '';
     iconBtns.forEach(b => b.disabled = false);
     if (badge) badge.style.display = 'inline-block';
+    if (noPlusBadge) noPlusBadge.style.display = 'none';
     const ov = block.querySelector('.link-lock-overlay');
     if (ov) ov.remove();
     return;
@@ -1193,6 +1536,7 @@ function applyFernoddPlusLock(hasPlus, currentLink) {
   clearBtn.style.display = 'none';
   iconBtns.forEach(b => b.disabled = true);
   if (badge) badge.style.display = 'none';
+  if (noPlusBadge) noPlusBadge.style.display = 'inline-block';
 
   const oldOv = block.querySelector('.link-lock-overlay');
   if (oldOv) oldOv.remove();
@@ -1227,9 +1571,8 @@ async function saveAllSettings() {
   btn.disabled = true;
   btn.textContent = 'Сохранение...';
 
-  const linkVal = linkInput.value.trim();
-  const hasPlus = document.getElementById('plusBadge').style.display !== 'none';
   const isOwn = isOwnProfile;
+  const hasPlus = document.getElementById('plusBadge')?.style.display !== 'none';
 
   const payload = {
     description: document.getElementById('descInput').value.trim(),
@@ -1238,11 +1581,14 @@ async function saveAllSettings() {
     vk: document.getElementById('vkInput').value.trim(),
   };
 
-  if (isOwn && hasPlus) {
-    payload.profileLink = linkVal;
-  } else if (!isOwn && canEditSettings) {
-    payload.profileLink = linkVal;
-    payload.steamId = targetUserId;
+  const linkVal = linkInput.value.trim();
+  if (linkVal) {
+    if (isOwn && hasPlus) {
+      payload.profileLink = linkVal;
+    } else if (!isOwn && canEditSettings) {
+      payload.profileLink = linkVal;
+      payload.steamId = targetUserId;
+    }
   }
 
   try {
@@ -1253,7 +1599,7 @@ async function saveAllSettings() {
     const errors = {
       bad_link_format: 'Неверный формат ссылки',
       link_taken: 'Ссылка уже занята',
-      fernodd_plus_required: 'Только для FERNODD+',
+      fernodd_plus_required: 'Только для FERNODD+ (только для ссылки профиля)',
       not_allowed_for_others: 'Нет прав на изменение чужого профиля',
       bad_steam_id: 'Неверный Steam ID',
       no_db: 'Ошибка базы данных',

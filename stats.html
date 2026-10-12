@@ -13,6 +13,17 @@
   .my-page { min-height: 100vh; padding: 70px 0 100px; position: relative; z-index: 1; }
   .my-container { width: 100%; max-width: 720px; margin: 0 auto; padding: 0 14px; }
 
+  .my-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    padding: 0 4px;
+  }
+  .my-header-right { display: flex; align-items: center; gap: 10px; }
+
   .page-title-block { text-align: center; margin-bottom: 18px; }
   .page-title-block h1 {
     font-family: 'Unbounded', sans-serif;
@@ -21,6 +32,54 @@
   }
   .page-title-block h1 span { color: var(--red); text-shadow: 0 0 30px rgba(225,6,0,0.6); }
   .page-title-block p { color: var(--text-dim); font-size: 13px; line-height: 1.5; }
+
+  .stats-tabs {
+    display: flex;
+    gap: 6px;
+    padding: 6px;
+    background: linear-gradient(145deg, #0e0e0e, #0a0a0a);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 14px;
+  }
+  .stats-tab {
+    flex: 1;
+    padding: 12px 16px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    color: var(--text-dim);
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .stats-tab:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+  .stats-tab.active {
+    color: #fff;
+    background: linear-gradient(135deg, rgba(225,6,0,0.25), rgba(139,0,0,0.15));
+    border-color: rgba(225,6,0,0.5);
+  }
+  .stats-tab .tab-count {
+    padding: 2px 8px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 700;
+  }
+  .stats-tab.active .tab-count {
+    background: rgba(225,6,0,0.3);
+    color: #fff;
+  }
+
+  .stats-panel { display: none; animation: fadeUp 0.35s; }
+  .stats-panel.active { display: block; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
   .stats-info {
     background: linear-gradient(145deg, #0e0e0e, #0a0a0a);
@@ -80,6 +139,17 @@
     border: 1px solid var(--border-bright);
   }
 
+  .stat-avatar-wrap { position: relative; flex-shrink: 0; }
+  .stat-status-dot {
+    position: absolute;
+    bottom: -2px; right: -2px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    border: 2.5px solid #0a0a0a;
+  }
+  .stat-status-dot.online { background: #4ade80; box-shadow: 0 0 8px #4ade80; }
+  .stat-status-dot.offline { background: #6b7280; }
+
   .stat-body { flex: 1; min-width: 0; }
   .stat-name {
     font-family: 'Unbounded', sans-serif;
@@ -113,6 +183,71 @@
     box-shadow: 0 0 25px rgba(251,191,36,0.4);
   }
 
+  .players-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .players-count {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px;
+    color: var(--text-dim);
+    font-weight: 700;
+  }
+  .players-search {
+    flex: 1;
+    min-width: 180px;
+    position: relative;
+  }
+  .players-search input {
+    width: 100%;
+    padding: 10px 14px 10px 38px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-bright);
+    border-radius: 10px;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition: all 0.25s;
+  }
+  .players-search input:focus {
+    border-color: var(--red);
+    box-shadow: 0 0 0 3px rgba(225,6,0,0.12);
+  }
+  .players-search::before {
+    content: '🔍';
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    opacity: 0.5;
+  }
+
+  .player-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px;
+    background: linear-gradient(145deg, #0e0e0e, #0a0a0a);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.25s;
+  }
+  .player-row:hover { border-color: rgba(225,6,0,0.4); transform: translateX(4px); }
+
+  .player-balance {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #4ade80;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
   .empty-state { text-align: center; padding: 60px 20px; color: var(--text-dim); font-size: 13px; }
   .empty-state .ico { font-size: 48px; margin-bottom: 12px; opacity: 0.35; }
   .loading-state {
@@ -134,6 +269,8 @@
     .stat-name { font-size: 12px; }
     .stat-fire { padding: 5px 10px; font-size: 12px; }
     .stat-rank { width: 28px; height: 28px; font-size: 12px; }
+    .player-balance { font-size: 11.5px; }
+    .stats-tab { font-size: 12px; padding: 10px 12px; }
   }
 </style>
 </head>
@@ -149,20 +286,52 @@
 
 <main class="my-page">
   <div class="my-container">
-    <div class="page-title-block">
-      <h1>🔥 Статистика <span>активности</span></h1>
-      <p>Пользователи с наибольшим временем, проведённым на сайте</p>
-    </div>
-
-    <div class="stats-info">
-      <div class="stats-info-icon">🔥</div>
-      <div class="stats-info-text">
-        <b>+1 очко</b> за каждые 3 минуты на сайте. Огонёк обновляется автоматически.
+    <div class="my-header">
+      <div class="my-header-right">
+        <div class="profile-avatar-btn" id="profileAvatarBtn" onclick="toggleProfileMenu(event)">
+          <img id="headerAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          <div id="profileMenuContent"></div>
+        </div>
       </div>
     </div>
 
-    <div class="stats-list" id="statsList">
-      <div class="loading-state"><div class="spinner"></div> Загрузка...</div>
+    <div class="page-title-block">
+      <h1>📊 Статистика <span>проекта</span></h1>
+      <p>Активность пользователей и все зарегистрированные игроки</p>
+    </div>
+
+    <div class="stats-tabs">
+      <button class="stats-tab active" data-tab="streak" onclick="switchStatsTab('streak')">
+        🔥 Стрик <span class="tab-count" id="streakCount">0</span>
+      </button>
+      <button class="stats-tab" data-tab="players" onclick="switchStatsTab('players')">
+        👥 Игроки <span class="tab-count" id="playersCount">0</span>
+      </button>
+    </div>
+
+    <div class="stats-panel active" id="panel-streak">
+      <div class="stats-info">
+        <div class="stats-info-icon">🔥</div>
+        <div class="stats-info-text">
+          <b>+1 день к стрику</b> за ежедневный вход. Пропустишь день — стрик обнулится.
+        </div>
+      </div>
+      <div class="stats-list" id="streakList">
+        <div class="loading-state"><div class="spinner"></div> Загрузка...</div>
+      </div>
+    </div>
+
+    <div class="stats-panel" id="panel-players">
+      <div class="players-header">
+        <div class="players-count">Всего: <span id="playersTotal">0</span></div>
+        <div class="players-search">
+          <input type="text" id="playersSearchInput" placeholder="Поиск по нику или Steam ID..." oninput="filterPlayers()">
+        </div>
+      </div>
+      <div class="stats-list" id="playersList">
+        <div class="loading-state"><div class="spinner"></div> Загрузка...</div>
+      </div>
     </div>
   </div>
 </main>
@@ -182,20 +351,39 @@
 <script src="/js/my-profile.js"></script>
 <script src="/js/auth.js"></script>
 <script>
+let currentStatsTab = 'streak';
+let streakUsers = [];
+let playersUsers = [];
+let playersFilter = '';
+
 window.addEventListener('auth:changed', (e) => {
-  loadStats();
+  const user = e.detail.user;
+  if (!user) return;
+  document.getElementById('headerAvatar').src = user.avatar || '';
+  document.getElementById('profileMenuContent').innerHTML = renderProfileMenu('stats');
+  loadStreak();
+  loadPlayers();
 });
 
-async function loadStats() {
-  const list = document.getElementById('statsList');
+function switchStatsTab(tab) {
+  currentStatsTab = tab;
+  document.querySelectorAll('.stats-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  document.querySelectorAll('.stats-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + tab));
+}
+
+async function loadStreak() {
+  const list = document.getElementById('streakList');
   try {
     const data = await api('/api/stats/activity');
-    const users = data.users || [];
-    if (!users.length) {
-      list.innerHTML = `<div class="empty-state"><div class="ico">🔥</div>Пока никого нет с огоньком</div>`;
+    streakUsers = data.users || [];
+    document.getElementById('streakCount').textContent = streakUsers.length;
+
+    if (!streakUsers.length) {
+      list.innerHTML = `<div class="empty-state"><div class="ico">🔥</div>Пока никого нет со стриком</div>`;
       return;
     }
-    list.innerHTML = users.map((u, i) => {
+
+    list.innerHTML = streakUsers.map((u, i) => {
       const rank = i + 1;
       const cls = rank === 1 ? 'top-1' : rank === 2 ? 'top-2' : rank === 3 ? 'top-3' : '';
       const roleColor = u.topRoleColor || '#60a5fa';
@@ -207,12 +395,66 @@ async function loadStats() {
             <div class="stat-name">${escapeHtml(u.name)}</div>
             ${u.topRole ? `<span class="stat-role" style="background:${roleColor}15;color:${roleColor};border:1px solid ${roleColor}40;">${escapeHtml(u.topRole)}</span>` : ''}
           </div>
-          <div class="stat-fire">🔥 ${u.activity}</div>
+          <div class="stat-fire" style="${u.frozen ? 'background:rgba(96,165,250,0.15);border-color:rgba(96,165,250,0.4);color:#60a5fa;box-shadow:0 0 20px rgba(96,165,250,0.15);' : ''}">${u.frozen ? '🧊' : '🔥'} ${u.activity}</div>
         </a>`;
     }).join('');
   } catch (e) {
     list.innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${escapeHtml(e.message)}</div>`;
   }
+}
+
+async function loadPlayers() {
+  const list = document.getElementById('playersList');
+  try {
+    const data = await api('/api/stats/players');
+    playersUsers = data.users || [];
+    document.getElementById('playersTotal').textContent = playersUsers.length;
+    document.getElementById('playersCount').textContent = playersUsers.length;
+    renderPlayers();
+  } catch (e) {
+    list.innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${escapeHtml(e.message)}</div>`;
+  }
+}
+
+function filterPlayers() {
+  playersFilter = (document.getElementById('playersSearchInput').value || '').toLowerCase().trim();
+  renderPlayers();
+}
+
+function renderPlayers() {
+  const list = document.getElementById('playersList');
+  let arr = playersUsers;
+  if (playersFilter) {
+    arr = arr.filter(u => {
+      const nameMatch = (u.name || '').toLowerCase().includes(playersFilter);
+      const steamMatch = (u.steamId || '').includes(playersFilter);
+      return nameMatch || steamMatch;
+    });
+  }
+
+  if (!arr.length) {
+    list.innerHTML = `<div class="empty-state"><div class="ico">👥</div>${playersFilter ? 'Никого не найдено' : 'Пока нет зарегистрированных игроков'}</div>`;
+    return;
+  }
+
+  list.innerHTML = arr.map(u => {
+    const roleColor = u.topRoleColor || '#60a5fa';
+    const statusCls = u.siteStatus === 'online' ? 'online' : 'offline';
+    return `
+      <a class="player-row" href="/profile/${u.steamId}">
+        <div class="stat-avatar-wrap">
+          <img class="stat-avatar" src="${u.avatar}" alt="" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
+          <span class="stat-status-dot ${statusCls}"></span>
+        </div>
+        <div class="stat-body">
+          <div class="stat-name">${escapeHtml(u.name)}</div>
+          ${u.topRole ? `<span class="stat-role" style="background:${roleColor}15;color:${roleColor};border:1px solid ${roleColor}40;">${escapeHtml(u.topRole)}</span>` : ''}
+          <div style="font-size:10px;color:var(--text-dim);font-family:monospace;margin-top:3px;">${escapeHtml(u.steamId || '')}</div>
+        </div>
+        ${u.streak > 0 ? `<div class="stat-fire" style="padding:4px 9px;font-size:11px;${u.frozen ? 'background:rgba(96,165,250,0.15);border-color:rgba(96,165,250,0.4);color:#60a5fa;' : ''}">${u.frozen ? '🧊' : '🔥'} ${u.streak}</div>` : ''}
+        <div class="player-balance">${(u.balance || 0).toLocaleString('ru-RU')} ₽</div>
+      </a>`;
+  }).join('');
 }
 </script>
 </body>

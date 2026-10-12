@@ -159,6 +159,11 @@
   <div class="shop-container">
     <div class="shop-header">
       <div class="shop-title">Магазин</div>
+      <div class="profile-avatar-btn" id="profileAvatarBtn" onclick="toggleProfileMenu(event)">
+        <img id="headerAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        <div id="profileMenuContent"></div>
+      </div>
     </div>
 
     <div class="shop-tabs">
@@ -229,6 +234,7 @@ async function loadShop() {
 window.addEventListener('auth:changed', (e) => {
   currentUser = e.detail.user;
   if (currentUser) {
+    document.getElementById('headerAvatar').src = currentUser.avatar || '';
     const menuBox = document.getElementById('profileMenuContent');
     if (menuBox) menuBox.innerHTML = renderProfileMenu('shop');
   }

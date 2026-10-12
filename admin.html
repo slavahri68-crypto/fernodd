@@ -14,9 +14,7 @@ body > .auth-widget { display: none !important; }
 
 .admin-wrap { min-height: 100vh; position: relative; z-index: 1; padding: 84px clamp(16px, 2.5vw, 56px) 60px; width: 100%; max-width: 1920px; margin: 0 auto; overflow: visible; }
 
-.admin-top { position: absolute; top: 20px; right: 24px; display: flex; align-items: center; gap: 12px; padding: 0; background: transparent; border: none; box-shadow: none; z-index: 1000; }
-.admin-brand { display: none !important; }
-.admin-exit { display: none !important; }
+.admin-top { position: absolute; top: 20px; right: 24px; display: flex; align-items: center; gap: 12px; z-index: 1000; }
 .admin-user { display: flex; align-items: center; gap: 8px; position: relative; z-index: 200; }
 
 .admin-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 22px; position: relative; z-index: 50; }
@@ -75,6 +73,8 @@ body > .auth-widget { display: none !important; }
 .btn-act.blue:hover:not(:disabled) { background: rgba(59,130,246,0.25); }
 .btn-act.ghost { background: rgba(255,255,255,0.04); color: var(--text); border-color: var(--border-bright); }
 .btn-act.ghost:hover:not(:disabled) { border-color: var(--red); background: rgba(225,6,0,0.08); }
+.btn-act.gold { background: rgba(251,191,36,0.12); color: #fbbf24; border-color: rgba(251,191,36,0.4); }
+.btn-act.gold:hover:not(:disabled) { background: rgba(251,191,36,0.22); }
 
 .empty-state { text-align: center; padding: 50px 20px; color: var(--text-dim); font-size: 13px; }
 .empty-state .ico { font-size: 44px; margin-bottom: 12px; opacity: 0.35; }
@@ -122,9 +122,6 @@ body > .auth-widget { display: none !important; }
 .role-simple-item { display: flex; align-items: center; gap: 14px; padding: 14px 18px; cursor: pointer; transition: background 0.2s; border-bottom: 1px solid var(--border); }
 .role-simple-item:last-child { border-bottom: none; }
 .role-simple-item:hover { background: rgba(225,6,0,0.06); }
-.role-checkbox { width: 20px; height: 20px; border: 2px solid var(--border-bright); border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-.role-checkbox.checked { background: var(--red); border-color: var(--red); }
-.role-checkbox.checked::after { content: '✓'; color: #fff; font-size: 13px; font-weight: 900; line-height: 1; }
 .role-simple-name { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500; color: var(--text); flex: 1; }
 
 .chart-card { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
@@ -142,25 +139,306 @@ body > .auth-widget { display: none !important; }
 .top-staff-name { flex: 1; font-weight: 600; color: #fff; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .top-staff-count { font-family: 'Unbounded'; color: var(--red); font-weight: 900; font-size: 14px; }
 
-.balances-table { display: flex; flex-direction: column; gap: 8px; }
-.balance-row { display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 12px; transition: all 0.25s; }
-.balance-row:hover { border-color: rgba(225,6,0,0.4); transform: translateX(4px); }
-.balance-avatar { width: 44px; height: 44px; border-radius: 11px; object-fit: cover; flex-shrink: 0; border: 2px solid var(--border-bright); }
-.balance-body { flex: 1; min-width: 0; }
-.balance-name { font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 13.5px; color: #fff; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.balance-steam-id { font-size: 11px; color: var(--text-dim); font-family: monospace; }
-.balance-amount { font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: 16px; color: #4ade80; white-space: nowrap; flex-shrink: 0; margin-right: 12px; }
-.balance-actions { display: flex; gap: 6px; flex-shrink: 0; }
-.balance-btn { padding: 7px 12px; border-radius: 8px; border: 1px solid var(--border-bright); background: rgba(255,255,255,0.04); color: var(--text); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 5px; }
-.balance-btn:hover { border-color: var(--red); background: rgba(225,6,0,0.08); }
-.balance-btn.green { color: #4ade80; border-color: rgba(74,222,128,0.4); background: rgba(74,222,128,0.08); }
-.balance-btn.green:hover { background: rgba(74,222,128,0.18); border-color: #4ade80; }
-.balance-btn.red { color: #ef4444; border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.08); }
-.balance-btn.red:hover { background: rgba(239,68,68,0.18); border-color: #ef4444; }
-.balance-btn.blue { color: #60a5fa; border-color: rgba(96,165,250,0.4); background: rgba(96,165,250,0.08); }
-.balance-btn.blue:hover { background: rgba(96,165,250,0.18); border-color: #60a5fa; }
-.balance-search-row { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
-.balance-search-row .search-wrap { flex: 1; margin: 0; min-width: 200px; }
+/* ============ BALANCE SEARCH ============ */
+.balance-search-hero {
+  text-align: center;
+  padding: 30px 20px;
+  background: linear-gradient(145deg, #0e0e0e, #060606);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.balance-search-hero::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: 50%;
+  transform: translateX(-50%);
+  width: 240px; height: 240px;
+  background: radial-gradient(circle, rgba(225,6,0,0.18), transparent 65%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+.balance-search-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 0 20px rgba(225,6,0,0.5));
+}
+.balance-search-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+  position: relative;
+  z-index: 1;
+}
+.balance-search-desc {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
+}
+.balance-search-input-wrap {
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+}
+.balance-search-input {
+  flex: 1;
+  padding: 14px 16px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-bright);
+  border-radius: 12px;
+  color: #fff;
+  font-family: 'Inter', monospace;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.25s;
+  letter-spacing: 0.5px;
+}
+.balance-search-input:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 0 4px rgba(225,6,0,0.12);
+}
+.balance-search-input::placeholder {
+  color: #555;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+.balance-search-btn {
+  padding: 14px 22px;
+  background: linear-gradient(135deg, var(--red), var(--red-dark));
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-family: 'Unbounded', sans-serif;
+  font-weight: 700;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: all 0.3s;
+  white-space: nowrap;
+  box-shadow: 0 6px 20px rgba(225,6,0,0.35);
+}
+.balance-search-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(225,6,0,0.55);
+}
+.balance-search-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.balance-search-hint {
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--text-dim);
+  position: relative;
+  z-index: 1;
+}
+
+.balance-result {
+  background: linear-gradient(145deg, #0e0e0e, #060606);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 22px;
+  margin-bottom: 16px;
+  animation: fadeUp 0.35s;
+}
+.balance-user-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 16px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+.balance-user-avatar {
+  width: 64px; height: 64px;
+  border-radius: 16px;
+  object-fit: cover;
+  border: 2px solid var(--border-bright);
+  flex-shrink: 0;
+}
+.balance-user-info { flex: 1; min-width: 0; }
+.balance-user-name {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 4px;
+  word-break: break-word;
+}
+.balance-user-steam {
+  font-family: 'Inter', monospace;
+  font-size: 11.5px;
+  color: var(--text-dim);
+  margin-bottom: 3px;
+  word-break: break-all;
+}
+.balance-user-discord {
+  font-size: 11.5px;
+  color: #60a5fa;
+  font-weight: 500;
+}
+.balance-user-current {
+  text-align: right;
+  flex-shrink: 0;
+}
+.balance-user-current-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  color: var(--text-dim);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.balance-user-current-value {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  color: #4ade80;
+  letter-spacing: -0.5px;
+}
+
+.balance-actions-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.balance-action-btn {
+  padding: 12px 10px;
+  border-radius: 11px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 12.5px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.25s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.balance-action-btn.green {
+  background: rgba(74,222,128,0.12);
+  color: #4ade80;
+  border-color: rgba(74,222,128,0.4);
+}
+.balance-action-btn.green:hover { background: rgba(74,222,128,0.25); }
+.balance-action-btn.red {
+  background: rgba(239,68,68,0.12);
+  color: #ef4444;
+  border-color: rgba(239,68,68,0.4);
+}
+.balance-action-btn.red:hover { background: rgba(239,68,68,0.25); }
+.balance-action-btn.blue {
+  background: rgba(96,165,250,0.12);
+  color: #60a5fa;
+  border-color: rgba(96,165,250,0.4);
+}
+.balance-action-btn.blue:hover { background: rgba(96,165,250,0.25); }
+
+.balance-panel { display: none; margin-top: 12px; }
+.balance-panel.visible { display: block; animation: fadeUp 0.25s; }
+.balance-panel-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+.balance-panel-input {
+  flex: 1;
+  padding: 14px 16px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-bright);
+  border-radius: 11px;
+  color: #fff;
+  font-family: 'Unbounded', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.25s;
+  min-width: 0;
+}
+.balance-panel-input:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 0 4px rgba(225,6,0,0.12);
+}
+.balance-panel-submit {
+  padding: 14px 22px;
+  border: none;
+  border-radius: 11px;
+  font-family: 'Unbounded', sans-serif;
+  font-weight: 800;
+  font-size: 12.5px;
+  cursor: pointer;
+  color: #fff;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+.balance-panel-submit.green {
+  background: linear-gradient(135deg, #4ade80, #16a34a);
+  box-shadow: 0 6px 20px rgba(74,222,128,0.35);
+}
+.balance-panel-submit.red {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  box-shadow: 0 6px 20px rgba(239,68,68,0.35);
+}
+.balance-panel-submit.blue {
+  background: linear-gradient(135deg, #60a5fa, #2563eb);
+  box-shadow: 0 6px 20px rgba(96,165,250,0.35);
+}
+.balance-panel-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+.balance-panel-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.balance-quick-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.balance-quick-btn {
+  padding: 6px 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border-bright);
+  border-radius: 8px;
+  color: var(--text-dim);
+  font-family: 'Unbounded', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.balance-quick-btn:hover {
+  color: #fff;
+  border-color: var(--red);
+  background: rgba(225,6,0,0.08);
+}
+
+.balance-result-empty {
+  background: rgba(239,68,68,0.06);
+  border: 1px solid rgba(239,68,68,0.3);
+  border-radius: 14px;
+  padding: 24px;
+  text-align: center;
+  color: var(--red);
+  font-size: 13px;
+  animation: fadeUp 0.35s;
+}
 
 .fd-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; }
 .fd-modal-overlay.visible { display: flex; }
@@ -177,7 +455,7 @@ body > .auth-widget { display: none !important; }
 .fd-btn-confirm { background: linear-gradient(135deg, var(--red), var(--red-dark)); color: #fff; }
 .fd-btn-confirm.green { background: linear-gradient(135deg, #4ade80, #16a34a); }
 
-.denied { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; text-align: center; gap: 16px; }
+.denied { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; text-align: center; gap: 16px; padding: 20px; }
 .denied-icon { font-size: 70px; }
 .denied h1 { font-family: 'Unbounded', sans-serif; font-size: clamp(28px, 4.5vw, 46px); color: var(--red); letter-spacing: -2px; }
 .denied p { color: var(--text-dim); max-width: 460px; line-height: 1.7; font-size: 14px; }
@@ -191,8 +469,10 @@ body > .auth-widget { display: none !important; }
   .app-avatar { width: 48px; height: 48px; }
   .fd-modal { padding: 22px; }
   .admin-top { top: 12px; right: 12px; }
-  .balance-row { flex-wrap: wrap; }
-  .balance-actions { width: 100%; justify-content: flex-end; margin-top: 8px; }
+  .balance-actions-row { grid-template-columns: 1fr; }
+  .balance-user-row { flex-wrap: wrap; }
+  .balance-user-current { width: 100%; text-align: left; padding-top: 10px; border-top: 1px solid var(--border); }
+  .balance-panel-input-row { flex-direction: column; }
 }
 </style>
 </head>
@@ -255,6 +535,7 @@ body > .auth-widget { display: none !important; }
 <script src="/js/my-profile.js"></script>
 <script src="/js/auth.js"></script>
 <script>
+/* ============ CONSTANTS ============ */
 const ROLE_COLOR_OVERRIDE = {
   'Главная администрация': '#e10600', 'Владелец': '#e10600', 'Разработчик': '#e10600',
   'Следящий': '#e10600', 'Куратор': '#e10600', 'Поддержка': '#e10600', 'Медиа': '#e10600',
@@ -277,31 +558,25 @@ let ticketPoll = null;
 let lastMessages = '';
 let selectedMember = null;
 let availableRoles = [];
-let balancesCache = [];
-let balancesSearch = '';
+let currentBalanceUser = null;
 
+/* ============ HELPERS ============ */
 function esc(s) {
   return String(s == null ? '' : s)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-function isOwner() { return !!(window.currentUser && window.currentUser.isOwner); }
-function isHeadAdminOrOwner() {
-  const u = window.currentUser;
-  if (!u) return false;
-  if (u.isHeadAdmin || u.isOwner) return true;
-  const allRoles = [...(u.roles || []), ...(u.siteRoles || [])];
-  return allRoles.includes('Главная администрация');
+function toast(text, type = 'info') {
+  const wrap = document.getElementById('toastWrap');
+  if (!wrap) return;
+  const icons = { success: '✓', error: '✕', info: 'ℹ' };
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.innerHTML = `<span style="font-weight:900;">${icons[type] || 'ℹ'}</span><span>${esc(text)}</span>`;
+  wrap.appendChild(el);
+  setTimeout(() => { el.classList.add('fade'); setTimeout(() => el.remove(), 300); }, 3000);
 }
-function isWatcherOrAbove() {
-  const u = window.currentUser;
-  if (!u) return false;
-  if (u.isHeadAdmin || u.isOwner) return true;
-  const allRoles = [...(u.roles || []), ...(u.siteRoles || [])];
-  return allRoles.includes('Следящий');
-}
-function canApprove() { return isWatcherOrAbove(); }
 
 function closeModal() {
   document.getElementById('fdModal').classList.remove('visible');
@@ -324,32 +599,6 @@ function confirmModal({ icon = '❓', title, desc, confirmText = 'OK', confirmCl
     const btn = document.getElementById('fdConfirmBtn');
     btn.disabled = true;
     try { await onConfirm(); } finally { closeModal(); }
-  };
-}
-
-function formModal({ icon = '📝', title, fields = [], confirmText = 'Создать', onConfirm }) {
-  const box = document.getElementById('fdModalBox');
-  const fieldsHtml = fields.map(f => `
-    <label class="fd-modal-label">${esc(f.label)}</label>
-    <input type="${f.type || 'text'}" class="fd-modal-input" id="fd_${f.id}" placeholder="${esc(f.placeholder || '')}" value="${esc(f.value || '')}">
-  `).join('');
-  box.innerHTML = `
-    <div class="fd-modal-icon">${icon}</div>
-    <h3>${esc(title)}</h3>
-    ${fieldsHtml}
-    <div class="fd-modal-actions">
-      <button class="fd-btn-cancel" onclick="closeModal()">Отмена</button>
-      <button class="fd-btn-confirm" id="fdConfirmBtn">${esc(confirmText)}</button>
-    </div>
-  `;
-  document.getElementById('fdModal').classList.add('visible');
-  setTimeout(() => { const first = box.querySelector('.fd-modal-input'); if (first) first.focus(); }, 100);
-  document.getElementById('fdConfirmBtn').onclick = async () => {
-    const values = {};
-    for (const f of fields) values[f.id] = document.getElementById('fd_' + f.id).value.trim();
-    const btn = document.getElementById('fdConfirmBtn');
-    btn.disabled = true;
-    try { await onConfirm(values); } finally { closeModal(); }
   };
 }
 
@@ -390,6 +639,25 @@ function radioModal({ icon = '❓', title, desc, options = [], confirmText = 'П
   };
 }
 
+/* ============ PERMISSIONS ============ */
+function isOwner() { return !!(window.currentUser && window.currentUser.isOwner); }
+function isHeadAdminOrOwner() {
+  const u = window.currentUser;
+  if (!u) return false;
+  if (u.isHeadAdmin || u.isOwner) return true;
+  const allRoles = [...(u.roles || []), ...(u.siteRoles || [])];
+  return allRoles.includes('Главная администрация');
+}
+function isWatcherOrAbove() {
+  const u = window.currentUser;
+  if (!u) return false;
+  if (u.isHeadAdmin || u.isOwner) return true;
+  const allRoles = [...(u.roles || []), ...(u.siteRoles || [])];
+  return allRoles.includes('Следящий');
+}
+function canApprove() { return isWatcherOrAbove(); }
+
+/* ============ AUTH ============ */
 window.addEventListener('auth:changed', (e) => {
   const user = e.detail.user;
   isAuthorized = window.canAccessAdmin ? window.canAccessAdmin(user) : false;
@@ -413,6 +681,7 @@ setTimeout(() => {
   }
 }, 2000);
 
+/* ============ TAB SWITCHING ============ */
 function switchTab(tab) {
   if (tab === 'manage' && !isHeadAdminOrOwner()) {
     toast('Раздел доступен только главной администрации.', 'error');
@@ -447,9 +716,7 @@ function renderModerator() {
   `;
   loadModBody();
 }
-
 function setModSub(sub) { moderatorSub = sub; renderModerator(); }
-
 async function loadModBody() {
   const body = document.getElementById('modBody');
   if (!body) return;
@@ -739,9 +1006,7 @@ function renderManage() {
   `;
   loadMgBody();
 }
-
 function setMgSub(sub) { manageSub = sub; renderManage(); }
-
 async function loadMgBody() {
   const body = document.getElementById('mgBody');
   if (!body) return;
@@ -791,7 +1056,6 @@ function renderStaffGrid() {
   if (!grid) return;
   const list = staffData[staffFilter] || [];
   if (!list.length) { grid.innerHTML = '<div class="empty-state">Нет участников.</div>'; return; }
-
   grid.innerHTML = list.map(s => {
     const status = (s.presence && s.presence.status) || 'offline';
     const color = ROLE_COLOR_OVERRIDE[s.topRole] || s.topRoleColor;
@@ -892,109 +1156,199 @@ async function loadAnalyticsBlock(body) {
   }
 }
 
+/* ============ BALANCE (поиск по Steam ID) ============ */
 async function loadBalancesBlock(body) {
   if (!isHeadAdminOrOwner()) {
     body.innerHTML = '<div class="empty-state"><div class="ico">🔒</div>Доступно только главной администрации.</div>';
     return;
   }
-  body.innerHTML = '<div class="skeleton"></div><div class="skeleton"></div>';
-  try {
-    const data = await api('/api/admin/balances');
-    balancesCache = data.users || [];
-    renderBalancesBlock(body);
-  } catch (e) {
-    body.innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${esc(e.message)}</div>`;
-  }
+  currentBalanceUser = null;
+  renderBalancesBlock(body);
 }
 
 function renderBalancesBlock(body) {
-  const totalBalance = balancesCache.reduce((s, u) => s + (u.balance || 0), 0);
-  const withBalance = balancesCache.filter(u => u.balance > 0).length;
-
   body.innerHTML = `
-    <div class="section-block">
-      <div class="section-block-head">
-        <div>
-          <div class="section-block-title"><span class="ico">💰</span> Управление балансом</div>
-          <div class="section-block-sub">
-            Всего пользователей: <b>${balancesCache.length}</b> · С балансом: <b>${withBalance}</b> · Общий баланс: <b style="color:#4ade80;">${totalBalance.toLocaleString('ru-RU')} ₽</b>
-          </div>
-        </div>
-        <button class="btn-act ghost" onclick="loadBalancesBlock(document.getElementById('mgBody'))">↻ Обновить</button>
+    <div class="balance-search-hero">
+      <div class="balance-search-icon">💰</div>
+      <div class="balance-search-title">Управление балансом</div>
+      <div class="balance-search-desc">Введите Steam ID (17 цифр) чтобы найти пользователя</div>
+      <div class="balance-search-input-wrap">
+        <input
+          class="balance-search-input"
+          id="balanceSteamInput"
+          placeholder="76561198000000000"
+          maxlength="17"
+          inputmode="numeric"
+          oninput="onBalanceSteamInput(this.value)"
+          onkeydown="if(event.key==='Enter')findBalanceUser()"
+        >
+        <button class="balance-search-btn" id="balanceSearchBtn" onclick="findBalanceUser()" disabled>Найти</button>
       </div>
-
-      <div class="balance-search-row">
-        <div class="search-wrap">
-          <input class="search-input" id="balanceSearch" placeholder="Поиск по нику или Steam ID..." oninput="onBalanceSearch(this.value)">
-        </div>
-      </div>
-
-      <div class="balances-table" id="balancesTable"></div>
+      <div class="balance-search-hint">Найти Steam ID можно на <b style="color:var(--text);">steamid.io</b></div>
     </div>
+    <div id="balanceResult"></div>
   `;
-  renderBalancesTable();
+  const input = document.getElementById('balanceSteamInput');
+  if (input) setTimeout(() => input.focus(), 100);
 }
 
-function onBalanceSearch(val) {
-  balancesSearch = (val || '').toLowerCase().trim();
-  renderBalancesTable();
+function onBalanceSteamInput(v) {
+  const cleaned = v.replace(/\D/g, '').slice(0, 17);
+  const input = document.getElementById('balanceSteamInput');
+  if (input.value !== cleaned) input.value = cleaned;
+  const btn = document.getElementById('balanceSearchBtn');
+  if (btn) btn.disabled = cleaned.length !== 17;
 }
 
-function renderBalancesTable() {
-  const el = document.getElementById('balancesTable');
-  if (!el) return;
-  let list = balancesCache;
-  if (balancesSearch) {
-    list = list.filter(u =>
-      (u.username || '').toLowerCase().includes(balancesSearch) ||
-      (u.steamId || '').includes(balancesSearch) ||
-      (u.discordId || '').includes(balancesSearch)
-    );
-  }
-  if (!list.length) {
-    el.innerHTML = '<div class="empty-state"><div class="ico">👥</div>Никого не найдено</div>';
+async function findBalanceUser() {
+  const steamId = document.getElementById('balanceSteamInput').value.trim();
+  if (!/^\d{17}$/.test(steamId)) {
+    toast('Введите корректный Steam ID (17 цифр)', 'error');
     return;
   }
-  el.innerHTML = list.map(u => `
-    <div class="balance-row">
-      <img class="balance-avatar" src="${esc(u.avatar)}" alt="" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
-      <div class="balance-body">
-        <div class="balance-name">${esc(u.username)}</div>
-        <div class="balance-steam-id">${esc(u.steamId)}</div>
-      </div>
-      <div class="balance-amount">${(u.balance || 0).toLocaleString('ru-RU')} ₽</div>
-      <div class="balance-actions">
-        <button class="balance-btn green" onclick="openBalanceModal('${u.steamId}', '${(u.username || '').replace(/'/g, "\\'")}', 'add')">+ Выдать</button>
-        <button class="balance-btn red" onclick="openBalanceModal('${u.steamId}', '${(u.username || '').replace(/'/g, "\\'")}', 'subtract')">− Снять</button>
-        <button class="balance-btn blue" onclick="openBalanceModal('${u.steamId}', '${(u.username || '').replace(/'/g, "\\'")}', 'set')">= Установить</button>
-      </div>
-    </div>
-  `).join('');
+  const btn = document.getElementById('balanceSearchBtn');
+  btn.disabled = true;
+  btn.textContent = 'Поиск...';
+
+  const result = document.getElementById('balanceResult');
+  result.innerHTML = '<div class="loading-state"><div class="spinner"></div> Поиск пользователя...</div>';
+
+  try {
+    const data = await api('/api/admin/balance/find?steamId=' + steamId);
+    currentBalanceUser = data.user;
+    renderBalanceUser(data.user);
+    btn.disabled = false;
+    btn.textContent = 'Найти';
+  } catch (e) {
+    const errors = {
+      bad_steam_id: 'Неверный Steam ID',
+      not_found: 'Пользователь не найден',
+      no_db: 'Ошибка базы данных',
+    };
+    const key = e.message.split(' — ')[0];
+    result.innerHTML = `<div class="balance-result-empty">❌ ${esc(errors[key] || e.message)}</div>`;
+    btn.disabled = false;
+    btn.textContent = 'Найти';
+  }
 }
 
-function openBalanceModal(steamId, userName, mode) {
-  const titles = { add: '💰 Выдать баланс', subtract: '💸 Снять баланс', set: '⚙️ Установить баланс' };
-  const confirmClass = mode === 'add' ? 'green' : '';
-  const confirmText = mode === 'add' ? '+ Выдать' : mode === 'subtract' ? '− Снять' : '✓ Установить';
-  const icon = mode === 'add' ? '💰' : mode === 'subtract' ? '💸' : '⚙️';
+function renderBalanceUser(user) {
+  const result = document.getElementById('balanceResult');
+  result.innerHTML = `
+    <div class="balance-result">
+      <div class="balance-user-row">
+        <img class="balance-user-avatar" src="${esc(user.avatar)}" alt="" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
+        <div class="balance-user-info">
+          <div class="balance-user-name">${esc(user.username)}</div>
+          <div class="balance-user-steam">${esc(user.steamId)}</div>
+          ${user.discordName ? `<div class="balance-user-discord">Discord: ${esc(user.discordName)}</div>` : ''}
+        </div>
+        <div class="balance-user-current">
+          <div class="balance-user-current-label">Баланс</div>
+          <div class="balance-user-current-value" id="balanceValue">${(user.balance || 0).toLocaleString('ru-RU')} ₽</div>
+        </div>
+      </div>
 
-  formModal({
-    icon, title: titles[mode],
-    fields: [{ id: 'amount', label: 'Сумма (₽)', placeholder: '100', type: 'number' }],
-    confirmText,
-    onConfirm: async (values) => {
-      const amount = Number(values.amount);
-      if (!amount || amount <= 0) { toast('Введите положительное число', 'error'); return; }
+      <div class="balance-actions-row">
+        <button class="balance-action-btn green" onclick="toggleBalancePanel('add')">+ Выдать</button>
+        <button class="balance-action-btn red" onclick="toggleBalancePanel('subtract')">− Снять</button>
+        <button class="balance-action-btn blue" onclick="toggleBalancePanel('set')">= Установить</button>
+      </div>
+
+      <div class="balance-panel" id="panel-add">
+        <label class="fd-modal-label">Сумма для выдачи (₽)</label>
+        <div class="balance-panel-input-row">
+          <input class="balance-panel-input" id="amount-add" type="number" min="1" placeholder="100">
+          <button class="balance-panel-submit green" onclick="submitBalance('add')">+ Выдать</button>
+        </div>
+        <div class="balance-quick-row">
+          <button class="balance-quick-btn" onclick="setQuick('add', 50)">+50</button>
+          <button class="balance-quick-btn" onclick="setQuick('add', 100)">+100</button>
+          <button class="balance-quick-btn" onclick="setQuick('add', 500)">+500</button>
+          <button class="balance-quick-btn" onclick="setQuick('add', 1000)">+1000</button>
+        </div>
+      </div>
+
+      <div class="balance-panel" id="panel-subtract">
+        <label class="fd-modal-label">Сумма для снятия (₽)</label>
+        <div class="balance-panel-input-row">
+          <input class="balance-panel-input" id="amount-subtract" type="number" min="1" placeholder="100">
+          <button class="balance-panel-submit red" onclick="submitBalance('subtract')">− Снять</button>
+        </div>
+        <div class="balance-quick-row">
+          <button class="balance-quick-btn" onclick="setQuick('subtract', 50)">-50</button>
+          <button class="balance-quick-btn" onclick="setQuick('subtract', 100)">-100</button>
+          <button class="balance-quick-btn" onclick="setQuick('subtract', 500)">-500</button>
+          <button class="balance-quick-btn" onclick="setQuick('subtract', 1000)">-1000</button>
+        </div>
+      </div>
+
+      <div class="balance-panel" id="panel-set">
+        <label class="fd-modal-label">Новое значение баланса (₽)</label>
+        <div class="balance-panel-input-row">
+          <input class="balance-panel-input" id="amount-set" type="number" min="0" placeholder="0">
+          <button class="balance-panel-submit blue" onclick="submitBalance('set')">= Установить</button>
+        </div>
+        <div class="balance-quick-row">
+          <button class="balance-quick-btn" onclick="setQuick('set', 0)">Обнулить</button>
+          <button class="balance-quick-btn" onclick="setQuick('set', 100)">=100</button>
+          <button class="balance-quick-btn" onclick="setQuick('set', 1000)">=1000</button>
+          <button class="balance-quick-btn" onclick="setQuick('set', 5000)">=5000</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+window.toggleBalancePanel = function(mode) {
+  document.querySelectorAll('.balance-panel').forEach(p => p.classList.remove('visible'));
+  const panel = document.getElementById('panel-' + mode);
+  if (panel) {
+    panel.classList.add('visible');
+    const input = panel.querySelector('input');
+    if (input) setTimeout(() => input.focus(), 100);
+  }
+};
+
+window.setQuick = function(mode, value) {
+  const input = document.getElementById('amount-' + mode);
+  if (input) input.value = value;
+};
+
+window.submitBalance = async function(mode) {
+  if (!currentBalanceUser) return;
+  const input = document.getElementById('amount-' + mode);
+  const amount = Number(input?.value);
+  if (!Number.isFinite(amount) || (mode !== 'set' && amount <= 0)) {
+    toast('Введите корректную сумму', 'error');
+    return;
+  }
+
+  const labels = { add: 'выдать', subtract: 'снять', set: 'установить' };
+  const icons = { add: '💰', subtract: '💸', set: '⚙️' };
+
+  confirmModal({
+    icon: icons[mode],
+    title: `${mode === 'add' ? 'Выдать' : mode === 'subtract' ? 'Снять' : 'Установить'} ${amount}₽?`,
+    desc: `Пользователь: ${currentBalanceUser.username}\nSteam ID: ${currentBalanceUser.steamId}`,
+    confirmText: `Да, ${labels[mode]}`,
+    confirmClass: mode === 'add' ? 'green' : '',
+    onConfirm: async () => {
       try {
         const r = await api('/api/admin/balance/change', {
           method: 'POST',
-          body: JSON.stringify({ steamId, mode, amount }),
+          body: JSON.stringify({
+            steamId: currentBalanceUser.steamId,
+            mode,
+            amount,
+          }),
         });
-        toast(`✓ ${userName}: баланс ${r.oldBalance}₽ → ${r.newBalance}₽`, 'success');
-        const idx = balancesCache.findIndex(u => u.steamId === steamId);
-        if (idx >= 0) balancesCache[idx].balance = r.newBalance;
-        const body = document.getElementById('mgBody');
-        if (body) renderBalancesBlock(body);
+        toast(`✓ ${currentBalanceUser.username}: ${r.oldBalance}₽ → ${r.newBalance}₽`, 'success');
+        currentBalanceUser.balance = r.newBalance;
+        const valueEl = document.getElementById('balanceValue');
+        if (valueEl) valueEl.textContent = `${r.newBalance.toLocaleString('ru-RU')} ₽`;
+        input.value = '';
+        document.querySelectorAll('.balance-panel').forEach(p => p.classList.remove('visible'));
       } catch (e) {
         const errors = { bad_amount: 'Некорректная сумма', bad_mode: 'Некорректный режим', missing_fields: 'Заполните поля', no_db: 'Ошибка базы данных' };
         const key = e.message.split(' — ')[0];
@@ -1002,8 +1356,9 @@ function openBalanceModal(steamId, userName, mode) {
       }
     }
   });
-}
+};
 
+/* ============ РОЛИ ============ */
 async function loadRolesBlock(body) {
   if (!isWatcherOrAbove()) { body.innerHTML = '<div class="empty-state"><div class="ico">🔒</div>Доступно только следящим и выше.</div>'; return; }
   body.innerHTML = `
@@ -1056,7 +1411,7 @@ async function pickSteamUser(steamId, name, discordId) {
     availableRoles = rolesData.roles || [];
     if (!availableRoles.length) { roleList.innerHTML = '<div class="empty-state">Нет ролей</div>'; return; }
     roleList.innerHTML = `<div class="role-simple-list">
-      ${availableRoles.map(r => `<div class="role-simple-item" onclick="giveRole('${r.id}','${r.name.replace(/'/g, "\\'")}')"><div class="role-checkbox"></div><div class="role-simple-name">${esc(r.name)}</div></div>`).join('')}
+      ${availableRoles.map(r => `<div class="role-simple-item" onclick="giveRole('${r.id}','${r.name.replace(/'/g, "\\'")}')"><div class="role-simple-name">${esc(r.name)}</div></div>`).join('')}
     </div>`;
   } catch (e) { roleList.innerHTML = `<div class="empty-state" style="color:var(--red);">${esc(e.message)}</div>`; }
 }
@@ -1089,6 +1444,7 @@ function giveRole(roleId, roleName) {
   });
 }
 
+/* ============ ПРОМОКОДЫ (с кириллицей) ============ */
 async function loadPromoBlock(body) {
   if (!isOwner()) { body.innerHTML = '<div class="empty-state"><div class="ico">🔒</div>Только для владельца</div>'; return; }
   body.innerHTML = `
@@ -1127,15 +1483,10 @@ function openPromoCreate() {
     <p style="margin-bottom:14px;">Код автоматически переводится в верхний регистр. Поддерживаются латиница, <b style="color:#fff;">кириллица</b>, цифры, «_» и «-».</p>
 
     <label class="fd-modal-label">Код промокода</label>
-    <input type="text" class="fd-modal-input" id="fd_code" placeholder="НАПРИМЕР: FERM100 или СКИДКА" maxlength="32" autocomplete="off" spellcheck="false" style="margin-bottom:6px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;min-height:18px;">
+    <input type="text" class="fd-modal-input" id="fd_code" placeholder="FERM100 или СКИДКА" maxlength="32" autocomplete="off" spellcheck="false" style="margin-bottom:6px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
       <span id="fd_code_status" style="font-size:11px;color:var(--text-dim);">3–32 символа · латиница, кириллица, цифры, «_», «-»</span>
       <span id="fd_code_counter" style="font-size:10.5px;color:var(--text-dim);font-family:'Unbounded';font-weight:600;">0 / 32</span>
-    </div>
-
-    <div id="fd_code_preview" style="display:none;padding:10px 14px;background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.3);border-radius:10px;margin-bottom:14px;font-family:monospace;letter-spacing:1.5px;font-size:14px;color:#4ade80;font-weight:700;">
-      <span style="opacity:0.6;font-size:10px;letter-spacing:0.5px;display:block;margin-bottom:3px;font-family:'Unbounded';">ИТОГОВЫЙ КОД</span>
-      <span id="fd_code_preview_value">—</span>
     </div>
 
     <label class="fd-modal-label">Сумма (₽)</label>
@@ -1150,8 +1501,6 @@ function openPromoCreate() {
         <button type="button" class="btn-act ghost" style="font-size:11px;" onclick="fdPresetCode('ПРОМО')">ПРОМО</button>
         <button type="button" class="btn-act ghost" style="font-size:11px;" onclick="fdPresetCode('СКИДКА')">СКИДКА</button>
         <button type="button" class="btn-act ghost" style="font-size:11px;" onclick="fdPresetCode('БОНУС')">БОНУС</button>
-        <button type="button" class="btn-act ghost" style="font-size:11px;" onclick="fdPresetCode('НОВЫЙГОД')">НОВЫЙГОД</button>
-        <button type="button" class="btn-act ghost" style="font-size:11px;" onclick="fdPresetCode('ЛЕТО')">ЛЕТО</button>
         <button type="button" class="btn-act ghost" style="font-size:11px;" onclick="fdPresetCode('FERM')">FERM</button>
       </div>
     </div>
@@ -1166,49 +1515,33 @@ function openPromoCreate() {
   const codeEl = document.getElementById('fd_code');
   const statusEl = document.getElementById('fd_code_status');
   const counterEl = document.getElementById('fd_code_counter');
-  const previewEl = document.getElementById('fd_code_preview');
-  const previewValEl = document.getElementById('fd_code_preview_value');
   const confirmBtn = document.getElementById('fdConfirmBtn');
 
   function validate() {
     const raw = codeEl.value;
     const cleaned = raw.replace(/[^a-zA-Zа-яА-ЯёЁ0-9_\-]/g, '');
     if (cleaned !== raw) codeEl.value = cleaned;
-
     const upper = cleaned.toUpperCase();
     counterEl.textContent = `${upper.length} / 32`;
-
     if (!upper) {
       statusEl.textContent = '3–32 символа · латиница, кириллица, цифры, «_», «-»';
       statusEl.style.color = 'var(--text-dim)';
-      previewEl.style.display = 'none';
       confirmBtn.disabled = true;
       return;
     }
-
     if (upper.length < 3) {
-      statusEl.textContent = `Минимум 3 символа (сейчас ${upper.length})`;
+      statusEl.textContent = `Минимум 3 символа (${upper.length})`;
       statusEl.style.color = '#fbbf24';
-      previewEl.style.display = 'none';
       confirmBtn.disabled = true;
       return;
     }
-
     if (/^[A-ZА-ЯЁ0-9_\-]{3,32}$/.test(upper)) {
       const hasCyr = /[А-ЯЁ]/.test(upper);
-      statusEl.textContent = hasCyr ? '✓ Кириллица разрешена · код валиден' : '✓ Код валиден';
+      statusEl.textContent = hasCyr ? '✓ Кириллица разрешена' : '✓ Код валиден';
       statusEl.style.color = '#4ade80';
-      previewEl.style.display = 'block';
-      previewValEl.textContent = upper;
       confirmBtn.disabled = false;
-    } else {
-      statusEl.textContent = 'Недопустимые символы';
-      statusEl.style.color = '#ef4444';
-      previewEl.style.display = 'none';
-      confirmBtn.disabled = true;
     }
   }
-
   codeEl.addEventListener('input', validate);
   validate();
   setTimeout(() => codeEl.focus(), 100);
@@ -1217,27 +1550,16 @@ function openPromoCreate() {
     const code = codeEl.value.trim().toUpperCase();
     const amount = Number(document.getElementById('fd_amount').value);
     const maxUses = Number(document.getElementById('fd_maxUses').value) || 0;
-
     if (!code || !amount) { toast('Заполните код и сумму', 'error'); return; }
-    if (!/^[A-ZА-ЯЁ0-9_\-]{3,32}$/.test(code)) { toast('Неверный формат кода', 'error'); return; }
-
     confirmBtn.disabled = true;
     confirmBtn.textContent = 'Создание...';
     try {
-      await api('/api/promocodes', {
-        method: 'POST',
-        body: JSON.stringify({ code, amount, maxUses })
-      });
+      await api('/api/promocodes', { method: 'POST', body: JSON.stringify({ code, amount, maxUses }) });
       toast(`✓ Промокод «${code}» создан`, 'success');
       closeModal();
       loadPromoList();
     } catch (e) {
-      const errors = {
-        already_exists: 'Такой промокод уже существует',
-        bad_code_format: 'Неверный формат кода',
-        missing_fields: 'Заполните все поля',
-        no_db: 'Ошибка базы данных',
-      };
+      const errors = { already_exists: 'Такой уже есть', bad_code_format: 'Неверный формат', missing_fields: 'Заполните поля' };
       const key = e.message.split(' — ')[0];
       toast('❌ ' + (errors[key] || e.message), 'error');
       confirmBtn.disabled = false;
@@ -1256,8 +1578,7 @@ window.fdPresetCode = function(prefix) {
 
 function deletePromo(code) {
   confirmModal({
-    icon: '🗑',
-    title: `Удалить «${code}»?`,
+    icon: '🗑', title: `Удалить «${code}»?`,
     desc: 'Промокод будет удалён безвозвратно.',
     confirmText: '🗑 Удалить',
     onConfirm: async () => {
@@ -1270,6 +1591,7 @@ function deletePromo(code) {
   });
 }
 
+/* ============ ЗАКАЗЫ ============ */
 async function loadOrdersBlock(body) {
   if (!isOwner()) { body.innerHTML = '<div class="empty-state"><div class="ico">🔒</div>Только для владельца</div>'; return; }
   body.innerHTML = '<div class="loading-state"><div class="spinner"></div> Загрузка...</div>';
@@ -1296,6 +1618,7 @@ async function loadOrdersBlock(body) {
   } catch (e) { body.innerHTML = `<div class="empty-state" style="color:var(--red);">${esc(e.message)}</div>`; }
 }
 
+/* ============ НАСТРОЙКИ ============ */
 async function loadSettingsBlock(body) {
   body.innerHTML = '<div class="skeleton"></div>';
   try {
@@ -1308,7 +1631,6 @@ async function loadSettingsBlock(body) {
           <div class="setting-card"><div class="setting-label">Discord сервер</div><div class="setting-value">${esc(s.guildId)}</div></div>
           <div class="setting-card"><div class="setting-label">Канал заявок</div><div class="setting-value">${esc(s.applyChannel)}</div></div>
           <div class="setting-card"><div class="setting-label">Канал логов</div><div class="setting-value">${esc(s.logsChannel)}</div></div>
-          <div class="setting-card"><div class="setting-label">Роли админов</div><div class="setting-value">${(s.adminRoles || []).join('<br>') || '—'}</div></div>
           <div class="setting-card"><div class="setting-label">Статус бота</div><div class="setting-value ${s.botConnected ? 'ok' : 'err'}">${s.botConnected ? '✅ Подключён' : '❌ Не подключён'}</div></div>
         </div>
       </div>
@@ -1316,35 +1638,22 @@ async function loadSettingsBlock(body) {
   } catch (e) { body.innerHTML = `<div class="empty-state" style="color:var(--red);">${esc(e.message)}</div>`; }
 }
 
+/* ============ МОНИТОРИНГ ============ */
 async function loadMonitorBlock(body) {
   body.innerHTML = '<div class="loading-state"><div class="spinner"></div> Проверка...</div>';
   const start = performance.now();
   let apiStatus = 'err', apiText = 'Недоступен', ping = '—';
   try { await api('/api/me'); ping = Math.round(performance.now() - start) + ' ms'; apiStatus = 'ok'; apiText = 'Работает'; }
   catch { apiText = 'Ошибка'; }
-  let presenceStatus = 'err', presenceText = 'Не подключён';
-  try { const p = await api('/api/presence'); if (p.ready) { presenceStatus = 'ok'; presenceText = `Активен · ${p.online + p.idle + p.dnd}/${p.total}`; } } catch {}
   body.innerHTML = `
     <div class="section-block">
       <div class="section-block-head"><div><div class="section-block-title"><span class="ico">💓</span> Мониторинг</div></div><button class="btn-act ghost" onclick="loadMonitorBlock(document.getElementById('mgBody'))">↻ Обновить</button></div>
       <div class="settings-grid">
         <div class="setting-card"><div class="setting-label">API</div><div class="setting-value ${apiStatus}">${apiStatus === 'ok' ? '✅' : '❌'} ${apiText}</div></div>
         <div class="setting-card"><div class="setting-label">Ping</div><div class="setting-value">${ping}</div></div>
-        <div class="setting-card"><div class="setting-label">Presence</div><div class="setting-value ${presenceStatus}">${presenceStatus === 'ok' ? '✅' : '❌'} ${presenceText}</div></div>
       </div>
     </div>
   `;
-}
-
-function toast(text, type = 'info') {
-  const wrap = document.getElementById('toastWrap');
-  if (!wrap) return;
-  const icons = { success: '✓', error: '✕', info: 'ℹ' };
-  const el = document.createElement('div');
-  el.className = 'toast ' + type;
-  el.innerHTML = `<span style="font-weight:900;">${icons[type] || 'ℹ'}</span><span>${esc(text)}</span>`;
-  wrap.appendChild(el);
-  setTimeout(() => { el.classList.add('fade'); setTimeout(() => el.remove(), 300); }, 3000);
 }
 </script>
 </body>

@@ -5,15 +5,3 @@
 [functions]
   node_bundler = "esbuild"
   external_node_modules = ["express", "serverless-http", "mongodb", "jsonwebtoken", "node-fetch"]
-
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/api/:splat"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/auth/*"
-  to = "/.netlify/functions/api/:splat"
-  status = 200
-  force = true

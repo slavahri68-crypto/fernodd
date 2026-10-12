@@ -180,6 +180,23 @@ app.use(async (req, res, next) => {
   next();
 });
 
+/* ============ УТИЛИТЫ МСК ============ */
+function getMoscowDateKey(date = new Date()) {
+  const msk = new Date(date.getTime() + 3 * 60 * 60 * 1000);
+  const y = msk.getUTCFullYear();
+  const m = String(msk.getUTCMonth() + 1).padStart(2, '0');
+  const d = String(msk.getUTCDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function daysBetweenKeys(key1, key2) {
+  const [y1, m1, d1] = key1.split('-').map(Number);
+  const [y2, m2, d2] = key2.split('-').map(Number);
+  const t1 = Date.UTC(y1, m1 - 1, d1);
+  const t2 = Date.UTC(y2, m2 - 1, d2);
+  return Math.round((t2 - t1) / (1000 * 60 * 60 * 24));
+}
+
 /* ============ Утилиты БД ============ */
 async function getBalance(steamId) {
   if (!mongoDb) return 0;
@@ -339,16 +356,18 @@ function isWatcherOrAbove(u) {
   if (u.isHeadAdmin || u.isOwner) return true;
   return (u.roles || []).some(r => r === 'Следящий');
 }
-/* Право редактировать/смотреть чужой профиль: Следящий и выше (НЕ Куратор) */
 function canEditOthersProfiles(u) {
   if (!u) return false;
   if (u.isOwner || u.isHeadAdmin) return true;
   const allRoles = [...(u.roles || []), ...(u.siteRoles || [])].map(r => (r || '').toLowerCase());
   return allRoles.some(r =>
-    r === 'следящий' ||
-    r === 'главная администрация' ||
-    r === 'владелец'
+    r === 'следящий' || r === 'главная администрация' || r === 'владелец'
   );
+}
+function hasFernoddPlus(u, siteRoles = []) {
+  if (!u) return false;
+  const allRoles = [...(u.roles || []), ...siteRoles].map(r => (r || '').toLowerCase());
+  return allRoles.some(r => r.startsWith('fernodd+'));
 }
 function isHeadAdminOrOwner(u) { return !!(u && (u.isHeadAdmin || u.isOwner)); }
 function isCurator(u) { return !!(u && (u.roles || []).some(r => r === 'Куратор')); }
@@ -508,14 +527,13 @@ app.get('/auth/discord/callback', async (req, res) => {
       for (const roleName of allRolesToApply) {
         if (!roleName) continue;
         const role = roles.find(r => r.name.toLowerCase() === roleName.toLowerCase());
-        if (!role) { console.warn(`[role sync] Роль "${roleName}" не найдена`); continue; }
-        try { await discordPut(`/guilds/${DISCORD_GUILD_ID}/members/${discordUser.id}/roles/${role.id}`); }
-        catch (e) { console.error(`[role sync] Ошибка: ${role.name}`, e.message); }
+        if (!role) continue;
+        try { await discordPut(`/guilds/${DISCORD_GUILD_ID}/members/${discordUser.id}/roles/${role.id}`); } catch {}
       }
 
       await clearPendingRole(user.steamId);
       await clearPendingRole(discordUser.id);
-    } catch (e) { console.error('[role sync]', e); }
+    } catch {}
 
     try {
       const roles = await getGuildRoles();
@@ -555,45 +573,177 @@ app.get('/api/me', async (req, res) => {
 
 app.get('/api/balance', requireAuth, async (req, res) => res.json({ balance: await getBalance(req.user.steamId) }));
 
-/* ============ АКТИВНОСТЬ (огонёк) ============ */
+/* ============ СТРИК ============ */
 app.post('/api/activity/ping', requireAuth, async (req, res) => {
-  if (!mongoDb) return res.json({ points: 0 });
+  if (!mongoDb) return res.json({ points: 0, streak: 0, frozen: false });
+
   const steamId = req.user.steamId;
-  const now = Date.now();
-  const COOLDOWN_MS = 3 * 60 * 1000;
-  const POINTS_PER_TICK = 1;
+  const now = new Date();
+  const todayKey = getMoscowDateKey(now);
 
   try {
     const doc = await mongoDb.collection('activity').findOne({ steamId });
-    const lastPing = doc?.lastPing ? new Date(doc.lastPing).getTime() : 0;
     let points = doc?.points || 0;
+    const lastPingKey = doc?.lastPingKey || null;
+    const freezeUsedKey = doc?.freezeUsedKey || null;
 
-    if (now - lastPing >= COOLDOWN_MS) {
-      points += POINTS_PER_TICK;
-      await mongoDb.collection('activity').updateOne(
-        { steamId },
-        { $set: { steamId, points, lastPing: new Date(now).toISOString() } },
-        { upsert: true }
-      );
+    let shouldIncrement = false;
+    let consumedFreeze = false;
+
+    if (!lastPingKey) {
+      shouldIncrement = true;
+    } else {
+      const diff = daysBetweenKeys(lastPingKey, todayKey);
+
+      if (diff === 0) {
+        shouldIncrement = false;
+      } else if (diff === 1) {
+        shouldIncrement = true;
+        if (freezeUsedKey) consumedFreeze = true;
+      } else if (diff >= 2) {
+        const missedDays = diff - 1;
+        const freezeActive = freezeUsedKey && freezeUsedKey === lastPingKey;
+
+        if (freezeActive && missedDays === 1) {
+          shouldIncrement = true;
+          consumedFreeze = true;
+        } else {
+          points = 0;
+          shouldIncrement = true;
+          if (freezeUsedKey) consumedFreeze = true;
+        }
+      }
     }
 
-    res.json({ points, lastPing: new Date(now).toISOString() });
+    if (shouldIncrement) points += 1;
+
+    const maxStreak = Math.max(doc?.maxStreak || 0, points);
+
+    const update = {
+      steamId,
+      points,
+      maxStreak,
+      lastPingKey: todayKey,
+      lastPing: now.toISOString(),
+    };
+
+    if (consumedFreeze) {
+      update.freezeUsedKey = null;
+      update.freezeUsedAt = null;
+    }
+
+    await mongoDb.collection('activity').updateOne(
+      { steamId },
+      { $set: update },
+      { upsert: true }
+    );
+
+    res.json({
+      points,
+      streak: points,
+      frozen: !!freezeUsedKey && !consumedFreeze,
+      freezeUsedKey,
+    });
   } catch (e) {
+    console.error('[activity/ping]', e);
     res.status(500).json({ error: 'server_error' });
   }
 });
 
-app.get('/api/activity/:steamId', async (req, res) => {
-  if (!mongoDb) return res.json({ points: 0 });
+app.post('/api/activity/freeze', requireAuth, async (req, res) => {
+  if (!mongoDb) return res.status(500).json({ error: 'no_db' });
+
+  const steamId = req.user.steamId;
+  const now = new Date();
+  const todayKey = getMoscowDateKey(now);
+
   try {
-    const doc = await mongoDb.collection('activity').findOne({ steamId: req.params.steamId });
-    res.json({ points: doc?.points || 0 });
-  } catch {
-    res.json({ points: 0 });
+    const siteRoles = await getSiteRoles(steamId);
+    if (!hasFernoddPlus(req.user, siteRoles)) {
+      return res.status(403).json({ error: 'fernodd_plus_required' });
+    }
+
+    const doc = await mongoDb.collection('activity').findOne({ steamId });
+    if (!doc || !doc.points || doc.points < 1) {
+      return res.status(400).json({ error: 'no_streak_to_freeze' });
+    }
+
+    if (doc.freezeUsedKey) {
+      return res.status(400).json({ error: 'already_frozen' });
+    }
+
+    if (doc.lastPingKey !== todayKey) {
+      return res.status(400).json({ error: 'must_visit_first' });
+    }
+
+    await mongoDb.collection('activity').updateOne(
+      { steamId },
+      {
+        $set: {
+          freezeUsedKey: todayKey,
+          freezeUsedAt: now.toISOString(),
+        }
+      }
+    );
+
+    res.json({ ok: true, streak: doc.points, freezeUsedKey: todayKey });
+  } catch (e) {
+    console.error('[activity/freeze]', e);
+    res.status(500).json({ error: 'server_error', details: String(e) });
   }
 });
 
-/* ============ СТАТИСТИКА АКТИВНОСТИ ============ */
+app.get('/api/activity/status', requireAuth, async (req, res) => {
+  if (!mongoDb) return res.status(500).json({ error: 'no_db' });
+
+  const steamId = req.user.steamId;
+  const todayKey = getMoscowDateKey();
+
+  try {
+    const doc = await mongoDb.collection('activity').findOne({ steamId });
+    const siteRoles = await getSiteRoles(steamId);
+    const userHasPlus = hasFernoddPlus(req.user, siteRoles);
+
+    const points = doc?.points || 0;
+    const maxStreak = doc?.maxStreak || 0;
+    const lastPingKey = doc?.lastPingKey || null;
+    const freezeUsedKey = doc?.freezeUsedKey || null;
+
+    const countedToday = lastPingKey === todayKey;
+
+    let frozen = false;
+    if (freezeUsedKey) {
+      const diff = lastPingKey ? daysBetweenKeys(lastPingKey, todayKey) : 999;
+      if (diff <= 1) frozen = true;
+    }
+
+    res.json({
+      streak: points,
+      maxStreak,
+      countedToday,
+      frozen,
+      hasFernoddPlus: userHasPlus,
+      lastPingKey,
+      freezeUsedKey,
+      todayKey,
+    });
+  } catch (e) {
+    console.error('[activity/status]', e);
+    res.status(500).json({ error: 'server_error', details: String(e) });
+  }
+});
+
+app.get('/api/activity/:steamId', async (req, res) => {
+  if (!mongoDb) return res.json({ points: 0, streak: 0 });
+  try {
+    const doc = await mongoDb.collection('activity').findOne({ steamId: req.params.steamId });
+    res.json({ points: doc?.points || 0, streak: doc?.points || 0 });
+  } catch {
+    res.json({ points: 0, streak: 0 });
+  }
+});
+
+/* ============ СТАТИСТИКА ============ */
 app.get('/api/stats/activity', async (req, res) => {
   if (!mongoDb) return res.json({ users: [] });
   try {
@@ -606,6 +756,7 @@ app.get('/api/stats/activity', async (req, res) => {
     if (!docs.length) return res.json({ users: [] });
 
     const result = [];
+    const todayKey = getMoscowDateKey();
 
     for (const doc of docs) {
       const steamId = doc.steamId;
@@ -641,9 +792,7 @@ app.get('/api/stats/activity', async (req, res) => {
 
       if (name === 'Steam User') {
         try {
-          const r = await fetch(
-            `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${STEAM_API_KEY}&steamids=${steamId}`
-          );
+          const r = await fetch(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${STEAM_API_KEY}&steamids=${steamId}`);
           const data = await r.json();
           const p = data.response?.players?.[0];
           if (p) {
@@ -664,6 +813,13 @@ app.get('/api/stats/activity', async (req, res) => {
         'Модератор': '#3b82f6', 'Игрок': '#a855f7',
       };
 
+      let frozen = false;
+      if (doc.freezeUsedKey) {
+        const lastPingKey = doc.lastPingKey || null;
+        const diff = lastPingKey ? daysBetweenKeys(lastPingKey, todayKey) : 999;
+        if (diff <= 1) frozen = true;
+      }
+
       result.push({
         steamId,
         name,
@@ -671,12 +827,104 @@ app.get('/api/stats/activity', async (req, res) => {
         activity,
         topRole: finalTopRole,
         topRoleColor: COLORS[finalTopRole] || '#60a5fa',
+        frozen,
       });
     }
 
     res.json({ users: result });
   } catch (e) {
     console.error('[stats/activity]', e);
+    res.status(500).json({ error: 'server_error', details: String(e) });
+  }
+});
+
+app.get('/api/stats/players', async (req, res) => {
+  if (!mongoDb) return res.json({ users: [] });
+  try {
+    const links = await mongoDb.collection('links').find({}).toArray();
+    if (!links.length) return res.json({ users: [] });
+
+    const result = [];
+
+    for (const link of links) {
+      const steamId = link.steamId;
+
+      let steamProfile = null;
+      try {
+        const r = await fetch(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${STEAM_API_KEY}&steamids=${steamId}`);
+        const data = await r.json();
+        steamProfile = data.response?.players?.[0] || null;
+      } catch {}
+
+      let name = steamProfile?.personaname || 'Steam User';
+      let avatar = steamProfile?.avatarfull || steamProfile?.avatarmedium || steamProfile?.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png';
+
+      let discordInfo = null;
+      if (link.discordId && DISCORD_BOT_TOKEN && DISCORD_GUILD_ID) {
+        try {
+          const m = await getGuildMember(link.discordId);
+          name = m.nick || m.user.global_name || m.user.username || name;
+          avatar = m.user.avatar
+            ? `https://cdn.discordapp.com/avatars/${m.user.id}/${m.user.avatar}.png`
+            : avatar;
+          const roles = await getGuildRoles();
+          const roleMap = {};
+          roles.forEach(r => { roleMap[r.id] = r; });
+          const userRoles = m.roles.map(rid => roleMap[rid]).filter(Boolean)
+            .filter(r => r.name !== '@everyone')
+            .sort((a, b) => b.position - a.position);
+          const topRole = userRoles[0] || null;
+          discordInfo = {
+            topRole: topRole ? topRole.name : null,
+            topRoleColor: topRole && topRole.color ? '#' + topRole.color.toString(16).padStart(6, '0') : null,
+          };
+        } catch {}
+      }
+
+      const siteRoles = await getSiteRoles(steamId);
+      const ROLE_PRIORITY = ['Главная администрация', 'Владелец', 'Разработчик', 'Следящий', 'Куратор', 'Главный модератор', 'Старший модератор', 'Модератор', 'Поддержка', 'Медиа', 'Игрок'];
+      const allRoles = [...siteRoles, discordInfo?.topRole].filter(Boolean);
+      const finalTopRole = ROLE_PRIORITY.find(r => allRoles.includes(r)) || discordInfo?.topRole || 'Игрок';
+      const COLORS = {
+        'Главная администрация': '#e10600', 'Владелец': '#e10600', 'Разработчик': '#e10600',
+        'Следящий': '#e10600', 'Куратор': '#e10600', 'Поддержка': '#e10600', 'Медиа': '#e10600',
+        'Главный модератор': '#22d3ee', 'Старший модератор': '#4ade80',
+        'Модератор': '#3b82f6', 'Игрок': '#a855f7',
+      };
+
+      const actDoc = await mongoDb.collection('activity').findOne({ steamId });
+      const streak = actDoc?.points || 0;
+
+      const balance = await getBalance(steamId);
+
+      let siteStatus = 'offline';
+      const presence = await mongoDb.collection('presence').findOne({ steamId });
+      if (presence?.lastSeen) {
+        const diff = Date.now() - new Date(presence.lastSeen).getTime();
+        if (diff < 5 * 60 * 1000) siteStatus = 'online';
+      }
+
+      result.push({
+        steamId,
+        name,
+        avatar,
+        topRole: finalTopRole,
+        topRoleColor: COLORS[finalTopRole] || '#60a5fa',
+        streak,
+        balance,
+        siteStatus,
+        registeredAt: link.linkedAt || null,
+      });
+    }
+
+    result.sort((a, b) => {
+      if (b.streak !== a.streak) return b.streak - a.streak;
+      return (a.name || '').localeCompare(b.name || '');
+    });
+
+    res.json({ users: result });
+  } catch (e) {
+    console.error('[stats/players]', e);
     res.status(500).json({ error: 'server_error', details: String(e) });
   }
 });
@@ -765,10 +1013,7 @@ app.get('/api/inventory', async (req, res) => {
     return res.status(400).json({ error: 'bad_steam_id' });
   }
 
-  const orders = await mongoDb.collection('orders')
-    .find({ userId: targetSteamId })
-    .sort({ createdAt: -1 })
-    .toArray();
+  const orders = await mongoDb.collection('orders').find({ userId: targetSteamId }).sort({ createdAt: -1 }).toArray();
 
   const grouped = {};
   for (const o of orders) {
@@ -933,20 +1178,29 @@ app.post('/api/profile/update', requireAuth, async (req, res) => {
   }
 
   const update = {};
+
+  // Описание, фон, telegram, vk — БЕЗ FERNODD+
   if (description !== undefined) update.description = String(description).slice(0, 200);
   if (backgroundUrl !== undefined) update.backgroundUrl = String(backgroundUrl).slice(0, 500);
+  if (telegram !== undefined) update.telegram = String(telegram).slice(0, 200);
+  if (vk !== undefined) update.vk = String(vk).slice(0, 200);
 
+  // Ссылка профиля — только с FERNODD+ (или Следящий+ правит чужой)
   if (profileLink !== undefined) {
+    let hasPlus = false;
+
     if (targetSteamId === req.user.steamId) {
       const userRoles = [
         ...(req.user.roles || []),
         ...(await getSiteRoles(targetSteamId)),
       ].map(r => (r || '').toLowerCase());
+      hasPlus = userRoles.some(r => r.startsWith('fernodd+'));
+    } else {
+      hasPlus = true;
+    }
 
-      const hasFernoddPlus = userRoles.some(r => r.startsWith('fernodd+'));
-      if (!hasFernoddPlus) {
-        return res.status(403).json({ error: 'fernodd_plus_required' });
-      }
+    if (!hasPlus) {
+      return res.status(403).json({ error: 'fernodd_plus_required' });
     }
 
     if (profileLink !== '') {
@@ -965,8 +1219,6 @@ app.post('/api/profile/update', requireAuth, async (req, res) => {
     }
   }
 
-  if (telegram !== undefined) update.telegram = String(telegram).slice(0, 200);
-  if (vk !== undefined) update.vk = String(vk).slice(0, 200);
   update.updatedAt = new Date().toISOString();
 
   await mongoDb.collection('profiles').updateOne(
@@ -1292,10 +1544,7 @@ app.get('/api/admin/balance/find', requireHeadAdmin, async (req, res) => {
         const r = await fetch(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${STEAM_API_KEY}&steamids=${steamId}`);
         const data = await r.json();
         const p = data.response?.players?.[0];
-        if (p) {
-          username = p.personaname;
-          avatar = p.avatarfull || p.avatarmedium || p.avatar;
-        }
+        if (p) { username = p.personaname; avatar = p.avatarfull || p.avatarmedium || p.avatar; }
       } catch {}
     }
 
@@ -1518,13 +1767,32 @@ app.get('/api/users/:id', async (req, res) => {
     };
 
     const allRolesLower = allRoles.map(r => (r || '').toLowerCase());
-    const hasFernoddPlus = allRolesLower.some(r => r.startsWith('fernodd+'));
+    const hasFernoddPlusFlag = allRolesLower.some(r => r.startsWith('fernodd+'));
 
     let activity = 0;
+    let streakMax = 0;
+    let streakFrozen = false;
+    let streakFrozenAt = null;
+    let streakCountedToday = false;
     if (mongoDb) {
       try {
         const actDoc = await mongoDb.collection('activity').findOne({ steamId: profile.steamid });
         activity = actDoc?.points || 0;
+        streakMax = actDoc?.maxStreak || 0;
+
+        const todayKey = getMoscowDateKey();
+        const lastPingKey = actDoc?.lastPingKey || null;
+        const freezeUsedKey = actDoc?.freezeUsedKey || null;
+
+        streakCountedToday = lastPingKey === todayKey;
+
+        if (freezeUsedKey) {
+          const diff = lastPingKey ? daysBetweenKeys(lastPingKey, todayKey) : 999;
+          if (diff <= 1) {
+            streakFrozen = true;
+            streakFrozenAt = actDoc.freezeUsedAt || null;
+          }
+        }
       } catch {}
     }
 
@@ -1546,8 +1814,13 @@ app.get('/api/users/:id', async (req, res) => {
       profileLink: profileExtra.profileLink || '',
       telegram: profileExtra.telegram || '',
       vk: profileExtra.vk || '',
-      isVerified: hasFernoddPlus,
+      isVerified: hasFernoddPlusFlag,
       activity: activity,
+      streak: activity,
+      streakMax: streakMax,
+      streakCountedToday: streakCountedToday,
+      streakFrozen: streakFrozen,
+      streakFrozenAt: streakFrozenAt,
       tag: '',
       isMe: isMe,
       canEditSettings: canEditSettings,
@@ -1588,7 +1861,7 @@ app.post('/api/apply', async (req, res) => {
   } catch { res.status(500).json({ error: 'send_failed' }); }
 });
 
-/* ============ СПИСОК ЗАЯВОК ============ */
+/* ============ ЗАЯВКИ ============ */
 async function fetchApplicationsRaw() {
   if (!DISCORD_APPLY_CHANNEL_ID) return [];
   const r = await fetch(`https://discord.com/api/channels/${DISCORD_APPLY_CHANNEL_ID}/messages?limit=50`, { headers: { Authorization: `Bot ${DISCORD_BOT_TOKEN}` } });
@@ -1635,7 +1908,6 @@ app.get('/api/my-applications', requireAuth, async (req, res) => {
   } catch { res.status(500).json({ error: 'server_error' }); }
 });
 
-/* ============ СТАТУСЫ ЗАЯВОК ============ */
 async function setOverride(id, status) {
   if (!mongoDb) return;
   const doc = await mongoDb.collection('kv').findOne({ _id: 'overrides' });
