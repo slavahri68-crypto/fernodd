@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fernodd — Друзья</title>
+<link rel="icon" type="image/png" href="/logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/config.js"></script>
+<style>
+  body > .auth-widget { display: none !important; }
+  .my-page { min-height: 100vh; padding: 80px clamp(16px, 2.5vw, 56px) 140px; position: relative; z-index: 1; }
+  .my-container { width: 100%; max-width: 1920px; margin: 0 auto; }
+  .friends-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .f-tab { padding: 9px 18px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-bright); border-radius: 100px; color: var(--text-dim); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.25s; display: inline-flex; align-items: center; gap: 8px; }
+  .f-tab:hover { color: var(--text); }
+  .f-tab.active { background: rgba(225,6,0,0.15); color: #fff; border-color: var(--red); }
+  .f-tab .count { display: inline-block; padding: 2px 8px; background: rgba(255,255,255,0.06); border-radius: 100px; font-size: 11px; }
+  .f-tab.active .count { background: rgba(225,6,0,0.25); }
+  .friends-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .friend-card { background: #0e0e0e; border: 1px solid var(--border); border-radius: 14px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s; text-decoration: none; }
+  .friend-card:hover { transform: translateY(-4px); border-color: var(--red); }
+  .friend-avatar-wrap { position: relative; flex-shrink: 0; }
+  .friend-avatar { width: 48px; height: 48px; border-radius: 12px; border: 2px solid var(--border-bright); object-fit: cover; }
+  .friend-status { position: absolute; bottom: -2px; right: -2px; width: 14px; height: 14px; border-radius: 50%; border: 3px solid #0e0e0e; }
+  .friend-status.online { background: #57cbde; }
+  .friend-status.offline { background: #6b7280; }
+  .friend-status.busy { background: #ef4444; }
+  .friend-info { flex: 1; min-width: 0; }
+  .friend-name { font-family: 'Unbounded', sans-serif; font-size: 13.5px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
+  .friend-meta { font-size: 11px; color: var(--text-dim); }
+  .friend-badge { display: inline-block; padding: 2px 8px; background: rgba(74,222,128,0.15); color: #4ade80; border-radius: 100px; font-size: 10px; font-weight: 700; margin-left: 6px; }
+  .friends-empty { text-align: center; padding: 60px 20px; color: var(--text-dim); font-size: 13px; }
+  .friends-empty .ico { font-size: 48px; margin-bottom: 12px; opacity: 0.35; }
+  @media (max-width: 699px) { .my-page { padding: 70px 12px 120px; } .friends-grid { grid-template-columns: 1fr; } }
+  .loading-state { display: flex; align-items: center; justify-content: center; padding: 60px 20px; gap: 10px; color: var(--text-dim); font-size: 13px; }
+  .spinner { width: 20px; height: 20px; border: 2px solid var(--border-bright); border-top-color: var(--red); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="bg-layer">
+  <div class="bg-glow-1"></div><div class="bg-glow-2"></div><div class="bg-glow-3"></div>
+  <div class="bg-grid"></div>
+  <div class="particles" id="particles"></div>
+</div>
+
+<div class="auth-widget" id="authWidget"></div>
+
+<main class="my-page">
+  <div class="my-container">
+    <div class="my-header">
+      <div class="my-header-right">
+        <div class="profile-avatar-btn" id="profileAvatarBtn" onclick="toggleProfileMenu(event)">
+          <img id="headerAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          <div id="profileMenuContent"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="friends-tabs">
+      <button class="f-tab active" onclick="switchFTab(this, 'all')">Все <span class="count" id="countAll">0</span></button>
+      <button class="f-tab" onclick="switchFTab(this, 'registered')">На сайте <span class="count" id="countReg">0</span></button>
+      <button class="f-tab" onclick="switchFTab(this, 'online')">В сети <span class="count" id="countOnline">0</span></button>
+    </div>
+
+    <div class="friends-grid" id="friendsGrid">
+      <div class="loading-state" style="grid-column:1/-1;"><div class="spinner"></div> Загрузка друзей из Steam...</div>
+    </div>
+  </div>
+</main>
+
+<nav class="bottom-nav">
+  <a class="nav-btn" href="/"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Главная</span></a>
+  <a class="nav-btn" href="/rules"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Правила</span></a>
+  <a class="nav-btn" href="/roles"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Роли</span></a>
+  <a class="nav-btn" href="/shop"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span>Магазин</span></a>
+  <a class="nav-btn active" href="/profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg><span>Профиль</span></a>
+</nav>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script src="/js/common.js"></script>
+<script src="/js/my-profile.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+let allFriends = [];
+let currentFilter = 'all';
+
+window.addEventListener('auth:changed', (e) => {
+  const user = e.detail.user;
+  if (!user) return;
+  document.getElementById('headerAvatar').src = user.avatar || '';
+  document.getElementById('profileMenuContent').innerHTML = renderProfileMenu('friends');
+  loadFriends();
+});
+
+async function loadFriends() {
+  const grid = document.getElementById('friendsGrid');
+  try {
+    const data = await api('/api/friends');
+    allFriends = data.friends || [];
+    document.getElementById('countAll').textContent = allFriends.length;
+    document.getElementById('countReg').textContent = allFriends.filter(f => f.registered).length;
+    document.getElementById('countOnline').textContent = allFriends.filter(f => f.status === 'online').length;
+    renderFriends();
+  } catch (e) {
+    grid.innerHTML = `<div class="friends-empty" style="grid-column:1/-1;color:var(--red);">Ошибка: ${escapeHtml(e.message)}</div>`;
+  }
+}
+
+function renderFriends() {
+  const grid = document.getElementById('friendsGrid');
+  let list = allFriends;
+  if (currentFilter === 'registered') list = list.filter(f => f.registered);
+  if (currentFilter === 'online') list = list.filter(f => f.status === 'online');
+  if (!list.length) {
+    grid.innerHTML = `<div class="friends-empty" style="grid-column:1/-1;"><div class="ico">👥</div>${currentFilter === 'registered' ? 'Никто из друзей не зарегистрирован' : (currentFilter === 'online' ? 'Никого нет в сети' : 'У вас нет друзей в Steam')}</div>`;
+    return;
+  }
+  grid.innerHTML = list.map(f => {
+    const regBadge = f.registered ? '<span class="friend-badge">✓ На сайте</span>' : '';
+    const statusText = f.status === 'online' ? 'В сети' : (f.status === 'busy' ? 'Занят' : 'Не в сети');
+    const href = f.registered && f.steamId ? `/profile/${f.steamId}` : f.profileUrl;
+    const target = f.registered ? '' : 'target="_blank" rel="noopener"';
+    return `<a class="friend-card" href="${href}" ${target}>
+      <div class="friend-avatar-wrap">
+        <img class="friend-avatar" src="${f.avatar}" alt="" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
+        <span class="friend-status ${f.status}"></span>
+      </div>
+      <div class="friend-info">
+        <div class="friend-name">${escapeHtml(f.name)}</div>
+        <div class="friend-meta">${statusText} ${regBadge}</div>
+      </div>
+    </a>`;
+  }).join('');
+}
+
+function switchFTab(el, filter) {
+  document.querySelectorAll('.f-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  currentFilter = filter;
+  renderFriends();
+}
+</script>
+</body>
+</html>

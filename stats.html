@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fernodd — Статистика</title>
+<link rel="icon" type="image/png" href="/logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/config.js"></script>
+<style>
+  body > .auth-widget { display: none !important; }
+  .my-page { min-height: 100vh; padding: 70px 0 100px; position: relative; z-index: 1; }
+  .my-container { width: 100%; max-width: 720px; margin: 0 auto; padding: 0 14px; }
+
+  .page-title-block { text-align: center; margin-bottom: 18px; }
+  .page-title-block h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 26px; font-weight: 900; color: #fff;
+    letter-spacing: -1px; margin-bottom: 6px;
+  }
+  .page-title-block h1 span { color: var(--red); text-shadow: 0 0 30px rgba(225,6,0,0.6); }
+  .page-title-block p { color: var(--text-dim); font-size: 13px; line-height: 1.5; }
+
+  .stats-info {
+    background: linear-gradient(145deg, #0e0e0e, #0a0a0a);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .stats-info-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: rgba(255,68,0,0.12);
+    border: 1px solid rgba(255,68,0,0.35);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .stats-info-text { font-size: 12px; color: var(--text-dim); line-height: 1.5; }
+  .stats-info-text b { color: #ff4400; font-family: 'Unbounded', sans-serif; font-weight: 700; }
+
+  .stats-list { display: flex; flex-direction: column; gap: 6px; }
+
+  .stat-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px;
+    background: linear-gradient(145deg, #0e0e0e, #0a0a0a);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-row:hover { border-color: rgba(255,68,0,0.4); transform: translateX(4px); }
+  .stat-row.top-1 { border-color: rgba(251,191,36,0.5); background: linear-gradient(145deg, rgba(251,191,36,0.06), #0a0a0a); }
+  .stat-row.top-2 { border-color: rgba(209,213,219,0.4); background: linear-gradient(145deg, rgba(209,213,219,0.05), #0a0a0a); }
+  .stat-row.top-3 { border-color: rgba(217,119,6,0.4); background: linear-gradient(145deg, rgba(217,119,6,0.05), #0a0a0a); }
+
+  .stat-rank {
+    width: 32px; height: 32px; border-radius: 9px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border-bright);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900; font-size: 13px;
+    color: var(--text-dim);
+    flex-shrink: 0;
+  }
+  .stat-row.top-1 .stat-rank { background: linear-gradient(135deg, #fbbf24, #d97706); color: #000; border-color: transparent; box-shadow: 0 0 20px rgba(251,191,36,0.5); }
+  .stat-row.top-2 .stat-rank { background: linear-gradient(135deg, #e5e7eb, #9ca3af); color: #000; border-color: transparent; }
+  .stat-row.top-3 .stat-rank { background: linear-gradient(135deg, #d97706, #92400e); color: #fff; border-color: transparent; }
+
+  .stat-avatar {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1px solid var(--border-bright);
+  }
+
+  .stat-body { flex: 1; min-width: 0; }
+  .stat-name {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px; font-weight: 700; color: #fff;
+    margin-bottom: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .stat-role {
+    display: inline-block;
+    font-size: 10.5px; font-weight: 600;
+    padding: 2px 8px; border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .stat-fire {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 6px 12px;
+    background: linear-gradient(135deg, rgba(255,68,0,0.15), rgba(255,68,0,0.05));
+    border: 1px solid rgba(255,68,0,0.4);
+    border-radius: 100px;
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 800; font-size: 13px;
+    color: #ff4400;
+    flex-shrink: 0;
+    box-shadow: 0 0 20px rgba(255,68,0,0.15);
+  }
+  .stat-row.top-1 .stat-fire {
+    background: linear-gradient(135deg, rgba(251,191,36,0.2), rgba(255,68,0,0.1));
+    border-color: rgba(251,191,36,0.6);
+    color: #fbbf24;
+    box-shadow: 0 0 25px rgba(251,191,36,0.4);
+  }
+
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--text-dim); font-size: 13px; }
+  .empty-state .ico { font-size: 48px; margin-bottom: 12px; opacity: 0.35; }
+  .loading-state {
+    display: flex; align-items: center; justify-content: center;
+    padding: 60px 20px; gap: 10px;
+    color: var(--text-dim); font-size: 13px;
+  }
+  .spinner {
+    width: 20px; height: 20px;
+    border: 2px solid var(--border-bright);
+    border-top-color: var(--red);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 480px) {
+    .stat-avatar { width: 38px; height: 38px; }
+    .stat-name { font-size: 12px; }
+    .stat-fire { padding: 5px 10px; font-size: 12px; }
+    .stat-rank { width: 28px; height: 28px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-layer">
+  <div class="bg-glow-1"></div><div class="bg-glow-2"></div><div class="bg-glow-3"></div>
+  <div class="bg-grid"></div>
+  <div class="particles" id="particles"></div>
+</div>
+
+<div class="auth-widget" id="authWidget"></div>
+
+<main class="my-page">
+  <div class="my-container">
+    <div class="page-title-block">
+      <h1>🔥 Статистика <span>активности</span></h1>
+      <p>Пользователи с наибольшим временем, проведённым на сайте</p>
+    </div>
+
+    <div class="stats-info">
+      <div class="stats-info-icon">🔥</div>
+      <div class="stats-info-text">
+        <b>+1 очко</b> за каждые 3 минуты на сайте. Огонёк обновляется автоматически.
+      </div>
+    </div>
+
+    <div class="stats-list" id="statsList">
+      <div class="loading-state"><div class="spinner"></div> Загрузка...</div>
+    </div>
+  </div>
+</main>
+
+<nav class="bottom-nav">
+  <a class="nav-btn" href="/"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Главная</span></a>
+  <a class="nav-btn" href="/rules"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Правила</span></a>
+  <a class="nav-btn" href="/roles"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Роли</span></a>
+  <a class="nav-btn" href="/shop"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span>Магазин</span></a>
+  <a class="nav-btn active" href="/stats"><svg viewBox="0 0 24 24"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg><span>Стата</span></a>
+  <a class="nav-btn" href="/profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg><span>Профиль</span></a>
+</nav>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script src="/js/common.js"></script>
+<script src="/js/my-profile.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+window.addEventListener('auth:changed', (e) => {
+  loadStats();
+});
+
+async function loadStats() {
+  const list = document.getElementById('statsList');
+  try {
+    const data = await api('/api/stats/activity');
+    const users = data.users || [];
+    if (!users.length) {
+      list.innerHTML = `<div class="empty-state"><div class="ico">🔥</div>Пока никого нет с огоньком</div>`;
+      return;
+    }
+    list.innerHTML = users.map((u, i) => {
+      const rank = i + 1;
+      const cls = rank === 1 ? 'top-1' : rank === 2 ? 'top-2' : rank === 3 ? 'top-3' : '';
+      const roleColor = u.topRoleColor || '#60a5fa';
+      return `
+        <a class="stat-row ${cls}" href="/profile/${u.steamId}">
+          <div class="stat-rank">${rank}</div>
+          <img class="stat-avatar" src="${u.avatar}" alt="" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
+          <div class="stat-body">
+            <div class="stat-name">${escapeHtml(u.name)}</div>
+            ${u.topRole ? `<span class="stat-role" style="background:${roleColor}15;color:${roleColor};border:1px solid ${roleColor}40;">${escapeHtml(u.topRole)}</span>` : ''}
+          </div>
+          <div class="stat-fire">🔥 ${u.activity}</div>
+        </a>`;
+    }).join('');
+  } catch (e) {
+    list.innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${escapeHtml(e.message)}</div>`;
+  }
+}
+</script>
+</body>
+</html>
