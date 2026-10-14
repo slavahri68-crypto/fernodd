@@ -19,20 +19,27 @@
 
 <div class="auth-widget" id="authWidget"></div>
 
+<div class="my-header" style="display:flex; justify-content:flex-end; padding: 20px 24px 0; position: relative; z-index: 100;">
+  <div class="profile-avatar-btn" id="profileAvatarBtn" onclick="toggleProfileMenu(event)">
+    <img id="headerAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
+    <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    <div id="profileMenuContent"></div>
+  </div>
+</div>
+
 <main class="page active">
   <div class="container">
     <div class="page-header">
       <div class="page-tag">Иерархия</div>
       <h2 class="page-title">Роли <span>сервера</span></h2>
-      <p class="page-subtitle">Структура команды Fernodd — от главной администрации до игроков.</p>
+      <p class="page-subtitle">Структура команды Fernodd — от технической поддержки до игроков.</p>
     </div>
 
     <div class="roles-grid">
-      <div class="role-card" style="--role-color: #e10600;"><div class="role-header"><div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div><h3>Главная администрация</h3></div><p>Высшее руководство проекта.</p></div>
+      <div class="role-card" style="--role-color: #e10600;"><div class="role-header"><div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div><h3>Техническая поддержка</h3></div><p>Помогает игрокам с вопросами.</p></div>
       <div class="role-card" style="--role-color: #e10600;"><div class="role-header"><div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div><h3>Разработчик</h3></div><p>Техническая поддержка проекта.</p></div>
       <div class="role-card" style="--role-color: #e10600;"><div class="role-header"><div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div><h3>Следящий</h3></div><p>Наблюдает за порядком на сервере.</p></div>
       <div class="role-card" style="--role-color: #e10600;"><div class="role-header"><div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div><h3>Куратор</h3></div><p>Курирует работу модераторов.</p></div>
-      <div class="role-card" style="--role-color: #e10600;"><div class="role-header"><div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div><h3>Поддержка</h3></div><p>Помогает игрокам с вопросами.</p></div>
       <div class="role-card" style="--role-color: #e10600;"><div class="role-header"><div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div><h3>Медиа</h3></div><p>Создаёт контент о сервере.</p></div>
       <div class="role-card" style="--role-color: #22d3ee;"><div class="role-header"><div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div><h3>Главный модератор</h3></div><p>Возглавляет команду модераторов.</p></div>
       <div class="role-card" style="--role-color: #4ade80;"><div class="role-header"><div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div><h3>Старший модератор</h3></div><p>Опытный модератор с расширенными правами.</p></div>

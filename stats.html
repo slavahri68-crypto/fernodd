@@ -314,7 +314,7 @@
       <div class="stats-info">
         <div class="stats-info-icon">🔥</div>
         <div class="stats-info-text">
-          <b>+1 день к стрику</b> за ежедневный вход. Пропустишь день — стрик обнулится.
+          <b>+1 день к стрику</b> за 5 минут активности на сайте.
         </div>
       </div>
       <div class="stats-list" id="streakList">
@@ -383,19 +383,17 @@ async function loadStreak() {
       return;
     }
 
+    // Только аватар и ник
     list.innerHTML = streakUsers.map((u, i) => {
       const rank = i + 1;
       const cls = rank === 1 ? 'top-1' : rank === 2 ? 'top-2' : rank === 3 ? 'top-3' : '';
-      const roleColor = u.topRoleColor || '#60a5fa';
       return `
         <a class="stat-row ${cls}" href="/profile/${u.steamId}">
           <div class="stat-rank">${rank}</div>
           <img class="stat-avatar" src="${u.avatar}" alt="" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
           <div class="stat-body">
             <div class="stat-name">${escapeHtml(u.name)}</div>
-            ${u.topRole ? `<span class="stat-role" style="background:${roleColor}15;color:${roleColor};border:1px solid ${roleColor}40;">${escapeHtml(u.topRole)}</span>` : ''}
           </div>
-          <div class="stat-fire" style="${u.frozen ? 'background:rgba(96,165,250,0.15);border-color:rgba(96,165,250,0.4);color:#60a5fa;box-shadow:0 0 20px rgba(96,165,250,0.15);' : ''}">${u.frozen ? '🧊' : '🔥'} ${u.activity}</div>
         </a>`;
     }).join('');
   } catch (e) {

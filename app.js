@@ -17,7 +17,7 @@ if (!process.env.JWT_SECRET) {
 if (!process.env.MONGO_URL) console.warn('[env] ⚠️ MONGO_URL не задан — БД работать не будет');
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: '100kb' }));
 
 /* ============ CORS ============ */
 const ALLOWED_ORIGINS = [
@@ -42,7 +42,11 @@ app.use((req, res, next) => {
 const rateBuckets = new Map();
 function rateLimit(max, windowMs) {
   return (req, res, next) => {
-    const key = (req.ip || req.connection?.remoteAddress || 'unknown') + ':' + req.path;
+    const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim()
+      || req.ip
+      || req.connection?.remoteAddress
+      || 'unknown';
+    const key = ip + ':' + req.path;
     const now = Date.now();
     let bucket = rateBuckets.get(key);
     if (!bucket || now > bucket.reset) {
@@ -95,8 +99,8 @@ const ALL_STAFF_ROLES = [...ADMIN_ROLES, ...MODERATOR_ROLES];
 const ADMIN_STEAM_LIST = ADMIN_STEAM_IDS.split(',').map(s => s.trim()).filter(Boolean);
 
 const ASSIGNABLE_ROLE_NAMES_STAFF = ['модератор', 'старший модератор', 'главный модератор'];
-const ASSIGNABLE_ROLE_NAMES_OWNER = ['куратор', 'следящий', 'главная администрация'];
-const STAFF_ROLE_NAMES_ALL = ['модератор', 'старший модератор', 'главный модератор', 'куратор', 'следящий', 'главная администрация'];
+const ASSIGNABLE_ROLE_NAMES_OWNER = ['куратор', 'следящий', 'техническая поддержка'];
+const STAFF_ROLE_NAMES_ALL = ['модератор', 'старший модератор', 'главный модератор', 'куратор', 'следящий', 'техническая поддержка'];
 
 /* ============ ТОВАРЫ МАГАЗИНА ============ */
 const SHOP_ITEMS = [{
@@ -216,7 +220,10 @@ async function addBalance(steamId, delta) {
     { $inc: { amount: delta }, $set: { updatedAt: new Date().toISOString() } },
     { upsert: true, returnDocument: 'after' }
   );
-  return result.value?.amount || delta;
+  // MongoDB v6: результат — сам документ (не обёртка .value)
+  if (result && typeof result === 'object' && 'amount' in result) return result.amount;
+  if (result && result.value && typeof result.value === 'object') return result.value.amount || delta;
+  return delta;
 }
 async function getLink(steamId) {
   if (!mongoDb) return null;
@@ -344,9 +351,9 @@ async function removeAllStaffRoles(id, keep = []) {
       .map(r => r.id);
     const userSet = new Set(member.roles || []);
     for (const rid of removeIds.filter(x => userSet.has(x))) {
-      try { await discordDelete(`/guilds/${DISCORD_GUILD_ID}/members/${id}/roles/${rid}`); } catch (e) {}
+      try { await discordDelete(`/guilds/${DISCORD_GUILD_ID}/members/${id}/roles/${rid}`); } catch {}
     }
-  } catch (e) {}
+  } catch {}
 }
 
 /* ============ Права ============ */
@@ -382,16 +389,14 @@ function requireHeadAdmin(req, res, next) {
 function isWatcherOrAbove(u) {
   if (!u) return false;
   if (u.isHeadAdmin || u.isOwner) return true;
-  return (u.roles || []).some(r => r === 'Следящий');
+  return (u.roles || []).map(r => (r || '').toLowerCase()).includes('следящий');
 }
 function canEditOthersProfiles(u) {
   if (!u) return false;
   if (u.isOwner || u.isHeadAdmin) return true;
   const allRoles = [...(u.roles || []), ...(u.siteRoles || [])].map(r => (r || '').toLowerCase());
   return allRoles.some(r =>
-    r === 'следящий' ||
-    r === 'главная администрация' ||
-    r === 'владелец'
+    r === 'следящий' || r === 'техническая поддержка' || r === 'владелец'
   );
 }
 function hasFernoddPlus(u, siteRoles = []) {
@@ -483,7 +488,7 @@ app.get('/auth/steam/callback', async (req, res) => {
 
     const siteRoles = await getSiteRoles(profile.steamid);
     const allRoles = [...new Set([...roleNames, ...siteRoles])];
-    const finalIsHeadAdmin = isHeadAdmin || siteRoles.includes('Главная администрация');
+    const finalIsHeadAdmin = isHeadAdmin || siteRoles.includes('Техническая поддержка');
     const finalIsAdmin = isAdmin || ADMIN_ROLES.some(r => allRoles.includes(r)) || ADMIN_STEAM_LIST.includes(profile.steamid);
 
     const jwtToken = jwt.sign({
@@ -588,7 +593,7 @@ app.get('/api/me', async (req, res) => {
   const siteRoles = await getSiteRoles(p.steamId);
   const allRoles = [...new Set([...(p.roles || []), ...siteRoles])];
   const isOwner = !!p.isOwner || !!(OWNER_STEAM_ID && p.steamId === OWNER_STEAM_ID);
-  const isHeadAdmin = !!p.isHeadAdmin || isOwner || allRoles.includes('Главная администрация');
+  const isHeadAdmin = !!p.isHeadAdmin || isOwner || allRoles.includes('Техническая поддержка');
   const isAdmin = isOwner || isHeadAdmin || ADMIN_ROLES.some(r => allRoles.includes(r)) || ADMIN_STEAM_LIST.includes(p.steamId);
   res.json({
     user: {
@@ -709,12 +714,7 @@ app.post('/api/activity/freeze', requireAuth, async (req, res) => {
 
     await mongoDb.collection('activity').updateOne(
       { steamId },
-      {
-        $set: {
-          freezeUsedKey: todayKey,
-          freezeUsedAt: now.toISOString(),
-        }
-      }
+      { $set: { freezeUsedKey: todayKey, freezeUsedAt: now.toISOString() } }
     );
 
     res.json({ ok: true, streak: doc.points, freezeUsedKey: todayKey });
@@ -834,12 +834,12 @@ app.get('/api/stats/activity', async (req, res) => {
       }
 
       const siteRoles = await getSiteRoles(steamId);
-      const ROLE_PRIORITY = ['Главная администрация', 'Владелец', 'Разработчик', 'Следящий', 'Куратор', 'Главный модератор', 'Старший модератор', 'Модератор', 'Поддержка', 'Медиа', 'Игрок'];
+      const ROLE_PRIORITY = ['Техническая поддержка', 'Владелец', 'Разработчик', 'Следящий', 'Куратор', 'Главный модератор', 'Старший модератор', 'Модератор', 'Медиа', 'Игрок'];
       const allRoles = [...siteRoles, discordInfo?.topRole].filter(Boolean);
       const finalTopRole = ROLE_PRIORITY.find(r => allRoles.includes(r)) || discordInfo?.topRole || 'Игрок';
       const COLORS = {
-        'Главная администрация': '#e10600', 'Владелец': '#e10600', 'Разработчик': '#e10600',
-        'Следящий': '#e10600', 'Куратор': '#e10600', 'Поддержка': '#e10600', 'Медиа': '#e10600',
+        'Техническая поддержка': '#e10600', 'Владелец': '#e10600', 'Разработчик': '#e10600',
+        'Следящий': '#e10600', 'Куратор': '#e10600', 'Медиа': '#e10600',
         'Главный модератор': '#22d3ee', 'Старший модератор': '#4ade80',
         'Модератор': '#3b82f6', 'Игрок': '#a855f7',
       };
@@ -913,12 +913,12 @@ app.get('/api/stats/players', async (req, res) => {
       }
 
       const siteRoles = await getSiteRoles(steamId);
-      const ROLE_PRIORITY = ['Главная администрация', 'Владелец', 'Разработчик', 'Следящий', 'Куратор', 'Главный модератор', 'Старший модератор', 'Модератор', 'Поддержка', 'Медиа', 'Игрок'];
+      const ROLE_PRIORITY = ['Техническая поддержка', 'Владелец', 'Разработчик', 'Следящий', 'Куратор', 'Главный модератор', 'Старший модератор', 'Модератор', 'Медиа', 'Игрок'];
       const allRoles = [...siteRoles, discordInfo?.topRole].filter(Boolean);
       const finalTopRole = ROLE_PRIORITY.find(r => allRoles.includes(r)) || discordInfo?.topRole || 'Игрок';
       const COLORS = {
-        'Главная администрация': '#e10600', 'Владелец': '#e10600', 'Разработчик': '#e10600',
-        'Следящий': '#e10600', 'Куратор': '#e10600', 'Поддержка': '#e10600', 'Медиа': '#e10600',
+        'Техническая поддержка': '#e10600', 'Владелец': '#e10600', 'Разработчик': '#e10600',
+        'Следящий': '#e10600', 'Куратор': '#e10600', 'Медиа': '#e10600',
         'Главный модератор': '#22d3ee', 'Старший модератор': '#4ade80',
         'Модератор': '#3b82f6', 'Игрок': '#a855f7',
       };
@@ -1048,6 +1048,7 @@ app.get('/api/inventory', async (req, res) => {
     .find({ userId: targetSteamId })
     .sort({ createdAt: -1 })
     .toArray();
+  const siteRoles = await getSiteRoles(targetSteamId);
 
   const grouped = {};
   for (const o of orders) {
@@ -1074,18 +1075,45 @@ app.get('/api/inventory', async (req, res) => {
   const subMap = {};
   subscriptions.forEach(s => { subMap[s.itemId] = s; });
 
-  const items = Object.values(grouped).map(g => {
-    const sub = subMap[g.itemId];
-    const subForever = !!(sub && (sub.forever === true || (sub.expiresAt === null && sub.active)));
-    const isForever = g.forever || subForever;
-    return {
-      itemId: g.itemId, itemName: g.itemName, count: g.count,
-      totalPrice: g.totalPrice, totalDays: g.totalDays, forever: isForever,
-      expiresAt: isForever ? null : (sub?.expiresAt || null),
-      active: sub ? sub.active !== false : true,
-      lastPurchase: g.lastPurchase, firstPurchase: g.firstPurchase, purchases: g.purchases,
-    };
-  });
+  const ALLOWED_ROLES = [
+    'Модератор', 'Старший модератор', 'Главный модератор',
+    'Куратор', 'Следящий', 'Техническая поддержка'
+  ];
+
+  const roleItems = siteRoles
+    .filter(roleName => ALLOWED_ROLES.includes(roleName))
+    .map(roleName => ({
+      itemId: `role_${roleName}`,
+      itemName: roleName,
+      count: 1,
+      totalPrice: 0,
+      totalDays: 0,
+      forever: true,
+      expiresAt: null,
+      active: true,
+      lastPurchase: new Date().toISOString(),
+      firstPurchase: new Date().toISOString(),
+      purchases: [],
+      isRole: true,
+    }));
+
+  const items = [
+    ...Object.values(grouped).map(g => {
+      const sub = subMap[g.itemId];
+      const subForever = !!(sub && (sub.forever === true || (sub.expiresAt === null && sub.active)));
+      const isForever = g.forever || subForever;
+      return {
+        itemId: g.itemId, itemName: g.itemName, count: g.count,
+        totalPrice: g.totalPrice, totalDays: g.totalDays, forever: isForever,
+        expiresAt: isForever ? null : (sub?.expiresAt || null),
+        active: sub ? sub.active !== false : true,
+        lastPurchase: g.lastPurchase, firstPurchase: g.firstPurchase, purchases: g.purchases,
+        isRole: false,
+      };
+    }),
+    ...roleItems,
+  ];
+
   res.json({ items });
 });
 
@@ -1107,7 +1135,6 @@ app.get('/api/transactions', requireAuth, async (req, res) => {
   if (!canEditOthersProfiles(req.user)) {
     return res.status(403).json({ error: 'not_allowed_for_others' });
   }
-
   if (!/^\d{17}$/.test(targetSteamId)) {
     return res.status(400).json({ error: 'bad_steam_id' });
   }
@@ -1439,7 +1466,7 @@ app.get('/api/shop/orders/all', requireOwner, async (req, res) => {
 });
 
 /* ============ ВЫДАЧА РОЛЕЙ ============ */
-app.get('/api/roles-list', requireAdmin, async (req, res) => {
+app.get('/api/roles-list', requireAuth, async (req, res) => {
   const allowed = getAssignableRolesFor(req.user);
   if (!allowed.length) return res.status(403).json({ error: 'forbidden' });
   try {
@@ -1449,7 +1476,7 @@ app.get('/api/roles-list', requireAdmin, async (req, res) => {
   } catch { res.status(500).json({ error: 'server_error' }); }
 });
 
-app.get('/api/steam-search', requireAdmin, async (req, res) => {
+app.get('/api/steam-search', requireAuth, async (req, res) => {
   if (!isWatcherOrAbove(req.user)) return res.status(403).json({ error: 'forbidden' });
   const q = String(req.query.q || '').trim();
   if (!q || q.length < 3) return res.json({ users: [] });
@@ -1501,7 +1528,7 @@ app.get('/api/steam-search', requireAdmin, async (req, res) => {
   res.json({ users: results });
 });
 
-app.get('/api/user-current-role/:discordId', requireAdmin, async (req, res) => {
+app.get('/api/user-current-role/:discordId', requireAuth, async (req, res) => {
   if (!isWatcherOrAbove(req.user)) return res.status(403).json({ error: 'forbidden' });
   const { discordId } = req.params;
   if (!/^\d{17,20}$/.test(discordId)) return res.json({ currentRole: null });
@@ -1511,7 +1538,7 @@ app.get('/api/user-current-role/:discordId', requireAdmin, async (req, res) => {
   } catch { res.json({ currentRole: null }); }
 });
 
-app.post('/api/give-role', requireAdmin, async (req, res) => {
+app.post('/api/give-role', requireAuth, async (req, res) => {
   const allowed = getAssignableRolesFor(req.user);
   if (!allowed.length) return res.status(403).json({ error: 'forbidden' });
   const { steamId, discordId, roleId } = req.body || {};
@@ -1614,7 +1641,7 @@ app.post('/api/admin/balance/change', requireHeadAdmin, async (req, res) => {
 });
 
 /* ============ ПЕРСОНАЛ ============ */
-app.get('/api/staff', requireAdmin, async (req, res) => {
+app.get('/api/staff', requireAuth, async (req, res) => {
   try {
     const members = await discordGet(`/guilds/${DISCORD_GUILD_ID}/members?limit=1000`);
     const allRoles = await getGuildRoles();
@@ -1654,7 +1681,7 @@ app.get('/api/staff', requireAdmin, async (req, res) => {
 });
 
 /* ============ ЖАЛОБЫ ============ */
-app.get('/api/tickets', requireAdmin, async (req, res) => {
+app.get('/api/tickets', requireAuth, async (req, res) => {
   if (!DISCORD_OPEN_TICKETS_CATEGORY_ID && !DISCORD_CLOSED_TICKETS_CATEGORY_ID) return res.status(500).json({ error: 'category_not_configured' });
   try {
     const channels = await discordGet(`/guilds/${DISCORD_GUILD_ID}/channels`);
@@ -1683,7 +1710,7 @@ app.get('/api/tickets', requireAdmin, async (req, res) => {
   } catch { res.status(500).json({ error: 'server_error' }); }
 });
 
-app.get('/api/tickets/:id/messages', requireAdmin, async (req, res) => {
+app.get('/api/tickets/:id/messages', requireAuth, async (req, res) => {
   try {
     const r = await fetch(`https://discord.com/api/channels/${req.params.id}/messages?limit=100`, { headers: { Authorization: `Bot ${DISCORD_BOT_TOKEN}` } });
     if (!r.ok) return res.status(500).json({ error: 'discord_error' });
@@ -1721,7 +1748,7 @@ app.get('/api/logs', requireHeadAdmin, async (req, res) => {
 });
 
 /* ============ НАСТРОЙКИ ============ */
-app.get('/api/settings', requireOwner, (req, res) => {
+app.get('/api/settings', requireHeadAdmin, (req, res) => {
   res.json({ settings: {
     guildId: DISCORD_GUILD_ID || '—', applyChannel: DISCORD_APPLY_CHANNEL_ID || '—',
     logsChannel: DISCORD_LOGS_CHANNEL_ID || '—', openTicketsCategory: DISCORD_OPEN_TICKETS_CATEGORY_ID || '—',
@@ -1792,11 +1819,11 @@ app.get('/api/users/:id', async (req, res) => {
     const siteRoles = await getSiteRoles(profile.steamid);
 
     const allRoles = [...siteRoles, ...(discordInfo ? discordInfo.roles : [])].filter((v, i, a) => a.indexOf(v) === i);
-    const ROLE_PRIORITY = ['Главная администрация', 'Владелец', 'Разработчик', 'Следящий', 'Куратор', 'Главный модератор', 'Старший модератор', 'Модератор', 'Поддержка', 'Медиа', 'Игрок'];
+    const ROLE_PRIORITY = ['Техническая поддержка', 'Владелец', 'Разработчик', 'Следящий', 'Куратор', 'Главный модератор', 'Старший модератор', 'Модератор', 'Медиа', 'Игрок'];
     const topRole = ROLE_PRIORITY.find(r => allRoles.includes(r)) || 'Игрок';
     const COLORS = {
-      'Главная администрация': '#e10600', 'Владелец': '#e10600', 'Разработчик': '#e10600',
-      'Следящий': '#e10600', 'Куратор': '#e10600', 'Поддержка': '#e10600', 'Медиа': '#e10600',
+      'Техническая поддержка': '#e10600', 'Владелец': '#e10600', 'Разработчик': '#e10600',
+      'Следящий': '#e10600', 'Куратор': '#e10600', 'Медиа': '#e10600',
       'Главный модератор': '#22d3ee', 'Старший модератор': '#4ade80',
       'Модератор': '#3b82f6', 'Игрок': '#a855f7',
     };
@@ -1930,7 +1957,7 @@ async function fetchApplicationsRaw() {
   });
 }
 
-app.get('/api/applications', requireAdmin, async (req, res) => {
+app.get('/api/applications', requireAuth, async (req, res) => {
   try { res.json({ applications: await fetchApplicationsRaw() }); }
   catch (e) { res.status(500).json({ error: 'server_error', details: String(e) }); }
 });
@@ -1991,7 +2018,7 @@ async function getApplicationStatus(id) {
   } catch { return 'unknown'; }
 }
 
-app.post('/api/applications/:id/:action', requireAdmin, async (req, res) => {
+app.post('/api/applications/:id/:action', requireAuth, async (req, res) => {
   const { id, action } = req.params;
   if (!['approve', 'reject'].includes(action)) return res.status(400).json({ error: 'bad_action' });
   if (!canChangeDirectly(req.user)) return res.status(403).json({ error: 'not_allowed_directly' });
@@ -2005,7 +2032,7 @@ app.post('/api/applications/:id/:action', requireAdmin, async (req, res) => {
   } catch { res.status(500).json({ error: 'discord_error' }); }
 });
 
-app.post('/api/applications/:id/change', requireAdmin, async (req, res) => {
+app.post('/api/applications/:id/change', requireAuth, async (req, res) => {
   if (!canChangeDirectly(req.user)) return res.status(403).json({ error: 'not_allowed_directly' });
   const { newStatus } = req.body || {};
   if (!['approved', 'rejected', 'pending'].includes(newStatus)) return res.status(400).json({ error: 'bad_status' });
@@ -2018,7 +2045,7 @@ app.post('/api/applications/:id/change', requireAdmin, async (req, res) => {
   } catch { res.status(500).json({ error: 'discord_error' }); }
 });
 
-app.delete('/api/applications/:id', requireAdmin, async (req, res) => {
+app.delete('/api/applications/:id', requireAuth, async (req, res) => {
   if (!canDeleteDirectly(req.user)) return res.status(403).json({ error: 'not_allowed_directly' });
   try {
     const owner = await getApplicationOwner(req.params.id);
@@ -2031,13 +2058,13 @@ app.delete('/api/applications/:id', requireAdmin, async (req, res) => {
   } catch { res.status(500).json({ error: 'discord_error' }); }
 });
 
-app.get('/api/applications-history', requireAdmin, async (req, res) => {
+app.get('/api/applications-history', requireAuth, async (req, res) => {
   if (!isWatcherOrAbove(req.user)) return res.status(403).json({ error: 'forbidden' });
   res.json({ history: await loadHistory() });
 });
 
 /* ============ ANALYTICS ============ */
-app.get('/api/analytics-data', requireAdmin, async (req, res) => {
+app.get('/api/analytics-data', requireAuth, async (req, res) => {
   try {
     const apps = await fetchApplicationsRaw();
     const hist = await loadHistory();
@@ -2071,9 +2098,9 @@ app.get('/api/analytics-data', requireAdmin, async (req, res) => {
 });
 
 /* ============ PRESENCE ============ */
-app.get('/api/presence', requireAdmin, async (req, res) => res.json(await getPresenceStats()));
-app.get('/api/presence/:id', requireAdmin, async (req, res) => res.json(await getPresence(req.params.id)));
-app.get('/api/presence-all', requireAdmin, async (req, res) => res.json({ presence: await getAllPresence() }));
+app.get('/api/presence', requireAuth, async (req, res) => res.json(await getPresenceStats()));
+app.get('/api/presence/:id', requireAuth, async (req, res) => res.json(await getPresence(req.params.id)));
+app.get('/api/presence-all', requireAuth, async (req, res) => res.json({ presence: await getAllPresence() }));
 
 /* ============ HEALTH ============ */
 app.get('/api/health', (req, res) => res.json({ status: 'ok', uptime: process.uptime(), mongo: !!mongoDb, timestamp: new Date().toISOString() }));
@@ -2088,7 +2115,7 @@ app.use((err, req, res, next) => {
 process.on('unhandledRejection', (e) => console.error('[unhandledRejection]', e));
 process.on('uncaughtException', (e) => console.error('[uncaughtException]', e));
 
-/* ============ INIT ============ */
+/* ============ INIT (Netlify = serverless, без listen) ============ */
 initMongo();
 
 export { app };

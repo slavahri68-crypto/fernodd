@@ -347,6 +347,7 @@ function updateTotal(item) {
 }
 
 window.buySubscription = async function(itemId) {
+  if (!currentUser) { showToast('Войдите через Steam', 'error'); return; }
   const item = SHOP_DATA.roles.find(r => r.id === itemId);
   const tariff = item.tariffs.find(t => t.id === selectedTariffId);
   if (!tariff) return;

@@ -609,7 +609,6 @@
   .save-all-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(225,6,0,0.55); }
   .save-all-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  /* Кастомная ссылка */
   .link-block {
     position: relative;
     padding: 14px 16px;
@@ -1066,8 +1065,8 @@ function renderSteamProfile(user) {
   }
 
   const ROLE_COLORS = {
-    'Главная администрация': '#e10600', 'Владелец': '#e10600', 'Разработчик': '#e10600',
-    'Следящий': '#e10600', 'Куратор': '#e10600', 'Поддержка': '#e10600', 'Медиа': '#e10600',
+    'Техническая поддержка': '#e10600', 'Владелец': '#e10600', 'Разработчик': '#e10600',
+    'Следящий': '#e10600', 'Куратор': '#e10600', 'Медиа': '#e10600',
     'Главный модератор': '#22d3ee', 'Старший модератор': '#4ade80',
     'Модератор': '#3b82f6', 'Игрок': '#a855f7',
   };
@@ -1081,11 +1080,15 @@ function renderSteamProfile(user) {
   const cleanName = name.replace(/#\S+/, '').trim();
   const tag = user.tag || (tagMatch ? tagMatch[0] : '');
 
+  // ЗОЛОТАЯ ГАЛОЧКА
   const verifyBadge = user.isVerified
     ? `<span class="steam-badge-item verify" title="FERNODD+">
-         <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4-3.9-3.8 5.4-.8z"/></svg>
+         <svg width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24">
+           <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+         </svg>
        </span>` : '';
 
+  // ОГОНЁК — кликабелен только на своём профиле
   let activityBadge = '';
   if (user.activity > 0) {
     const frozen = user.streakFrozen;
@@ -1093,9 +1096,15 @@ function renderSteamProfile(user) {
     const color = frozen ? '#60a5fa' : '#ff4400';
     const borderColor = frozen ? 'rgba(96,165,250,0.4)' : 'rgba(255,68,0,0.35)';
     const bgColor = frozen ? 'rgba(96,165,250,0.15)' : 'rgba(255,68,0,0.15)';
-    activityBadge = `<span class="steam-badge-item fire" id="activityBadge" onclick="openStreakModal(event)" style="display:inline-flex;background:${bgColor};color:${color};border-color:${borderColor};cursor:pointer;">${icon} <span id="activityCount">${user.activity}</span></span>`;
+    const clickAttr = isOwnProfile
+      ? `onclick="openStreakModal(event)" style="cursor:pointer;"`
+      : `style="cursor:default;"`;
+    activityBadge = `<span class="steam-badge-item fire" id="activityBadge" ${clickAttr} style="display:inline-flex;background:${bgColor};color:${color};border-color:${borderColor};">${icon} <span id="activityCount">${user.activity}</span></span>`;
   } else {
-    activityBadge = `<span class="steam-badge-item fire" id="activityBadge" onclick="openStreakModal(event)" style="display:inline-flex;background:rgba(255,68,0,0.08);color:rgba(255,68,0,0.6);border-color:rgba(255,68,0,0.2);cursor:pointer;opacity:0.8;">🔥 <span id="activityCount">0</span></span>`;
+    const clickAttr = isOwnProfile
+      ? `onclick="openStreakModal(event)" style="cursor:pointer;"`
+      : `style="cursor:default;"`;
+    activityBadge = `<span class="steam-badge-item fire" id="activityBadge" ${clickAttr} style="display:inline-flex;background:rgba(255,68,0,0.08);color:rgba(255,68,0,0.6);border-color:rgba(255,68,0,0.2);opacity:0.8;">🔥 <span id="activityCount">0</span></span>`;
   }
 
   const tagBadge = tag ? `<span class="steam-badge-item tag">${escapeHtml(tag)}</span>` : '';
@@ -1118,6 +1127,7 @@ function renderSteamProfile(user) {
 /* ============ МОДАЛКА СТРИКА ============ */
 window.openStreakModal = async function(e) {
   if (e) e.stopPropagation();
+  if (!isOwnProfile) return;
 
   const modal = document.getElementById('streakModal');
   const inner = document.getElementById('streakModalInner');
@@ -1147,9 +1157,9 @@ window.openStreakModal = async function(e) {
     } else if (countedToday) {
       todayBlock = `<div class="streak-today ok">✅ Огонёк засчитан сегодня</div>`;
     } else if (streak > 0) {
-      todayBlock = `<div class="streak-today no">⚠️ Сегодня ещё не засчитан — зайди до 00:00 МСК</div>`;
+      todayBlock = `<div class="streak-today no">⚠️ Проведи 5 минут на сайте</div>`;
     } else {
-      todayBlock = `<div class="streak-today no">🕒 Начни свой стрик сегодня</div>`;
+      todayBlock = `<div class="streak-today no">🕒 Проведи 5 минут на сайте</div>`;
     }
 
     let freezeBlock = '';
@@ -1265,17 +1275,8 @@ function applyProfileVisibility(user) {
 
   document.querySelectorAll('.steam-menu-item').forEach(t => {
     const tab = t.dataset.tab;
-
-    if (tab === 'transactions' && !canViewTx) {
-      t.style.display = 'none';
-      return;
-    }
-
-    if (tab === 'settings' && !canEdit) {
-      t.style.display = 'none';
-      return;
-    }
-
+    if (tab === 'transactions' && !canViewTx) { t.style.display = 'none'; return; }
+    if (tab === 'settings' && !canEdit) { t.style.display = 'none'; return; }
     t.style.display = '';
   });
 
@@ -1310,11 +1311,25 @@ async function loadInventory(steamId) {
     const ICONS = {
       fernodd_plus: { icon: '⭐', color: '#fbbf24', tag: 'vip', tagLabel: 'FERNODD+' },
     };
+    const ROLE_ICONS = {
+      'Модератор': { icon: '🛡️', color: '#3b82f6', tagLabel: 'МОДЕРАТОР' },
+      'Старший модератор': { icon: '⭐', color: '#4ade80', tagLabel: 'СТ. МОДЕРАТОР' },
+      'Главный модератор': { icon: '👑', color: '#22d3ee', tagLabel: 'ГЛ. МОДЕРАТОР' },
+      'Куратор': { icon: '🎯', color: '#e10600', tagLabel: 'КУРАТОР' },
+      'Следящий': { icon: '👁️', color: '#e10600', tagLabel: 'СЛЕДЯЩИЙ' },
+      'Техническая поддержка': { icon: '🔧', color: '#e10600', tagLabel: 'ТЕХ. ПОДДЕРЖКА' },
+    };
     grid.innerHTML = items.map(it => {
-      const meta = ICONS[it.itemId] || { icon: '🎁', color: 'var(--red)', tag: 'vip', tagLabel: 'Услуга' };
+      let meta;
+      if (it.isRole) {
+        meta = ROLE_ICONS[it.itemName] || { icon: '🎭', color: 'var(--red)', tagLabel: 'РОЛЬ' };
+      } else {
+        meta = ICONS[it.itemId] || { icon: '🎁', color: 'var(--red)', tag: 'vip', tagLabel: 'Услуга' };
+      }
       const lastDate = new Date(it.lastPurchase).toLocaleDateString('ru-RU');
       let duration = 'Активно';
-      if (it.forever) duration = 'Навсегда';
+      if (it.isRole) duration = 'Навсегда';
+      else if (it.forever) duration = 'Навсегда';
       else if (it.expiresAt) {
         const diff = new Date(it.expiresAt) - Date.now();
         duration = diff > 0 ? `до ${new Date(it.expiresAt).toLocaleDateString('ru-RU')}` : 'Истекла';
@@ -1322,12 +1337,12 @@ async function loadInventory(steamId) {
 
       return `
         <div class="inv-card" style="--item-color:${meta.color};">
-          <span class="inv-tag ${meta.tag}">${meta.tagLabel}${it.count > 1 ? ` ×${it.count}` : ''}</span>
+          <span class="inv-tag ${meta.tag || ''}">${meta.tagLabel}${it.count > 1 ? ` ×${it.count}` : ''}</span>
           <div class="inv-image">${meta.icon}</div>
           <div class="inv-name">${escapeHtml(it.itemName)}</div>
           <div class="inv-info">
             <span>Действует: <b>${duration}</b></span>
-            <span>Покупка: <b>${lastDate}</b></span>
+            <span>${it.isRole ? 'Роль' : 'Покупка'}: <b>${lastDate}</b></span>
           </div>
         </div>`;
     }).join('');

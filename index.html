@@ -19,6 +19,14 @@
 
 <div class="auth-widget" id="authWidget"></div>
 
+<div class="my-header" style="display:flex; justify-content:flex-end; padding: 20px 24px 0; position: relative; z-index: 100;">
+  <div class="profile-avatar-btn" id="profileAvatarBtn" onclick="toggleProfileMenu(event)">
+    <img id="headerAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
+    <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    <div id="profileMenuContent"></div>
+  </div>
+</div>
+
 <main class="page active">
   <div class="container">
     <div class="hero">
