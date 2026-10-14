@@ -19,9 +19,9 @@
 
 <div class="auth-widget" id="authWidget"></div>
 
-<div class="my-header" style="display:flex; justify-content:flex-end; padding: 20px 24px 0; position: relative; z-index: 100;">
-  <div class="profile-avatar-btn" id="profileAvatarBtn" onclick="toggleProfileMenu(event)">
-    <img id="headerAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
+<div class="my-header" style="position:fixed; top:20px; right:24px; z-index:100;">
+  <div class="profile-avatar-btn" id="profileAvatarBtn" onclick="toggleProfileMenu(event)" style="display:none;">
+    <img id="headerAvatar" src="" alt="" style="display:none;">
     <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
     <div id="profileMenuContent"></div>
   </div>
@@ -36,15 +36,76 @@
     </div>
 
     <div class="roles-grid">
-      <div class="role-card" style="--role-color: #e10600;"><div class="role-header"><div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div><h3>Техническая поддержка</h3></div><p>Помогает игрокам с вопросами.</p></div>
-      <div class="role-card" style="--role-color: #e10600;"><div class="role-header"><div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div><h3>Разработчик</h3></div><p>Техническая поддержка проекта.</p></div>
-      <div class="role-card" style="--role-color: #e10600;"><div class="role-header"><div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div><h3>Следящий</h3></div><p>Наблюдает за порядком на сервере.</p></div>
-      <div class="role-card" style="--role-color: #e10600;"><div class="role-header"><div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div><h3>Куратор</h3></div><p>Курирует работу модераторов.</p></div>
-      <div class="role-card" style="--role-color: #e10600;"><div class="role-header"><div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div><h3>Медиа</h3></div><p>Создаёт контент о сервере.</p></div>
-      <div class="role-card" style="--role-color: #22d3ee;"><div class="role-header"><div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div><h3>Главный модератор</h3></div><p>Возглавляет команду модераторов.</p></div>
-      <div class="role-card" style="--role-color: #4ade80;"><div class="role-header"><div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div><h3>Старший модератор</h3></div><p>Опытный модератор с расширенными правами.</p></div>
-      <div class="role-card" style="--role-color: #3b82f6;"><div class="role-header"><div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div><h3>Модератор</h3></div><p>Следит за порядком в чатах и каналах.</p></div>
-      <div class="role-card" style="--role-color: #a855f7;"><div class="role-header"><div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div><h3>Игрок</h3></div><p>Базовый участник сообщества.</p></div>
+      <div class="role-card" style="--role-color: #5865f2;">
+        <div class="role-header">
+          <div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div>
+          <h3>Главная администрация</h3>
+        </div>
+        <p>Высшее руководство проекта.</p>
+      </div>
+      <div class="role-card" style="--role-color: #23a55a;">
+        <div class="role-header">
+          <div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div>
+          <h3>Разработчик</h3>
+        </div>
+        <p>Техническая поддержка проекта.</p>
+      </div>
+      <div class="role-card" style="--role-color: #f0b232;">
+        <div class="role-header">
+          <div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div>
+          <h3>Следящий</h3>
+        </div>
+        <p>Наблюдает за порядком на сервере.</p>
+      </div>
+      <div class="role-card" style="--role-color: #f0b232;">
+        <div class="role-header">
+          <div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div>
+          <h3>Куратор</h3>
+        </div>
+        <p>Курирует работу модераторов.</p>
+      </div>
+      <div class="role-card" style="--role-color: #ed4245;">
+        <div class="role-header">
+          <div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div>
+          <h3>Поддержка</h3>
+        </div>
+        <p>Помогает игрокам с вопросами.</p>
+      </div>
+      <div class="role-card" style="--role-color: #eb459e;">
+        <div class="role-header">
+          <div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div>
+          <h3>Медиа</h3>
+        </div>
+        <p>Создаёт контент о сервере.</p>
+      </div>
+      <div class="role-card" style="--role-color: #00a8fc;">
+        <div class="role-header">
+          <div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div>
+          <h3>Главный модератор</h3>
+        </div>
+        <p>Возглавляет команду модераторов.</p>
+      </div>
+      <div class="role-card" style="--role-color: #23a55a;">
+        <div class="role-header">
+          <div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div>
+          <h3>Старший модератор</h3>
+        </div>
+        <p>Опытный модератор с расширенными правами.</p>
+      </div>
+      <div class="role-card" style="--role-color: #5865f2;">
+        <div class="role-header">
+          <div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div>
+          <h3>Модератор</h3>
+        </div>
+        <p>Следит за порядком в чатах и каналах.</p>
+      </div>
+      <div class="role-card" style="--role-color: #a855f7;">
+        <div class="role-header">
+          <div class="role-icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="12"/><path d="M20 32c-4 0-8 3-8 8v14c0 3 2 5 5 5h30c3 0 5-2 5-5V40c0-5-4-8-8-8H20z"/></svg></div>
+          <h3>Игрок</h3>
+        </div>
+        <p>Базовый участник сообщества.</p>
+      </div>
     </div>
   </div>
 </main>
@@ -55,7 +116,7 @@
   <a class="nav-btn active" href="/roles"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Роли</span></a>
   <a class="nav-btn" href="/shop"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span>Магазин</span></a>
   <a class="nav-btn" href="/stats"><svg viewBox="0 0 24 24"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg><span>Стата</span></a>
-  <a class="nav-btn" href="/profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg><span>Профиль</span></a>
+  <a class="nav-btn" href="/apply"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg><span>Заявки</span></a>
 </nav>
 
 <script src="/js/common.js"></script>
