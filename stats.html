@@ -13,254 +13,71 @@
   .my-page { min-height: 100vh; padding: 70px 0 100px; position: relative; z-index: 1; }
   .my-container { width: 100%; max-width: 720px; margin: 0 auto; padding: 0 14px; }
 
-  .my-header {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
-    padding: 0 4px;
-  }
+  .my-header { display: flex; align-items: center; justify-content: flex-end; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; padding: 0 4px; }
   .my-header-right { display: flex; align-items: center; gap: 10px; }
 
   .page-title-block { text-align: center; margin-bottom: 18px; }
-  .page-title-block h1 {
-    font-family: 'Unbounded', sans-serif;
-    font-size: 26px; font-weight: 900; color: #fff;
-    letter-spacing: -1px; margin-bottom: 6px;
-  }
+  .page-title-block h1 { font-family: 'Unbounded', sans-serif; font-size: 26px; font-weight: 900; color: #fff; letter-spacing: -1px; margin-bottom: 6px; }
   .page-title-block h1 span { color: var(--red); text-shadow: 0 0 30px rgba(225,6,0,0.6); }
   .page-title-block p { color: var(--text-dim); font-size: 13px; line-height: 1.5; }
 
-  .stats-tabs {
-    display: flex;
-    gap: 6px;
-    padding: 6px;
-    background: linear-gradient(145deg, #0e0e0e, #0a0a0a);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    margin-bottom: 14px;
-  }
-  .stats-tab {
-    flex: 1;
-    padding: 12px 16px;
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 12px;
-    color: var(--text-dim);
-    font-family: 'Unbounded', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.25s;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
+  .stats-tabs { display: flex; gap: 6px; padding: 6px; background: linear-gradient(145deg, #0e0e0e, #0a0a0a); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 14px; }
+  .stats-tab { flex: 1; padding: 12px 16px; background: transparent; border: 1px solid transparent; border-radius: 12px; color: var(--text-dim); font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.25s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
   .stats-tab:hover { color: var(--text); background: rgba(255,255,255,0.04); }
-  .stats-tab.active {
-    color: #fff;
-    background: linear-gradient(135deg, rgba(225,6,0,0.25), rgba(139,0,0,0.15));
-    border-color: rgba(225,6,0,0.5);
-  }
-  .stats-tab .tab-count {
-    padding: 2px 8px;
-    background: rgba(255,255,255,0.08);
-    border-radius: 100px;
-    font-size: 10px;
-    font-weight: 700;
-  }
-  .stats-tab.active .tab-count {
-    background: rgba(225,6,0,0.3);
-    color: #fff;
-  }
+  .stats-tab.active { color: #fff; background: linear-gradient(135deg, rgba(225,6,0,0.25), rgba(139,0,0,0.15)); border-color: rgba(225,6,0,0.5); }
+  .stats-tab .tab-count { padding: 2px 8px; background: rgba(255,255,255,0.08); border-radius: 100px; font-size: 10px; font-weight: 700; }
+  .stats-tab.active .tab-count { background: rgba(225,6,0,0.3); color: #fff; }
 
   .stats-panel { display: none; animation: fadeUp 0.35s; }
   .stats-panel.active { display: block; }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-  .stats-info {
-    background: linear-gradient(145deg, #0e0e0e, #0a0a0a);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 14px 16px;
-    margin-bottom: 14px;
-    display: flex; align-items: center; gap: 12px;
-  }
-  .stats-info-icon {
-    width: 36px; height: 36px; border-radius: 10px;
-    background: rgba(255,68,0,0.12);
-    border: 1px solid rgba(255,68,0,0.35);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; flex-shrink: 0;
-  }
+  .stats-info { background: linear-gradient(145deg, #0e0e0e, #0a0a0a); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 12px; }
+  .stats-info-icon { width: 36px; height: 36px; border-radius: 10px; background: rgba(255,68,0,0.12); border: 1px solid rgba(255,68,0,0.35); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; color: #ff4400; }
   .stats-info-text { font-size: 12px; color: var(--text-dim); line-height: 1.5; }
   .stats-info-text b { color: #ff4400; font-family: 'Unbounded', sans-serif; font-weight: 700; }
 
   .stats-list { display: flex; flex-direction: column; gap: 6px; }
 
-  .stat-row {
-    display: flex; align-items: center; gap: 12px;
-    padding: 12px 14px;
-    background: linear-gradient(145deg, #0e0e0e, #0a0a0a);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    text-decoration: none;
-    transition: all 0.25s;
-    position: relative;
-    overflow: hidden;
-  }
+  .stat-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: linear-gradient(145deg, #0e0e0e, #0a0a0a); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; transition: all 0.25s; position: relative; overflow: hidden; }
   .stat-row:hover { border-color: rgba(255,68,0,0.4); transform: translateX(4px); }
   .stat-row.top-1 { border-color: rgba(251,191,36,0.5); background: linear-gradient(145deg, rgba(251,191,36,0.06), #0a0a0a); }
   .stat-row.top-2 { border-color: rgba(209,213,219,0.4); background: linear-gradient(145deg, rgba(209,213,219,0.05), #0a0a0a); }
   .stat-row.top-3 { border-color: rgba(217,119,6,0.4); background: linear-gradient(145deg, rgba(217,119,6,0.05), #0a0a0a); }
 
-  .stat-rank {
-    width: 32px; height: 32px; border-radius: 9px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid var(--border-bright);
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Unbounded', sans-serif;
-    font-weight: 900; font-size: 13px;
-    color: var(--text-dim);
-    flex-shrink: 0;
-  }
+  .stat-rank { width: 32px; height: 32px; border-radius: 9px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); display: flex; align-items: center; justify-content: center; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: 13px; color: var(--text-dim); flex-shrink: 0; }
   .stat-row.top-1 .stat-rank { background: linear-gradient(135deg, #fbbf24, #d97706); color: #000; border-color: transparent; box-shadow: 0 0 20px rgba(251,191,36,0.5); }
   .stat-row.top-2 .stat-rank { background: linear-gradient(135deg, #e5e7eb, #9ca3af); color: #000; border-color: transparent; }
   .stat-row.top-3 .stat-rank { background: linear-gradient(135deg, #d97706, #92400e); color: #fff; border-color: transparent; }
 
-  .stat-avatar {
-    width: 42px; height: 42px;
-    border-radius: 10px;
-    object-fit: cover;
-    flex-shrink: 0;
-    border: 1px solid var(--border-bright);
-  }
-  .stat-avatar-empty {
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid var(--border-bright);
-    color: var(--text-dim);
-    font-size: 14px;
-  }
+  .stat-avatar { width: 42px; height: 42px; border-radius: 10px; object-fit: cover; flex-shrink: 0; border: 1px solid var(--border-bright); }
+  .stat-avatar-empty { display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.03); border: 1px solid var(--border-bright); color: var(--text-dim); }
   .stat-avatar-empty::after { content: '—'; opacity: 0.5; }
 
   .stat-avatar-wrap { position: relative; flex-shrink: 0; }
-  .stat-status-dot {
-    position: absolute;
-    bottom: -2px; right: -2px;
-    width: 12px; height: 12px;
-    border-radius: 50%;
-    border: 2.5px solid #0a0a0a;
-  }
+  .stat-status-dot { position: absolute; bottom: -2px; right: -2px; width: 12px; height: 12px; border-radius: 50%; border: 2.5px solid #0a0a0a; }
   .stat-status-dot.online { background: #4ade80; box-shadow: 0 0 8px #4ade80; }
   .stat-status-dot.offline { background: #6b7280; }
 
   .stat-body { flex: 1; min-width: 0; }
-  .stat-name {
-    font-family: 'Unbounded', sans-serif;
-    font-size: 13px; font-weight: 700; color: #fff;
-    margin-bottom: 2px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
+  .stat-name { font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-  .stat-fire {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 6px 12px;
-    background: linear-gradient(135deg, rgba(255,68,0,0.15), rgba(255,68,0,0.05));
-    border: 1px solid rgba(255,68,0,0.4);
-    border-radius: 100px;
-    font-family: 'Unbounded', sans-serif;
-    font-weight: 800; font-size: 13px;
-    color: #ff4400;
-    flex-shrink: 0;
-    box-shadow: 0 0 20px rgba(255,68,0,0.15);
-  }
-  .stat-row.top-1 .stat-fire {
-    background: linear-gradient(135deg, rgba(251,191,36,0.2), rgba(255,68,0,0.1));
-    border-color: rgba(251,191,36,0.6);
-    color: #fbbf24;
-    box-shadow: 0 0 25px rgba(251,191,36,0.4);
-  }
-  .stat-fire.frozen {
-    background: linear-gradient(135deg, rgba(96,165,250,0.15), rgba(96,165,250,0.05));
-    border-color: rgba(96,165,250,0.4);
-    color: #60a5fa;
-    box-shadow: 0 0 20px rgba(96,165,250,0.15);
-  }
+  .stat-fire { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; background: linear-gradient(135deg, rgba(255,68,0,0.15), rgba(255,68,0,0.05)); border: 1px solid rgba(255,68,0,0.4); border-radius: 100px; font-family: 'Unbounded', sans-serif; font-weight: 800; font-size: 13px; color: #ff4400; flex-shrink: 0; }
+  .stat-fire.frozen { background: linear-gradient(135deg, rgba(96,165,250,0.15), rgba(96,165,250,0.05)); border-color: rgba(96,165,250,0.4); color: #60a5fa; }
 
-  .players-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  .players-count {
-    font-family: 'Unbounded', sans-serif;
-    font-size: 13px;
-    color: var(--text-dim);
-    font-weight: 700;
-  }
-  .players-search {
-    flex: 1;
-    min-width: 180px;
-    position: relative;
-  }
-  .players-search input {
-    width: 100%;
-    padding: 10px 14px 10px 38px;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border-bright);
-    border-radius: 10px;
-    color: #fff;
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    outline: none;
-    transition: all 0.25s;
-  }
-  .players-search input:focus {
-    border-color: var(--red);
-    box-shadow: 0 0 0 3px rgba(225,6,0,0.12);
-  }
-  .players-search::before {
-    content: '🔍';
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 13px;
-    opacity: 0.5;
-  }
+  .players-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 10px; flex-wrap: wrap; }
+  .players-count { font-family: 'Unbounded', sans-serif; font-size: 13px; color: var(--text-dim); font-weight: 700; }
+  .players-search { flex: 1; min-width: 180px; position: relative; }
+  .players-search input { width: 100%; padding: 10px 14px 10px 38px; background: var(--bg-elevated); border: 1px solid var(--border-bright); border-radius: 10px; color: #fff; font-family: 'Inter', sans-serif; font-size: 13px; outline: none; transition: all 0.25s; }
+  .players-search input:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(225,6,0,0.12); }
+  .players-search::before { content: '🔍'; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 13px; opacity: 0.5; }
 
-  .player-row {
-    display: flex; align-items: center; gap: 12px;
-    padding: 12px 14px;
-    background: linear-gradient(145deg, #0e0e0e, #0a0a0a);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    text-decoration: none;
-    transition: all 0.25s;
-  }
+  .player-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: linear-gradient(145deg, #0e0e0e, #0a0a0a); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; transition: all 0.25s; }
   .player-row:hover { border-color: rgba(225,6,0,0.4); transform: translateX(4px); }
 
   .empty-state { text-align: center; padding: 60px 20px; color: var(--text-dim); font-size: 13px; }
-  .empty-state .ico { font-size: 48px; margin-bottom: 12px; opacity: 0.35; }
-  .loading-state {
-    display: flex; align-items: center; justify-content: center;
-    padding: 60px 20px; gap: 10px;
-    color: var(--text-dim); font-size: 13px;
-  }
-  .spinner {
-    width: 20px; height: 20px;
-    border: 2px solid var(--border-bright);
-    border-top-color: var(--red);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
+  .loading-state { display: flex; align-items: center; justify-content: center; padding: 60px 20px; gap: 10px; color: var(--text-dim); font-size: 13px; }
+  .spinner { width: 20px; height: 20px; border: 2px solid var(--border-bright); border-top-color: var(--red); border-radius: 50%; animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
   @media (max-width: 480px) {
@@ -295,22 +112,24 @@
     </div>
 
     <div class="page-title-block">
-      <h1>📊 Статистика <span>проекта</span></h1>
+      <h1>Статистика <span>проекта</span></h1>
       <p>Активность пользователей и все зарегистрированные игроки</p>
     </div>
 
     <div class="stats-tabs">
       <button class="stats-tab active" data-tab="streak" onclick="switchStatsTab('streak')">
-        🔥 Стрик <span class="tab-count" id="streakCount">0</span>
+        Стрик <span class="tab-count" id="streakCount">0</span>
       </button>
       <button class="stats-tab" data-tab="players" onclick="switchStatsTab('players')">
-        👥 Игроки <span class="tab-count" id="playersCount">0</span>
+        Игроки <span class="tab-count" id="playersCount">0</span>
       </button>
     </div>
 
     <div class="stats-panel active" id="panel-streak">
       <div class="stats-info">
-        <div class="stats-info-icon">🔥</div>
+        <div class="stats-info-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px;"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67z"/></svg>
+        </div>
         <div class="stats-info-text">
           <b>+1 день к стрику</b> за 5 минут активности на сайте.
         </div>
@@ -382,7 +201,7 @@ async function loadStreak() {
     document.getElementById('streakCount').textContent = streakUsers.length;
 
     if (!streakUsers.length) {
-      list.innerHTML = `<div class="empty-state"><div class="ico">🔥</div>Пока никого нет со стриком</div>`;
+      list.innerHTML = `<div class="empty-state">Пока никого нет со стриком</div>`;
       return;
     }
 
@@ -427,12 +246,10 @@ function filterPlayers() {
 function renderPlayers() {
   const list = document.getElementById('playersList');
   let arr = playersUsers;
-  if (playersFilter) {
-    arr = arr.filter(u => (u.name || '').toLowerCase().includes(playersFilter));
-  }
+  if (playersFilter) arr = arr.filter(u => (u.name || '').toLowerCase().includes(playersFilter));
 
   if (!arr.length) {
-    list.innerHTML = `<div class="empty-state"><div class="ico">👥</div>${playersFilter ? 'Никого не найдено' : 'Пока нет зарегистрированных игроков'}</div>`;
+    list.innerHTML = `<div class="empty-state">${playersFilter ? 'Никого не найдено' : 'Пока нет зарегистрированных игроков'}</div>`;
     return;
   }
 

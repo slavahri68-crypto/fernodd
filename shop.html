@@ -72,9 +72,8 @@
   .shop-card:hover::before { opacity: 1; }
 
   .shop-badge { position: absolute; top: 16px; left: 16px; padding: 6px 14px; background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); color: #000; border-radius: 100px; font-family: 'Unbounded', sans-serif; font-size: 11px; font-weight: 900; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 5px; z-index: 3; box-shadow: 0 0 25px rgba(251,191,36,0.7), inset 0 1px 0 rgba(255,255,255,0.4); }
-  .shop-badge svg { width: 12px; height: 12px; fill: #000; }
   .shop-icon-wrap { height: 150px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; position: relative; z-index: 1; }
-  .shop-icon { width: 110px; height: 110px; display: flex; align-items: center; justify-content: center; font-size: 90px; line-height: 1; filter: drop-shadow(0 0 35px rgba(251,191,36,0.7)); transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+  .shop-icon { width: 110px; height: 110px; display: flex; align-items: center; justify-content: center; line-height: 1; filter: drop-shadow(0 0 35px rgba(251,191,36,0.7)); transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
   .shop-card:hover .shop-icon { transform: scale(1.15) rotate(-5deg); }
   .shop-icon svg { width: 100%; height: 100%; filter: drop-shadow(0 0 20px currentColor); }
   .shop-name { font-family: 'Unbounded', sans-serif; font-size: 22px; font-weight: 900; text-align: center; letter-spacing: -0.8px; margin-bottom: 6px; position: relative; z-index: 1; background: linear-gradient(180deg, #ffffff 0%, #c0c0c0 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 40px rgba(255,255,255,0.15); }
@@ -97,7 +96,7 @@
   .fd-plus-close { position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-bright); color: var(--text-dim); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; z-index: 2; }
   .fd-plus-close:hover { color: var(--red); border-color: var(--red); }
   .fd-plus-header { display: flex; align-items: center; gap: 18px; margin-bottom: 22px; }
-  .fd-plus-header-icon { width: 76px; height: 76px; border-radius: 20px; background: linear-gradient(145deg, rgba(225,6,0,0.15), rgba(139,0,0,0.05)); border: 1px solid rgba(225,6,0,0.4); display: flex; align-items: center; justify-content: center; font-size: 42px; flex-shrink: 0; box-shadow: 0 0 40px rgba(225,6,0,0.3); }
+  .fd-plus-header-icon { width: 76px; height: 76px; border-radius: 20px; background: linear-gradient(145deg, rgba(225,6,0,0.15), rgba(139,0,0,0.05)); border: 1px solid rgba(225,6,0,0.4); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 40px rgba(225,6,0,0.3); color: #fbbf24; }
   .fd-plus-header-title { font-family: 'Unbounded', sans-serif; font-size: 24px; font-weight: 900; color: #fff; letter-spacing: -1px; margin-bottom: 6px; }
   .fd-plus-header-title span { color: var(--red); text-shadow: 0 0 20px rgba(225,6,0,0.7); }
   .fd-plus-header-desc { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
@@ -129,13 +128,13 @@
     .shop-grid { grid-template-columns: 1fr; gap: 16px; }
     .shop-card { padding: 24px 18px 18px; border-radius: 20px; }
     .shop-icon-wrap { height: 110px; }
-    .shop-icon { width: 80px; height: 80px; font-size: 65px; }
+    .shop-icon { width: 80px; height: 80px; }
     .shop-name { font-size: 18px; }
     .shop-price-main { font-size: 26px; }
     .shop-buy-btn { padding: 13px; font-size: 12px; }
     .shop-tab { padding: 10px 16px; font-size: 12px; }
     .fd-plus-inner { padding: 24px 20px; border-radius: 20px; }
-    .fd-plus-header-icon { width: 60px; height: 60px; font-size: 34px; border-radius: 16px; }
+    .fd-plus-header-icon { width: 60px; height: 60px; border-radius: 16px; }
     .fd-plus-header-title { font-size: 19px; }
     .fd-plus-header-desc { font-size: 12px; }
     .fd-tariff { padding: 12px 14px; }
@@ -210,9 +209,7 @@ async function loadShop() {
       name: item.name,
       description: item.description,
       color: item.color,
-      icon: '⭐',
       iconSvg: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.5l7.1-.6L12 2z"/></svg>`,
-      badge: '-45%',
       type: 'subscription',
       features: ['Цветной ник', 'Закрытые каналы', 'Ивенты'],
       tariffs: item.tariffs.map((t, i) => ({
@@ -257,16 +254,13 @@ function renderShop() {
   grid.innerHTML = roles.map(item => {
     const minPrice = Math.min(...item.tariffs.map(t => t.price));
     const firstTariff = item.tariffs[0];
-    const badgeHTML = item.badge
-      ? `<div class="shop-badge"><svg viewBox="0 0 24 24"><path d="M12 2c-1.5 3.5-3.5 5-3.5 8a3.5 3.5 0 0 0 7 0c0-3-2-4.5-3.5-8z"/></svg>${escapeHtml(item.badge)}</div>` : '';
-    const iconHTML = item.iconSvg || item.icon;
+    const iconHTML = item.iconSvg || '';
     const features = item.features || [];
     const featuresHTML = features.length
       ? `<div class="shop-features">${features.map(f => `<span class="shop-feature">${escapeHtml(f)}</span>`).join('')}</div>` : '';
 
     return `
       <div class="shop-card" style="--item-color:${item.color};">
-        ${badgeHTML}
         <div class="shop-icon-wrap"><div class="shop-icon" style="color:${item.color};">${iconHTML}</div></div>
         <div class="shop-name">${escapeHtml(item.name)}</div>
         <div class="shop-desc">${escapeHtml(item.description)}</div>
@@ -292,7 +286,7 @@ function openSubscriptionModal(item) {
   inner.innerHTML = `
     <button class="fd-plus-close" onclick="closeSubscriptionModal()">✕</button>
     <div class="fd-plus-header">
-      <div class="fd-plus-header-icon">⭐</div>
+      <div class="fd-plus-header-icon"><svg viewBox="0 0 24 24" fill="currentColor" style="width:42px;height:42px;"><path d="M12 2l2.9 6.9 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.5l7.1-.6L12 2z"/></svg></div>
       <div style="flex:1;min-width:0;">
         <div class="fd-plus-header-title">FERNODD<span>+</span></div>
         <div class="fd-plus-header-desc">${escapeHtml(item.description)}</div>
@@ -302,7 +296,6 @@ function openSubscriptionModal(item) {
       <div class="fd-plus-feature"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Уникальный префикс и цветной ник</div>
       <div class="fd-plus-feature"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Доступ к закрытым каналам</div>
       <div class="fd-plus-feature"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Приоритетная поддержка</div>
-      <div class="fd-plus-feature"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> +50% к койнам за активность</div>
       <div class="fd-plus-feature"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Эксклюзивные ивенты</div>
     </div>
     <div class="fd-plus-section-title">Выберите тариф</div>
@@ -357,7 +350,7 @@ window.buySubscription = async function(itemId) {
   if (!tariff) return;
   const balance = currentUser?.balance || 0;
   if (balance < tariff.price) {
-    showToast('❌ Недостаточно средств. Пополните баланс.', 'error');
+    showToast('Недостаточно средств. Пополните баланс.', 'error');
     return;
   }
   const btn = document.getElementById('buyBtn');
@@ -365,7 +358,7 @@ window.buySubscription = async function(itemId) {
   btn.textContent = 'Обработка...';
   try {
     await api('/api/shop/buy-subscription', { method: 'POST', body: JSON.stringify({ itemId: 'fernodd_plus', tariffId: tariff.id }) });
-    showToast(`✅ FERNODD+ (${tariff.label}) оформлен!`, 'success');
+    showToast(`FERNODD+ (${tariff.label}) оформлен`, 'success');
     closeSubscriptionModal();
     const me = await api('/api/me');
     currentUser = me.user;
@@ -378,12 +371,12 @@ window.buySubscription = async function(itemId) {
   } catch (e) {
     const errors = {
       insufficient_balance: 'Недостаточно средств',
-      role_not_found: 'Роль FERNODD+ не найдена на сервере. Создай её в Discord.',
+      role_not_found: 'Роль FERNODD+ не найдена на сервере',
       item_not_found: 'Товар не найден',
       tariff_not_found: 'Тариф не найден',
     };
     const key = e.message.split(' — ')[0];
-    showToast('❌ ' + (errors[key] || e.message), 'error');
+    showToast((errors[key] || e.message), 'error');
     btn.disabled = false;
     btn.textContent = 'Купить FERNODD+';
   }

@@ -15,12 +15,11 @@ export function initPresence() {
     partials: [Partials.GuildMember, Partials.User],
   });
 
-  // ВАЖНО: событие называется `ready`, а не `clientReady`
   client.once('ready', async () => {
-    console.log(`[presence] ✅ Бот запущен: ${client.user.tag}`);
+    console.log(`[presence] Бот запущен: ${client.user.tag}`);
     ready = true;
     const guild = client.guilds.cache.get(process.env.DISCORD_GUILD_ID);
-    if (!guild) { console.warn('[presence] ❌ Гильдия не найдена'); return; }
+    if (!guild) { console.warn('[presence] Гильдия не найдена'); return; }
     await new Promise(r => setTimeout(r, 3000));
     try {
       const members = await guild.members.fetch();

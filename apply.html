@@ -69,12 +69,30 @@
         <p class="requirements-desc">Перед заполнением формы убедись, что ты соответствуешь всем требованиям.</p>
 
         <div class="info-list">
-          <div class="info-item"><div class="info-icon">🎂</div><div><h4>Возраст от 14 лет</h4><p>Адекватность и ответственность важнее возраста.</p></div></div>
-          <div class="info-item"><div class="info-icon">⏰</div><div><h4>Хороший онлайн</h4><p>Модератор должен быть активным.</p></div></div>
-          <div class="info-item"><div class="info-icon">🎤</div><div><h4>Discord и микрофон</h4><p>Обязательно наличие Discord.</p></div></div>
-          <div class="info-item"><div class="info-icon">📚</div><div><h4>Знание правил</h4><p>Ты должен знать правила наизусть.</p></div></div>
-          <div class="info-item"><div class="info-icon">🧠</div><div><h4>Стрессоустойчивость</h4><p>Умение сохранять спокойствие в конфликтах.</p></div></div>
-          <div class="info-item"><div class="info-icon">📝</div><div><h4>Грамотная речь</h4><p>Писать без ошибок и корректно общаться.</p></div></div>
+          <div class="info-item">
+            <div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#e10600" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+            <div><h4>Возраст от 14 лет</h4><p>Адекватность и ответственность важнее возраста.</p></div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#e10600" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+            <div><h4>Хороший онлайн</h4><p>Модератор должен быть активным.</p></div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#e10600" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div>
+            <div><h4>Discord и микрофон</h4><p>Обязательно наличие Discord.</p></div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#e10600" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+            <div><h4>Знание правил</h4><p>Ты должен знать правила наизусть.</p></div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#e10600" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><path d="M12 2a5 5 0 0 0-5 5c0 1.5 1 3 2 4v6a3 3 0 0 0 6 0v-6c1-1 2-2.5 2-4a5 5 0 0 0-5-5z"/></svg></div>
+            <div><h4>Стрессоустойчивость</h4><p>Умение сохранять спокойствие в конфликтах.</p></div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#e10600" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+            <div><h4>Грамотная речь</h4><p>Писать без ошибок и корректно общаться.</p></div>
+          </div>
         </div>
 
         <div class="apply-cta">
@@ -82,7 +100,7 @@
           <p id="applyCtaText">Войдите через Steam, чтобы подать заявку.</p>
           <div class="apply-row">
             <button class="apply-open-btn" id="openFormBtn" disabled>Подать заявку <span class="arrow">→</span></button>
-            <button class="my-apps-btn" id="myAppsBtn" style="display:none;" onclick="openMyApplications()">📄 Мои заявки <span class="my-apps-count" id="myAppsCount">0</span></button>
+            <button class="my-apps-btn" id="myAppsBtn" style="display:none;" onclick="openMyApplications()">Мои заявки <span class="my-apps-count" id="myAppsCount">0</span></button>
           </div>
         </div>
       </div>
@@ -114,9 +132,9 @@
     <h2>Мои <span>заявки</span></h2>
     <p style="color:var(--text-dim);margin-bottom:20px;">Здесь показаны только ваши заявки.</p>
     <div class="my-tabs">
-      <button class="my-tab active" data-tab="pending" onclick="switchMyTab('pending')">🕒 На рассмотрении <span class="my-tab-count" id="myCountPending">0</span></button>
-      <button class="my-tab" data-tab="approved" onclick="switchMyTab('approved')">✓ Одобренные <span class="my-tab-count" id="myCountApproved">0</span></button>
-      <button class="my-tab" data-tab="rejected" onclick="switchMyTab('rejected')">✕ Отклонённые <span class="my-tab-count" id="myCountRejected">0</span></button>
+      <button class="my-tab active" data-tab="pending" onclick="switchMyTab('pending')">На рассмотрении <span class="my-tab-count" id="myCountPending">0</span></button>
+      <button class="my-tab" data-tab="approved" onclick="switchMyTab('approved')">Одобренные <span class="my-tab-count" id="myCountApproved">0</span></button>
+      <button class="my-tab" data-tab="rejected" onclick="switchMyTab('rejected')">Отклонённые <span class="my-tab-count" id="myCountRejected">0</span></button>
     </div>
     <div class="my-list" id="myList"><p class="my-empty">Загрузка…</p></div>
   </div>
@@ -263,7 +281,7 @@ form.addEventListener('submit', async (e) => {
       body: JSON.stringify(payload)
     });
     if (r.ok) {
-      showToast('✅ Заявка успешно отправлена!', 'success');
+      showToast('✓ Заявка успешно отправлена!', 'success');
       form.reset();
       await loadMyApplicationsCount();
       setTimeout(() => backBtn.click(), 1500);

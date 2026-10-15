@@ -1,39 +1,14 @@
-# === ПРЯМЫЕ ССЫЛКИ ===
-/                       /index.html        200
-/rules                  /rules.html        200
-/roles                  /roles.html        200
-/apply                  /apply.html        200
-/shop                   /shop.html         200
-/stats                  /stats.html        200
-/admin                  /admin.html        200
-/skins                  /skins.html        200
-/profile                /profile.html      200
-
-# === ПОДСТРАНИЦЫ ===
-/profile/*              /profile.html      200
-/shop/*                 /shop.html         200
-/admin/*                /admin.html        200
-/rules/*                /rules.html        200
-/roles/*                /roles.html        200
-/apply/*                /apply.html        200
-/stats/*                /stats.html        200
-/skins/*                /skins.html        200
-
-# === РЕДИРЕКТЫ СО СТАРЫХ URL ===
-/friends                /profile           301
-/friends/*              /profile           301
-/inventory              /profile           301
-/inventory/*            /profile           301
-/settings               /profile           301
-/settings/*             /profile           301
-/transactions           /profile           301
-/transactions/*         /profile           301
-/referrals              /profile           301
-/referrals/*            /profile           301
-
-# === API и AUTH ===
-/api/*                  /.netlify/functions/api/:splat  200
-/auth/*                 /.netlify/functions/api/:splat  200
-
-# === SPA FALLBACK (всегда последним) ===
-/*                      /index.html        200
+/                  /index.html         200
+/profile           /profile.html       200
+/profile/*         /profile.html       200
+/rules             /rules.html         200
+/roles             /roles.html         200
+/apply             /apply.html         200
+/shop              /shop.html          200
+/stats             /stats.html         200
+/skins             /skins.html         200
+/admin             /admin.html         200
+/inventory         /profile.html       200
+/friends           /profile.html       200
+/transactions      /profile.html       200
+/referrals         /profile.html       200

@@ -13,513 +13,117 @@
   .my-page { min-height: 100vh; padding: 70px 0 100px; position: relative; z-index: 1; }
   .my-container { width: 100%; max-width: 720px; margin: 0 auto; padding: 0 14px; }
 
-  .my-header {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
-    padding: 0 4px;
-  }
+  .my-header { display: flex; align-items: center; justify-content: flex-end; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; padding: 0 4px; }
   .my-header-right { display: flex; align-items: center; gap: 10px; }
 
-  /* ============ STEAM PROFILE CARD ============ */
-  .steam-profile {
-    position: relative;
-    border-radius: 18px;
-    overflow: hidden;
-    background: linear-gradient(145deg, #0e0e0e, #060606);
-    border: 1px solid var(--border);
-    margin-bottom: 14px;
-  }
-  .steam-banner {
-    height: 140px;
-    background: linear-gradient(135deg, #1a1a1a 0%, #060606 100%);
-    background-size: cover;
-    background-position: center;
-    position: relative;
-  }
-  .steam-banner::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 50% 120%, rgba(225,6,0,0.25), transparent 60%);
-    pointer-events: none;
-  }
-
-  .steam-avatar-wrap {
-    position: relative;
-    width: 110px;
-    height: 110px;
-    margin: -55px auto 12px;
-    border-radius: 14px;
-    border: 3px solid #0e0e0e;
-    overflow: hidden;
-    background: #060606;
-    z-index: 2;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.7);
-  }
+  .steam-profile { position: relative; border-radius: 18px; overflow: hidden; background: linear-gradient(145deg, #0e0e0e, #060606); border: 1px solid var(--border); margin-bottom: 14px; }
+  .steam-banner { height: 140px; background: linear-gradient(135deg, #1a1a1a 0%, #060606 100%); background-size: cover; background-position: center; position: relative; }
+  .steam-banner::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 120%, rgba(225,6,0,0.25), transparent 60%); pointer-events: none; }
+  .steam-avatar-wrap { position: relative; width: 110px; height: 110px; margin: -55px auto 12px; border-radius: 14px; border: 3px solid #0e0e0e; overflow: hidden; background: #060606; z-index: 2; box-shadow: 0 8px 24px rgba(0,0,0,0.7); }
   .steam-avatar { width: 100%; height: 100%; object-fit: cover; display: block; }
-
+  .steam-avatar-empty { display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.03); color: var(--text-dim); font-size: 20px; }
+  .steam-avatar-empty::after { content: '—'; opacity: 0.4; }
   .steam-body { padding: 0 20px 22px; text-align: center; }
-
-  .steam-role-badge {
-    display: inline-block;
-    padding: 5px 14px;
-    background: rgba(96,165,250,0.12);
-    border: 1px solid rgba(96,165,250,0.5);
-    border-radius: 8px;
-    font-family: 'Inter', sans-serif;
-    font-size: 12.5px;
-    font-weight: 600;
-    letter-spacing: 0.2px;
-    color: #60a5fa;
-    margin-bottom: 12px;
-  }
-
-  .steam-name-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 8px;
-  }
-  .steam-name {
-    font-family: 'Unbounded', sans-serif;
-    font-size: 20px;
-    font-weight: 800;
-    color: #fff;
-    letter-spacing: -0.5px;
-    word-break: break-word;
-    line-height: 1.15;
-    max-width: 100%;
-  }
-  .steam-badge-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    padding: 3px 8px;
-    border-radius: 8px;
-    font-family: 'Inter', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    line-height: 1;
-  }
-  .steam-badge-item.verify {
-    background: rgba(251,191,36,0.15);
-    color: #fbbf24;
-    border: 1px solid rgba(251,191,36,0.4);
-    padding: 4px 6px;
-  }
-  .steam-badge-item.fire {
-    background: rgba(255,68,0,0.15);
-    color: #ff4400;
-    border: 1px solid rgba(255,68,0,0.35);
-  }
-  .steam-badge-item.tag {
-    background: rgba(255,255,255,0.06);
-    color: var(--text-dim);
-    border: 1px solid var(--border-bright);
-    font-size: 10.5px;
-  }
+  .steam-role-badge { display: inline-block; padding: 5px 14px; background: rgba(96,165,250,0.12); border: 1px solid rgba(96,165,250,0.5); border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 600; color: #60a5fa; margin-bottom: 12px; }
+  .steam-name-row { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  .steam-name { font-family: 'Unbounded', sans-serif; font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.5px; word-break: break-word; line-height: 1.15; max-width: 100%; }
+  .steam-badge-item { display: inline-flex; align-items: center; gap: 3px; padding: 3px 8px; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; line-height: 1; }
+  .steam-badge-item.verify { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.4); padding: 4px 6px; }
+  .steam-badge-item.fire { background: rgba(255,68,0,0.15); color: #ff4400; border: 1px solid rgba(255,68,0,0.35); }
+  .steam-badge-item.tag { background: rgba(255,255,255,0.06); color: var(--text-dim); border: 1px solid var(--border-bright); font-size: 10.5px; }
   @keyframes firePulse {
     0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,68,0,0.6); }
     50% { transform: scale(1.15); box-shadow: 0 0 20px 6px rgba(255,68,0,0.5); }
     100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,68,0,0); }
   }
-
-  .steam-status-text {
-    font-size: 12.5px;
-    font-weight: 600;
-    margin-bottom: 14px;
-    font-family: 'Unbounded', sans-serif;
-    letter-spacing: -0.2px;
-  }
+  .steam-status-text { font-size: 12.5px; font-weight: 600; margin-bottom: 14px; font-family: 'Unbounded', sans-serif; letter-spacing: -0.2px; }
   .steam-status-text.online { color: #4ade80; }
   .steam-status-text.offline { color: #8a8a8a; }
-
   .steam-desc { font-size: 13px; color: var(--text-dim); line-height: 1.6; margin-bottom: 16px; padding: 0 8px; }
 
-  /* ============ МОДАЛКА СТРИКА ============ */
-  .streak-modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    z-index: 2500;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
+  .streak-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 2500; display: none; align-items: center; justify-content: center; padding: 20px; }
   .streak-modal.visible { display: flex; }
-
-  .streak-modal-inner {
-    background: linear-gradient(145deg, #0e0e0e, #060606);
-    border: 1px solid var(--border-bright);
-    border-radius: 22px;
-    padding: 24px;
-    max-width: 380px;
-    width: 100%;
-    position: relative;
-    overflow: hidden;
-    animation: streakIn 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-    text-align: center;
-  }
-  .streak-modal-inner::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; height: 3px;
-    background: linear-gradient(90deg, #ff4400, #ff8c00, #ff4400);
-  }
-  @keyframes streakIn {
-    from { opacity: 0; transform: scale(0.92) translateY(20px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-  }
-
-  .streak-fire-big {
-    font-size: 64px;
-    margin: 4px 0 8px;
-    filter: drop-shadow(0 0 30px rgba(255,68,0,0.6));
-    animation: fireGlow 3s ease-in-out infinite;
-  }
-  .streak-fire-big.frozen {
-    filter: drop-shadow(0 0 30px rgba(96,165,250,0.6));
-  }
-  @keyframes fireGlow {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.06); }
-  }
-
-  .streak-count {
-    font-family: 'Unbounded', sans-serif;
-    font-size: 42px;
-    font-weight: 900;
-    color: #fff;
-    letter-spacing: -2px;
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-  .streak-count-label {
-    font-size: 12px;
-    color: var(--text-dim);
-    font-family: 'Unbounded', sans-serif;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: 16px;
-  }
-
-  .streak-stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 14px;
-  }
-  .streak-stat {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px 10px;
-  }
+  .streak-modal-inner { background: linear-gradient(145deg, #0e0e0e, #060606); border: 1px solid var(--border-bright); border-radius: 22px; padding: 24px; max-width: 380px; width: 100%; position: relative; overflow: hidden; animation: streakIn 0.35s cubic-bezier(0.22, 1, 0.36, 1); text-align: center; }
+  .streak-modal-inner::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #ff4400, #ff8c00, #ff4400); }
+  @keyframes streakIn { from { opacity: 0; transform: scale(0.92) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+  .streak-fire-big { font-size: 64px; margin: 4px 0 8px; filter: drop-shadow(0 0 30px rgba(255,68,0,0.6)); animation: fireGlow 3s ease-in-out infinite; }
+  .streak-fire-big.frozen { filter: drop-shadow(0 0 30px rgba(96,165,250,0.6)); }
+  @keyframes fireGlow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+  .streak-count { font-family: 'Unbounded', sans-serif; font-size: 42px; font-weight: 900; color: #fff; letter-spacing: -2px; line-height: 1; margin-bottom: 4px; }
+  .streak-count-label { font-size: 12px; color: var(--text-dim); font-family: 'Unbounded', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; }
+  .streak-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+  .streak-stat { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 12px 10px; }
   .streak-stat-icon { font-size: 18px; margin-bottom: 4px; opacity: 0.7; }
-  .streak-stat-value {
-    font-family: 'Unbounded', sans-serif;
-    font-size: 18px;
-    font-weight: 800;
-    color: #fff;
-    letter-spacing: -0.5px;
-    line-height: 1;
-    margin-bottom: 3px;
-  }
-  .streak-stat-label {
-    font-size: 10px;
-    color: var(--text-dim);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-  }
-
-  .streak-today {
-    padding: 10px 14px;
-    border-radius: 10px;
-    font-size: 12.5px;
-    font-weight: 600;
-    margin-bottom: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
+  .streak-stat-value { font-family: 'Unbounded', sans-serif; font-size: 18px; font-weight: 800; color: #fff; letter-spacing: -0.5px; line-height: 1; margin-bottom: 3px; }
+  .streak-stat-label { font-size: 10px; color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; }
+  .streak-today { padding: 10px 14px; border-radius: 10px; font-size: 12.5px; font-weight: 600; margin-bottom: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; }
   .streak-today.ok { background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.4); color: #4ade80; }
   .streak-today.no { background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.4); color: #fbbf24; }
   .streak-today.frozen { background: rgba(96,165,250,0.12); border: 1px solid rgba(96,165,250,0.4); color: #60a5fa; }
+  .streak-desc { font-size: 11.5px; color: var(--text-dim); line-height: 1.5; margin-bottom: 16px; padding: 0 8px; }
+  .streak-freeze-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #60a5fa, #2563eb); border: none; border-radius: 12px; color: #fff; font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 12.5px; cursor: pointer; transition: all 0.3s; box-shadow: 0 6px 20px rgba(96,165,250,0.35); display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; }
+  .streak-freeze-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(96,165,250,0.55); }
+  .streak-freeze-btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+  .streak-close-btn { width: 100%; padding: 10px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); border-radius: 10px; color: var(--text-dim); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12.5px; cursor: pointer; transition: all 0.2s; }
+  .streak-close-btn:hover { color: #fff; border-color: var(--red); background: rgba(225,6,0,0.08); }
+  .streak-loading { padding: 20px; color: var(--text-dim); font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 10px; }
 
-  .streak-desc {
-    font-size: 11.5px;
-    color: var(--text-dim);
-    line-height: 1.5;
-    margin-bottom: 16px;
-    padding: 0 8px;
-  }
-
-  .streak-freeze-btn {
-    width: 100%;
-    padding: 12px;
-    background: linear-gradient(135deg, #60a5fa, #2563eb);
-    border: none;
-    border-radius: 12px;
-    color: #fff;
-    font-family: 'Unbounded', sans-serif;
-    font-weight: 700;
-    font-size: 12.5px;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 6px 20px rgba(96,165,250,0.35);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 8px;
-  }
-  .streak-freeze-btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 28px rgba(96,165,250,0.55);
-  }
-  .streak-freeze-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    box-shadow: none;
-  }
-
-  .streak-close-btn {
-    width: 100%;
-    padding: 10px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid var(--border-bright);
-    border-radius: 10px;
-    color: var(--text-dim);
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 12.5px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .streak-close-btn:hover {
-    color: #fff;
-    border-color: var(--red);
-    background: rgba(225,6,0,0.08);
-  }
-
-  .streak-loading {
-    padding: 20px;
-    color: var(--text-dim);
-    font-size: 13px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-  }
-
-  /* ============ MENU LIST ============ */
-  .steam-menu {
-    background: linear-gradient(145deg, #0e0e0e, #060606);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 8px;
-    margin-bottom: 14px;
-  }
-  .steam-menu-item {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 14px 16px;
-    border-radius: 12px;
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    text-decoration: none;
-    transition: all 0.2s;
-    background: transparent;
-    border: none;
-    width: 100%;
-    text-align: left;
-    cursor: pointer;
-  }
-  .steam-menu-item:hover {
-    background: rgba(225,6,0,0.08);
-    color: #fff;
-    transform: translateX(4px);
-  }
-  .steam-menu-item.active {
-    background: rgba(225,6,0,0.12);
-    color: #fff;
-  }
-  .steam-menu-icon {
-    width: 22px;
-    height: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    color: var(--text-dim);
-    transition: color 0.2s;
-  }
+  .steam-menu { background: linear-gradient(145deg, #0e0e0e, #060606); border: 1px solid var(--border); border-radius: 18px; padding: 8px; margin-bottom: 14px; }
+  .steam-menu-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 12px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 500; text-decoration: none; transition: all 0.2s; background: transparent; border: none; width: 100%; text-align: left; cursor: pointer; }
+  .steam-menu-item:hover { background: rgba(225,6,0,0.08); color: #fff; transform: translateX(4px); }
+  .steam-menu-item.active { background: rgba(225,6,0,0.12); color: #fff; }
+  .steam-menu-icon { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--text-dim); transition: color 0.2s; }
   .steam-menu-item:hover .steam-menu-icon { color: var(--red); }
   .steam-menu-item.active .steam-menu-icon { color: var(--red); }
   .steam-menu-icon svg { width: 20px; height: 20px; }
 
-  /* ============ TAB PANELS ============ */
   .tab-panel { display: none; animation: fadeUp 0.35s; }
   .tab-panel.active { display: block; }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-  .section-title {
-    font-family: 'Unbounded', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    color: #fff;
-    margin-bottom: 12px;
-    letter-spacing: -0.3px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .section-title .cnt {
-    padding: 3px 10px;
-    background: rgba(255,255,255,0.06);
-    border-radius: 100px;
-    font-size: 11px;
-    color: var(--text-dim);
-    font-weight: 700;
-  }
+  .section-title { font-family: 'Unbounded', sans-serif; font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 12px; letter-spacing: -0.3px; display: flex; align-items: center; gap: 8px; }
+  .section-title .cnt { padding: 3px 10px; background: rgba(255,255,255,0.06); border-radius: 100px; font-size: 11px; color: var(--text-dim); font-weight: 700; }
 
-  /* ============ INVENTORY ============ */
   .inv-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
-  .inv-card {
-    background: linear-gradient(145deg, #0e0e0e, #060606);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 14px 12px;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: all 0.3s;
-  }
+  .inv-card { background: linear-gradient(145deg, #0e0e0e, #060606); border: 1px solid var(--border); border-radius: 14px; padding: 14px 12px; position: relative; overflow: hidden; display: flex; flex-direction: column; transition: all 0.3s; }
   .inv-card:hover { transform: translateY(-4px); border-color: var(--item-color, var(--red)); }
-  .inv-card::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    background: var(--item-color, var(--red));
-    box-shadow: 0 0 15px var(--item-color, var(--red));
-    opacity: 0.7;
-  }
-  .inv-tag {
-    display: inline-block;
-    align-self: flex-start;
-    padding: 3px 9px;
-    border-radius: 6px;
-    font-size: 10px;
-    font-weight: 800;
-    font-family: 'Unbounded', sans-serif;
-    letter-spacing: 0.3px;
-    margin-bottom: 10px;
-    background: rgba(225,6,0,0.15);
-    color: var(--red);
-  }
+  .inv-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--item-color, var(--red)); box-shadow: 0 0 15px var(--item-color, var(--red)); opacity: 0.7; }
+  .inv-tag { display: inline-block; align-self: flex-start; padding: 3px 9px; border-radius: 6px; font-size: 10px; font-weight: 800; font-family: 'Unbounded', sans-serif; letter-spacing: 0.3px; margin-bottom: 10px; background: rgba(225,6,0,0.15); color: var(--red); }
   .inv-tag.vip { background: rgba(251,191,36,0.15); color: #fbbf24; }
-  .inv-image {
-    height: 70px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 44px;
-    margin-bottom: 8px;
-    filter: drop-shadow(0 0 20px rgba(251,191,36,0.25));
-  }
-  .inv-name {
-    font-family: 'Unbounded', sans-serif;
-    font-size: 13px; font-weight: 800; color: #fff;
-    text-align: center; margin-bottom: 6px;
-    letter-spacing: -0.3px;
-    min-height: 32px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .inv-info {
-    display: flex; flex-direction: column; gap: 3px;
-    font-size: 10.5px; color: var(--text-dim);
-    padding-top: 8px;
-    border-top: 1px solid var(--border);
-    margin-top: auto;
-  }
+  .inv-image { height: 70px; display: flex; align-items: center; justify-content: center; font-size: 44px; margin-bottom: 8px; filter: drop-shadow(0 0 20px rgba(251,191,36,0.25)); }
+  .inv-image svg { width: 44px; height: 44px; }
+  .inv-name { font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 800; color: #fff; text-align: center; margin-bottom: 6px; letter-spacing: -0.3px; min-height: 32px; display: flex; align-items: center; justify-content: center; }
+  .inv-info { display: flex; flex-direction: column; gap: 3px; font-size: 10.5px; color: var(--text-dim); padding-top: 8px; border-top: 1px solid var(--border); margin-top: auto; }
   .inv-info b { color: #fff; font-weight: 600; }
 
-  /* ============ FRIENDS ============ */
+  .inv-remove-btn { margin-top: 10px; padding: 8px 12px; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 9px; color: #ef4444; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 11.5px; cursor: pointer; transition: all 0.25s; display: flex; align-items: center; justify-content: center; gap: 5px; width: 100%; }
+  .inv-remove-btn:hover { background: rgba(239,68,68,0.22); border-color: rgba(239,68,68,0.6); }
+
   .friends-tabs { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
-  .f-tab {
-    padding: 8px 14px;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid var(--border-bright);
-    border-radius: 100px;
-    color: var(--text-dim);
-    font-family: 'Inter', sans-serif;
-    font-weight: 600; font-size: 12px;
-    cursor: pointer;
-    transition: all 0.25s;
-    display: inline-flex; align-items: center; gap: 6px;
-  }
+  .f-tab { padding: 8px 14px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-bright); border-radius: 100px; color: var(--text-dim); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12px; cursor: pointer; transition: all 0.25s; display: inline-flex; align-items: center; gap: 6px; }
   .f-tab.active { background: rgba(225,6,0,0.15); color: #fff; border-color: var(--red); }
   .f-tab .count { display: inline-block; padding: 1px 7px; background: rgba(255,255,255,0.06); border-radius: 100px; font-size: 10px; }
   .f-tab.active .count { background: rgba(225,6,0,0.25); }
 
   .friends-list { display: flex; flex-direction: column; gap: 6px; }
-  .friend-row {
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px 12px;
-    background: #0e0e0e;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    transition: all 0.25s;
-    text-decoration: none;
-  }
+  .friend-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: #0e0e0e; border: 1px solid var(--border); border-radius: 12px; transition: all 0.25s; text-decoration: none; }
   .friend-row:hover { border-color: rgba(225,6,0,0.4); transform: translateX(4px); }
   .friend-avatar-wrap { position: relative; flex-shrink: 0; }
   .friend-avatar { width: 42px; height: 42px; border-radius: 10px; object-fit: cover; }
-  .friend-status {
-    position: absolute; bottom: -2px; right: -2px;
-    width: 12px; height: 12px; border-radius: 50%;
-    border: 2.5px solid #0e0e0e;
-  }
+  .friend-avatar-empty { display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.03); border: 1px solid var(--border-bright); color: var(--text-dim); }
+  .friend-avatar-empty::after { content: '—'; opacity: 0.5; }
+  .friend-status { position: absolute; bottom: -2px; right: -2px; width: 12px; height: 12px; border-radius: 50%; border: 2.5px solid #0e0e0e; }
   .friend-status.online { background: #4ade80; }
   .friend-status.offline { background: #6b7280; }
   .friend-status.busy { background: #ef4444; }
   .friend-info { flex: 1; min-width: 0; }
-  .friend-name {
-    font-family: 'Unbounded', sans-serif;
-    font-size: 13px; font-weight: 700; color: #fff;
-    margin-bottom: 2px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
+  .friend-name { font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .friend-meta { font-size: 11px; color: var(--text-dim); }
 
-  /* ============ TRANSACTIONS ============ */
   .tx-list { display: flex; flex-direction: column; gap: 8px; }
-  .tx-item {
-    display: flex; gap: 12px;
-    padding: 12px 14px;
-    background: #0e0e0e;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    transition: all 0.2s;
-  }
+  .tx-item { display: flex; gap: 12px; padding: 12px 14px; background: #0e0e0e; border: 1px solid var(--border); border-radius: 12px; transition: all 0.2s; }
   .tx-item:hover { border-color: rgba(225,6,0,0.3); }
-  .tx-arrow {
-    width: 32px; height: 32px; border-radius: 9px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 15px; font-weight: 900; flex-shrink: 0;
-  }
+  .tx-arrow { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; flex-shrink: 0; }
   .tx-arrow.income { background: rgba(74,222,128,0.12); color: #4ade80; }
   .tx-arrow.outcome { background: rgba(239,68,68,0.12); color: #ef4444; }
   .tx-body { flex: 1; min-width: 0; }
@@ -530,181 +134,46 @@
   .tx-amount.outcome { color: #ef4444; }
   .tx-date { font-size: 10.5px; color: var(--text-dim); }
 
-  /* ============ SETTINGS ============ */
-  .settings-card {
-    background: linear-gradient(145deg, #0e0e0e, #0a0a0a);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 18px 18px 20px;
-    margin-bottom: 14px;
-  }
-  .form-label {
-    display: block; font-size: 12.5px; color: #fff;
-    margin-bottom: 8px; font-weight: 600;
-    font-family: 'Unbounded', sans-serif;
-    letter-spacing: -0.2px;
-  }
-  .form-input {
-    width: 100%; padding: 12px 16px;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border-bright);
-    border-radius: 10px;
-    color: #fff;
-    font-family: 'Inter', sans-serif;
-    font-size: 13.5px;
-    outline: none;
-    margin-bottom: 16px;
-    transition: all 0.3s;
-  }
+  .settings-card { background: linear-gradient(145deg, #0e0e0e, #0a0a0a); border: 1px solid var(--border); border-radius: 16px; padding: 18px 18px 20px; margin-bottom: 14px; }
+  .form-label { display: block; font-size: 12.5px; color: #fff; margin-bottom: 8px; font-weight: 600; font-family: 'Unbounded', sans-serif; letter-spacing: -0.2px; }
+  .form-input { width: 100%; padding: 12px 16px; background: var(--bg-elevated); border: 1px solid var(--border-bright); border-radius: 10px; color: #fff; font-family: 'Inter', sans-serif; font-size: 13.5px; outline: none; margin-bottom: 16px; transition: all 0.3s; }
   .form-input:focus { border-color: var(--red); box-shadow: 0 0 0 4px rgba(225,6,0,0.12); }
   .form-input::placeholder { color: #555; }
   .form-input:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  .discord-link-box {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 16px;
-    background: rgba(96,165,250,0.06);
-    border: 1px solid rgba(96,165,250,0.35);
-    border-radius: 10px;
-    margin-bottom: 16px;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
+  .discord-link-box { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: rgba(96,165,250,0.06); border: 1px solid rgba(96,165,250,0.35); border-radius: 10px; margin-bottom: 16px; gap: 12px; flex-wrap: wrap; }
   .discord-link-info { display: flex; align-items: center; gap: 12px; }
   .discord-link-info img { width: 36px; height: 36px; border-radius: 10px; }
   .discord-link-info .name { font-size: 13px; color: #fff; font-weight: 600; }
-  .discord-unlink {
-    padding: 8px 14px;
-    background: rgba(239,68,68,0.12);
-    border: 1px solid rgba(239,68,68,0.4);
-    border-radius: 8px;
-    color: #ef4444;
-    font-family: 'Inter', sans-serif;
-    font-weight: 600; font-size: 12px;
-    cursor: pointer;
-    transition: all 0.3s;
-  }
+  .discord-unlink { padding: 8px 14px; background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.4); border-radius: 8px; color: #ef4444; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12px; cursor: pointer; transition: all 0.3s; }
   .discord-unlink:hover { background: rgba(239,68,68,0.25); }
-  .btn-link-discord {
-    padding: 8px 14px;
-    background: linear-gradient(135deg, #5865f2, #4752c4);
-    border-radius: 8px; color: #fff;
-    font-weight: 600; font-size: 12px;
-    text-decoration: none;
-  }
+  .btn-link-discord { padding: 8px 14px; background: linear-gradient(135deg, #5865f2, #4752c4); border-radius: 8px; color: #fff; font-weight: 600; font-size: 12px; text-decoration: none; }
 
-  .save-all-btn {
-    width: 100%; padding: 15px;
-    background: linear-gradient(135deg, var(--red), var(--red-dark));
-    border: none; border-radius: 12px;
-    color: #fff;
-    font-family: 'Unbounded', sans-serif;
-    font-weight: 800; font-size: 14px;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    box-shadow: 0 8px 24px rgba(225,6,0,0.35);
-    letter-spacing: -0.2px;
-  }
+  .save-all-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--red), var(--red-dark)); border: none; border-radius: 12px; color: #fff; font-family: 'Unbounded', sans-serif; font-weight: 800; font-size: 14px; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 8px 24px rgba(225,6,0,0.35); letter-spacing: -0.2px; }
   .save-all-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(225,6,0,0.55); }
   .save-all-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  .link-block {
-    position: relative;
-    padding: 14px 16px;
-    background: rgba(255,255,255,0.02);
-    border: 1px solid var(--border-bright);
-    border-radius: 12px;
-    margin-bottom: 16px;
-  }
-  .link-head {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 10px; margin-bottom: 10px; flex-wrap: wrap;
-  }
-  .link-head-title {
-    font-family: 'Unbounded', sans-serif;
-    font-size: 12.5px; font-weight: 700; color: #fff;
-    display: inline-flex; align-items: center; gap: 8px;
-  }
-  .link-head-title .ico {
-    width: 26px; height: 26px; border-radius: 7px;
-    background: rgba(225,6,0,0.12);
-    border: 1px solid rgba(225,6,0,0.3);
-    display: inline-flex; align-items: center; justify-content: center;
-    font-size: 12px; color: var(--red);
-  }
-  .link-head-clear {
-    font-size: 11.5px; color: var(--text-dim);
-    cursor: pointer; text-decoration: none;
-    padding: 4px 10px; border-radius: 8px;
-    transition: all 0.2s; background: transparent;
-    border: 1px solid transparent;
-    font-family: 'Inter', sans-serif;
-  }
+  .link-block { position: relative; padding: 14px 16px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-bright); border-radius: 12px; margin-bottom: 16px; }
+  .link-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+  .link-head-title { font-family: 'Unbounded', sans-serif; font-size: 12.5px; font-weight: 700; color: #fff; display: inline-flex; align-items: center; gap: 8px; }
+  .link-head-title .ico { width: 26px; height: 26px; border-radius: 7px; background: rgba(225,6,0,0.12); border: 1px solid rgba(225,6,0,0.3); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; color: var(--red); }
+  .link-head-clear { font-size: 11.5px; color: var(--text-dim); cursor: pointer; text-decoration: none; padding: 4px 10px; border-radius: 8px; transition: all 0.2s; background: transparent; border: 1px solid transparent; font-family: 'Inter', sans-serif; }
   .link-head-clear:hover { color: var(--red); background: rgba(225,6,0,0.08); }
 
-  .badge-tag {
-    padding: 3px 9px;
-    background: linear-gradient(135deg, #fbbf24, #d97706);
-    color: #000; border-radius: 100px;
-    font-size: 9.5px; font-weight: 900;
-    letter-spacing: 0.5px;
-    font-family: 'Unbounded', sans-serif;
-  }
-  .badge-tag.no-plus {
-    background: linear-gradient(135deg, #ff4400, #8b0000);
-    color: #fff;
-  }
+  .badge-tag { padding: 3px 9px; background: linear-gradient(135deg, #fbbf24, #d97706); color: #000; border-radius: 100px; font-size: 9.5px; font-weight: 900; letter-spacing: 0.5px; font-family: 'Unbounded', sans-serif; }
+  .badge-tag.no-plus { background: linear-gradient(135deg, #ff4400, #8b0000); color: #fff; }
 
-  .link-input-row {
-    display: flex; align-items: stretch;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border-bright);
-    border-radius: 10px;
-    overflow: hidden;
-    transition: all 0.25s;
-    min-height: 46px;
-  }
+  .link-input-row { display: flex; align-items: stretch; background: var(--bg-elevated); border: 1px solid var(--border-bright); border-radius: 10px; overflow: hidden; transition: all 0.25s; min-height: 46px; }
   .link-input-row:focus-within { border-color: var(--red); box-shadow: 0 0 0 3px rgba(225,6,0,0.12); }
-  .link-prefix {
-    display: flex; align-items: center;
-    padding: 0 12px;
-    background: rgba(255,255,255,0.02);
-    border-right: 1px solid var(--border-bright);
-    color: var(--red);
-    font-family: 'Inter', monospace;
-    font-weight: 700; font-size: 13px;
-    white-space: nowrap; user-select: none;
-  }
-  .link-input {
-    flex: 1; min-width: 0;
-    padding: 0 12px; background: transparent;
-    border: none; color: #fff;
-    font-family: 'Inter', sans-serif;
-    font-size: 13px; font-weight: 500;
-    outline: none; line-height: 46px;
-  }
+  .link-prefix { display: flex; align-items: center; padding: 0 12px; background: rgba(255,255,255,0.02); border-right: 1px solid var(--border-bright); color: var(--red); font-family: 'Inter', monospace; font-weight: 700; font-size: 13px; white-space: nowrap; user-select: none; }
+  .link-input { flex: 1; min-width: 0; padding: 0 12px; background: transparent; border: none; color: #fff; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; outline: none; line-height: 46px; }
   .link-input::placeholder { color: #4a4a4a; font-weight: 400; }
   .link-input:disabled { opacity: 0.5; cursor: not-allowed; }
-  .link-input-actions {
-    display: flex; align-items: center; gap: 4px;
-    padding: 0 8px;
-    border-left: 1px solid var(--border-bright);
-  }
-  .link-icon-btn {
-    width: 30px; height: 30px;
-    border-radius: 7px;
-    background: transparent;
-    border: 1px solid transparent;
-    color: var(--text-dim);
-    cursor: pointer;
-    display: inline-flex; align-items: center; justify-content: center;
-    transition: all 0.2s; padding: 0;
-  }
+  .link-input-actions { display: flex; align-items: center; gap: 4px; padding: 0 8px; border-left: 1px solid var(--border-bright); }
+  .link-icon-btn { width: 30px; height: 30px; border-radius: 7px; background: transparent; border: 1px solid transparent; color: var(--text-dim); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s; padding: 0; }
   .link-icon-btn:hover:not(:disabled) { color: #fff; background: rgba(255,255,255,0.05); }
   .link-icon-btn:disabled { opacity: 0.3; cursor: not-allowed; }
   .link-icon-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-
   .link-status-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
   .link-status { display: inline-flex; align-items: center; gap: 7px; font-size: 11.5px; color: var(--text-dim); }
   .link-status .dot-indicator { width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: 0.5; }
@@ -713,60 +182,17 @@
   .link-status.err { color: #ef4444; }
   .link-status.err .dot-indicator { opacity: 1; }
   .link-status.checking { color: #60a5fa; }
-
-  .link-counter {
-    font-family: 'Unbounded', sans-serif;
-    font-size: 11px; color: var(--text-dim);
-    font-weight: 700; margin-top: 8px; display: block;
-  }
-
-  .link-block.locked .link-input-row,
-  .link-block.locked .link-status-row,
-  .link-block.locked .link-counter { filter: blur(3px); opacity: 0.4; pointer-events: none; }
-
-  .link-lock-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(145deg, rgba(10,10,10,0.85), rgba(6,6,6,0.92));
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    border-radius: 12px;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    text-align: center; padding: 16px; gap: 6px;
-    z-index: 5;
-  }
+  .link-counter { font-family: 'Unbounded', sans-serif; font-size: 11px; color: var(--text-dim); font-weight: 700; margin-top: 8px; display: block; }
+  .link-block.locked .link-input-row, .link-block.locked .link-status-row, .link-block.locked .link-counter { filter: blur(3px); opacity: 0.4; pointer-events: none; }
+  .link-lock-overlay { position: absolute; inset: 0; background: linear-gradient(145deg, rgba(10,10,10,0.85), rgba(6,6,6,0.92)); backdrop-filter: blur(6px); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 16px; gap: 6px; z-index: 5; }
   .link-lock-icon { font-size: 26px; filter: drop-shadow(0 0 16px rgba(251,191,36,0.5)); }
-  .link-lock-title {
-    font-family: 'Unbounded', sans-serif;
-    font-size: 12.5px; font-weight: 800;
-    color: #fbbf24; letter-spacing: -0.2px;
-  }
+  .link-lock-title { font-family: 'Unbounded', sans-serif; font-size: 12.5px; font-weight: 800; color: #fbbf24; letter-spacing: -0.2px; }
   .link-lock-desc { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--text-dim); line-height: 1.4; max-width: 240px; }
-  .link-lock-btn {
-    padding: 8px 16px;
-    background: linear-gradient(135deg, #fbbf24, #d97706);
-    color: #000; border-radius: 8px;
-    font-family: 'Unbounded', sans-serif;
-    font-weight: 800; font-size: 11px;
-    text-decoration: none;
-    box-shadow: 0 6px 20px rgba(251,191,36,0.4);
-    margin-top: 4px;
-  }
+  .link-lock-btn { padding: 8px 16px; background: linear-gradient(135deg, #fbbf24, #d97706); color: #000; border-radius: 8px; font-family: 'Unbounded', sans-serif; font-weight: 800; font-size: 11px; text-decoration: none; box-shadow: 0 6px 20px rgba(251,191,36,0.4); margin-top: 4px; }
 
   .empty-state { text-align: center; padding: 40px 20px; color: var(--text-dim); font-size: 13px; }
-  .empty-state .ico { font-size: 40px; margin-bottom: 10px; opacity: 0.35; }
-  .loading-state {
-    display: flex; align-items: center; justify-content: center;
-    padding: 40px 20px; gap: 10px;
-    color: var(--text-dim); font-size: 13px;
-  }
-  .spinner {
-    width: 20px; height: 20px;
-    border: 2px solid var(--border-bright);
-    border-top-color: var(--red);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
+  .loading-state { display: flex; align-items: center; justify-content: center; padding: 40px 20px; gap: 10px; color: var(--text-dim); font-size: 13px; }
+  .spinner { width: 20px; height: 20px; border: 2px solid var(--border-bright); border-top-color: var(--red); border-radius: 50%; animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
   @media (max-width: 699px) {
@@ -775,7 +201,8 @@
     .steam-name { font-size: 17px; }
     .steam-body { padding: 0 16px 20px; }
     .inv-grid { gap: 8px; }
-    .inv-image { height: 60px; font-size: 36px; }
+    .inv-image { height: 60px; }
+    .inv-image svg { width: 36px; height: 36px; }
     .inv-name { font-size: 12px; }
     .settings-card { padding: 16px; }
     .tx-title { font-size: 12px; }
@@ -797,8 +224,8 @@
   <div class="my-container">
     <div class="my-header">
       <div class="my-header-right">
-        <div class="profile-avatar-btn" id="profileAvatarBtn" onclick="toggleProfileMenu(event)">
-          <img id="headerAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
+        <div class="profile-avatar-btn" id="profileAvatarBtn" onclick="toggleProfileMenu(event)" style="display:none;">
+          <img id="headerAvatar" src="" alt="" style="display:none;">
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
           <div id="profileMenuContent"></div>
         </div>
@@ -807,8 +234,9 @@
 
     <div class="steam-profile" id="steamProfile">
       <div class="steam-banner" id="steamBanner"></div>
-      <div class="steam-avatar-wrap">
-        <img class="steam-avatar" id="steamAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
+      <div class="steam-avatar-wrap" id="steamAvatarWrap">
+        <img class="steam-avatar" id="steamAvatar" src="" alt="" style="display:none;">
+        <div class="steam-avatar steam-avatar-empty" id="steamAvatarEmpty" style="display:none;"></div>
       </div>
       <div class="steam-body" id="steamBody">
         <div class="loading-state"><div class="spinner"></div> Загрузка...</div>
@@ -842,22 +270,19 @@
       </button>
     </div>
 
-    <!-- PANEL: PROFILE -->
     <div class="tab-panel active" id="panel-profile">
       <div class="settings-card">
-        <div class="section-title">📝 Описание</div>
+        <div class="section-title">Описание</div>
         <div id="profileDesc" style="font-size:13.5px;color:var(--text);line-height:1.6;">
           <div class="loading-state"><div class="spinner"></div> Загрузка...</div>
         </div>
       </div>
     </div>
 
-    <!-- PANEL: SKINS -->
     <div class="tab-panel" id="panel-skins">
-      <div class="empty-state"><div class="ico">🔪</div>Раздел в разработке</div>
+      <div class="empty-state">Раздел в разработке</div>
     </div>
 
-    <!-- PANEL: INVENTORY -->
     <div class="tab-panel" id="panel-inventory">
       <div class="section-title">Активные <span class="cnt" id="invCount">0</span></div>
       <div class="inv-grid" id="invGrid">
@@ -865,7 +290,6 @@
       </div>
     </div>
 
-    <!-- PANEL: FRIENDS -->
     <div class="tab-panel" id="panel-friends">
       <div class="friends-tabs">
         <button class="f-tab active" onclick="switchFTab(this, 'all')">Все <span class="count" id="countAll">0</span></button>
@@ -877,7 +301,6 @@
       </div>
     </div>
 
-    <!-- PANEL: TRANSACTIONS -->
     <div class="tab-panel" id="panel-transactions">
       <div class="section-title">История операций</div>
       <div class="tx-list" id="txList">
@@ -885,7 +308,6 @@
       </div>
     </div>
 
-    <!-- PANEL: SETTINGS -->
     <div class="tab-panel" id="panel-settings">
       <div id="adminEditNotice" style="display:none;margin-bottom:14px;padding:12px 14px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.35);border-radius:10px;font-size:12.5px;color:#fbbf24;line-height:1.5;"></div>
 
@@ -929,7 +351,7 @@
         <label class="form-label">Привязка Discord</label>
         <div class="discord-link-box" id="discordBox">
           <div class="discord-link-info">
-            <img id="discordAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
+            <img id="discordAvatar" src="/logo.png" alt="">
             <div class="name" id="discordName">Загрузка...</div>
           </div>
           <button class="discord-unlink" id="discordActionBtn" onclick="unlinkDiscord()">Отвязать</button>
@@ -947,7 +369,6 @@
   </div>
 </main>
 
-<!-- МОДАЛКА СТРИКА -->
 <div class="streak-modal" id="streakModal" onclick="if(event.target.id==='streakModal')closeStreakModal()">
   <div class="streak-modal-inner" id="streakModalInner"></div>
 </div>
@@ -958,7 +379,7 @@
   <a class="nav-btn" href="/roles"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Роли</span></a>
   <a class="nav-btn" href="/shop"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span>Магазин</span></a>
   <a class="nav-btn" href="/stats"><svg viewBox="0 0 24 24"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg><span>Стата</span></a>
-  <a class="nav-btn active" href="/profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg><span>Профиль</span></a>
+  <a class="nav-btn" href="/apply"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg><span>Заявки</span></a>
 </nav>
 
 <div class="toast-wrap" id="toastWrap"></div>
@@ -980,15 +401,19 @@ let canViewTransactions = false;
 let allFriends = [];
 let currentFriendFilter = 'all';
 
-/* ============ AUTH ============ */
 window.addEventListener('auth:changed', (e) => {
   const user = e.detail.user;
   if (!user) {
-    document.getElementById('steamBody').innerHTML = '<div class="empty-state"><div class="ico">🔒</div>Войдите через Steam</div>';
+    document.getElementById('steamBody').innerHTML = '<div class="empty-state">Войдите через Steam</div>';
     return;
   }
-  document.getElementById('headerAvatar').src = user.avatar || '';
-  document.getElementById('profileMenuContent').innerHTML = renderProfileMenu('profile');
+  const av = document.getElementById('headerAvatar');
+  if (av) {
+    if (user.avatar) { av.src = user.avatar; av.style.display = ''; }
+    else { av.style.display = 'none'; }
+  }
+  const menuBox = document.getElementById('profileMenuContent');
+  if (menuBox) menuBox.innerHTML = renderProfileMenu('profile');
   currentUserData = user;
 
   const pathParts = window.location.pathname.split('/').filter(Boolean);
@@ -998,77 +423,82 @@ window.addEventListener('auth:changed', (e) => {
   targetUserId = urlId || params.get('id') || user.steamId || user.id;
 
   loadProfile();
+
+  // Открыть вкладку по хэшу
+  const openTabFromHash = () => {
+    const h = window.location.hash.replace('#', '');
+    if (h && ['profile', 'skins', 'inventory', 'friends', 'transactions', 'settings'].includes(h)) {
+      switchProfileTab(h);
+    }
+  };
+  setTimeout(openTabFromHash, 500);
+  window.addEventListener('hashchange', openTabFromHash);
 });
 
-/* ============ TABS ============ */
 function switchProfileTab(tab) {
   if (tab === 'settings' && !canEditSettings) return;
   if (tab === 'transactions' && !isOwnProfile && !canViewTransactions) return;
-
   document.querySelectorAll('.steam-menu-item').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + tab));
 }
 
-/* ============ PROFILE ============ */
 async function loadProfile() {
+  if (!targetUserId) {
+    document.getElementById('steamBody').innerHTML = '<div class="empty-state">Войдите через Steam</div>';
+    return;
+  }
   try {
     const r = await api(`/api/users/${targetUserId}`);
     const user = r.user;
     if (!user) {
-      document.getElementById('steamBody').innerHTML = '<div class="empty-state"><div class="ico">🔍</div>Не найден</div>';
+      document.getElementById('steamBody').innerHTML = '<div class="empty-state">Не найден</div>';
       return;
     }
-
     const mySteamId = currentUserData?.steamId || currentUserData?.id;
     isOwnProfile = !!(mySteamId && mySteamId === user.steamId);
-
     const isStaff = window.canEditOthersProfiles && window.canEditOthersProfiles(currentUserData);
     canEditSettings = !!user.canEditSettings && (isOwnProfile || isStaff);
     canViewTransactions = !!user.canViewTransactions && (isOwnProfile || isStaff);
 
     renderSteamProfile(user);
     document.getElementById('profileDesc').innerHTML = escapeHtml(user.description || 'Is it worth it?');
-
     applyProfileVisibility(user);
-
     loadInventory(user.steamId);
     loadFriends(user.steamId);
-
-    if (isOwnProfile) {
-      loadTransactions();
-    } else if (canViewTransactions) {
-      loadTransactions(user.steamId);
-    }
-
-    if (isOwnProfile) {
-      loadDiscordInfo(currentUserData.discordId);
-    } else {
-      loadDiscordInfo(user.discordId);
-    }
-
-    if (canEditSettings) {
-      loadSettingsDataFor(user);
-    }
+    if (isOwnProfile) loadTransactions();
+    else if (canViewTransactions) loadTransactions(user.steamId);
+    if (isOwnProfile) loadDiscordInfo(currentUserData.discordId);
+    else loadDiscordInfo(user.discordId);
+    if (canEditSettings) loadSettingsDataFor(user);
   } catch (e) {
     document.getElementById('steamBody').innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${escapeHtml(e.message)}</div>`;
   }
 }
 
 function renderSteamProfile(user) {
-  const avatar = user.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png';
-  const name = user.nickname || user.global_name || user.username || 'Пользователь';
-  document.getElementById('steamAvatar').src = avatar;
+  const avatarImg = document.getElementById('steamAvatar');
+  const avatarEmpty = document.getElementById('steamAvatarEmpty');
+  if (user.avatar) {
+    avatarImg.src = user.avatar;
+    avatarImg.style.display = 'block';
+    avatarEmpty.style.display = 'none';
+  } else {
+    avatarImg.style.display = 'none';
+    avatarEmpty.style.display = 'flex';
+  }
 
   const banner = document.getElementById('steamBanner');
   if (user.backgroundUrl) {
     banner.style.background = `linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.6)), url('${user.backgroundUrl}') center/cover`;
   }
 
+  const name = user.nickname || user.global_name || user.username || 'Пользователь';
+
   const ROLE_COLORS = {
-    'Техническая поддержка': '#e10600', 'Владелец': '#e10600', 'Разработчик': '#e10600',
-    'Следящий': '#e10600', 'Куратор': '#e10600', 'Медиа': '#e10600',
-    'Главный модератор': '#22d3ee', 'Старший модератор': '#4ade80',
-    'Модератор': '#3b82f6', 'Игрок': '#a855f7',
+    'Техническая поддержка': '#5865f2', 'Владелец': '#5865f2',
+    'Следящий': '#f0b232', 'Куратор': '#f0b232',
+    'Главный модератор': '#00a8fc', 'Старший модератор': '#23a55a',
+    'Модератор': '#5865f2', 'Игрок': '#a855f7',
   };
   const topRole = user.topRole || (user.roles || [])[0] || 'Игрок';
   const roleColor = ROLE_COLORS[topRole] || '#60a5fa';
@@ -1080,7 +510,6 @@ function renderSteamProfile(user) {
   const cleanName = name.replace(/#\S+/, '').trim();
   const tag = user.tag || (tagMatch ? tagMatch[0] : '');
 
-  // ЗОЛОТАЯ ГАЛОЧКА
   const verifyBadge = user.isVerified
     ? `<span class="steam-badge-item verify" title="FERNODD+">
          <svg width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24">
@@ -1088,7 +517,6 @@ function renderSteamProfile(user) {
          </svg>
        </span>` : '';
 
-  // ОГОНЁК — кликабелен только на своём профиле
   let activityBadge = '';
   if (user.activity > 0) {
     const frozen = user.streakFrozen;
@@ -1124,24 +552,16 @@ function renderSteamProfile(user) {
   `;
 }
 
-/* ============ МОДАЛКА СТРИКА ============ */
 window.openStreakModal = async function(e) {
   if (e) e.stopPropagation();
   if (!isOwnProfile) return;
-
   const modal = document.getElementById('streakModal');
   const inner = document.getElementById('streakModalInner');
-
-  inner.innerHTML = `
-    <div class="streak-loading">
-      <div class="spinner"></div> Загрузка...
-    </div>
-  `;
+  inner.innerHTML = `<div class="streak-loading"><div class="spinner"></div> Загрузка...</div>`;
   modal.classList.add('visible');
 
   try {
     const data = await api('/api/activity/status');
-
     const streak = data.streak || 0;
     const maxStreak = data.maxStreak || 0;
     const countedToday = data.countedToday;
@@ -1152,86 +572,48 @@ window.openStreakModal = async function(e) {
     const fireCls = frozen ? 'frozen' : '';
 
     let todayBlock = '';
-    if (frozen) {
-      todayBlock = `<div class="streak-today frozen">🧊 Стрик заморожен · пропуск 1 дня не сгорит</div>`;
-    } else if (countedToday) {
-      todayBlock = `<div class="streak-today ok">✅ Огонёк засчитан сегодня</div>`;
-    } else if (streak > 0) {
-      todayBlock = `<div class="streak-today no">⚠️ Проведи 5 минут на сайте</div>`;
-    } else {
-      todayBlock = `<div class="streak-today no">🕒 Проведи 5 минут на сайте</div>`;
-    }
+    if (frozen) todayBlock = `<div class="streak-today frozen">Стрик заморожен · пропуск 1 дня не сгорит</div>`;
+    else if (countedToday) todayBlock = `<div class="streak-today ok">Огонёк засчитан сегодня</div>`;
+    else if (streak > 0) todayBlock = `<div class="streak-today no">Проведи 5 минут на сайте</div>`;
+    else todayBlock = `<div class="streak-today no">Проведи 5 минут на сайте</div>`;
 
     let freezeBlock = '';
     if (hasPlus && streak > 0 && !frozen && countedToday) {
-      freezeBlock = `
-        <button class="streak-freeze-btn" onclick="freezeStreakFromModal()">
-          🧊 Заморозить на 1 день
-        </button>`;
+      freezeBlock = `<button class="streak-freeze-btn" onclick="freezeStreakFromModal()">Заморозить на 1 день</button>`;
     } else if (frozen) {
-      freezeBlock = `
-        <button class="streak-freeze-btn" disabled>
-          🧊 Заморозка активна
-        </button>`;
+      freezeBlock = `<button class="streak-freeze-btn" disabled>Заморозка активна</button>`;
     }
 
     inner.innerHTML = `
       <div class="streak-fire-big ${fireCls}">${fireIcon}</div>
       <div class="streak-count">${streak}</div>
       <div class="streak-count-label">${streak === 1 ? 'день подряд' : 'дней подряд'}</div>
-
       <div class="streak-stats">
-        <div class="streak-stat">
-          <div class="streak-stat-icon">🔥</div>
-          <div class="streak-stat-value">${streak}</div>
-          <div class="streak-stat-label">Текущий</div>
-        </div>
-        <div class="streak-stat">
-          <div class="streak-stat-icon">🏆</div>
-          <div class="streak-stat-value">${maxStreak}</div>
-          <div class="streak-stat-label">Рекорд</div>
-        </div>
+        <div class="streak-stat"><div class="streak-stat-icon">🔥</div><div class="streak-stat-value">${streak}</div><div class="streak-stat-label">Текущий</div></div>
+        <div class="streak-stat"><div class="streak-stat-icon">🏆</div><div class="streak-stat-value">${maxStreak}</div><div class="streak-stat-label">Рекорд</div></div>
       </div>
-
       ${todayBlock}
       ${freezeBlock}
-
-      <div class="streak-desc">
-        Заходи на сайт каждый день — стрик растёт.<br>
-        Пропустишь 1 день — стрик сгорит.
-      </div>
-
+      <div class="streak-desc">Заходи на сайт каждый день — стрик растёт.<br>Пропустишь 1 день — стрик сгорит.</div>
       <button class="streak-close-btn" onclick="closeStreakModal()">Закрыть</button>
     `;
   } catch (e) {
-    inner.innerHTML = `
-      <div class="streak-loading" style="color:var(--red);">
-        Ошибка: ${escapeHtml(e.message)}
-      </div>
-      <button class="streak-close-btn" style="margin-top:10px;" onclick="closeStreakModal()">Закрыть</button>
-    `;
+    inner.innerHTML = `<div class="streak-loading" style="color:var(--red);">Ошибка: ${escapeHtml(e.message)}</div><button class="streak-close-btn" style="margin-top:10px;" onclick="closeStreakModal()">Закрыть</button>`;
   }
 };
 
 window.closeStreakModal = function() {
   document.getElementById('streakModal').classList.remove('visible');
 };
-
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') closeStreakModal();
-});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeStreakModal(); });
 
 window.freezeStreakFromModal = async function() {
   if (!confirm('Заморозить стрик?\n\nПропустишь 1 день — стрик не сгорит. Пропустишь 2 — сгорит.')) return;
-
   try {
     const r = await api('/api/activity/freeze', { method: 'POST' });
-    showToast(`🧊 Заморожено (🔥 ${r.streak})`, 'success');
+    showToast(`Заморозено (${r.streak})`, 'success');
     closeStreakModal();
-    setTimeout(() => {
-      loadProfile();
-      openStreakModal();
-    }, 500);
+    setTimeout(() => { loadProfile(); openStreakModal(); }, 500);
   } catch (e) {
     const errors = {
       fernodd_plus_required: 'Только для владельцев FERNODD+',
@@ -1241,11 +623,10 @@ window.freezeStreakFromModal = async function() {
       no_db: 'Ошибка базы данных',
     };
     const key = e.message.split(' — ')[0];
-    showToast('❌ ' + (errors[key] || e.message), 'error');
+    showToast((errors[key] || e.message), 'error');
   }
 };
 
-/* ============ ACTIVITY UPDATE ============ */
 window.addEventListener('activity:changed', (e) => {
   const badge = document.getElementById('activityBadge');
   const count = document.getElementById('activityCount');
@@ -1256,7 +637,6 @@ window.addEventListener('activity:changed', (e) => {
     badge.style.animation = 'none';
     void badge.offsetWidth;
     badge.style.animation = 'firePulse 0.6s ease';
-
     if (e.detail.frozen) {
       badge.innerHTML = `🧊 <span id="activityCount">${e.detail.points}</span>`;
       badge.style.background = 'rgba(96,165,250,0.15)';
@@ -1266,7 +646,6 @@ window.addEventListener('activity:changed', (e) => {
   }
 });
 
-/* ============ VISIBILITY ============ */
 function applyProfileVisibility(user) {
   const isOwn = !!(currentUserData && (currentUserData.steamId === user.steamId));
   const isStaff = window.canEditOthersProfiles && window.canEditOthersProfiles(currentUserData);
@@ -1282,20 +661,15 @@ function applyProfileVisibility(user) {
 
   const activeTab = document.querySelector('.steam-menu-item.active')?.dataset.tab;
   const activeEl = document.querySelector(`.steam-menu-item[data-tab="${activeTab}"]`);
-  if (!activeEl || activeEl.style.display === 'none') {
-    switchProfileTab('profile');
-  }
+  if (!activeEl || activeEl.style.display === 'none') switchProfileTab('profile');
 
   const adminNotice = document.getElementById('adminEditNotice');
   if (adminNotice) {
     adminNotice.style.display = canEdit && !isOwn ? 'block' : 'none';
-    if (canEdit && !isOwn) {
-      adminNotice.innerHTML = `⚠️ Вы редактируете профиль <b>${escapeHtml(user.username || user.steamId)}</b> от имени персонала`;
-    }
+    if (canEdit && !isOwn) adminNotice.innerHTML = `Вы редактируете профиль <b>${escapeHtml(user.username || user.steamId)}</b> от имени персонала`;
   }
 }
 
-/* ============ INVENTORY ============ */
 async function loadInventory(steamId) {
   const grid = document.getElementById('invGrid');
   grid.innerHTML = '<div class="loading-state" style="grid-column:1/-1;"><div class="spinner"></div> Загрузка...</div>';
@@ -1305,27 +679,37 @@ async function loadInventory(steamId) {
     const items = data.items || [];
     document.getElementById('invCount').textContent = items.length;
     if (!items.length) {
-      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="ico">📦</div>Пока нет покупок</div>`;
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">Пока нет покупок</div>`;
       return;
     }
     const ICONS = {
-      fernodd_plus: { icon: '⭐', color: '#fbbf24', tag: 'vip', tagLabel: 'FERNODD+' },
+      fernodd_plus: {
+        svg: `<svg viewBox="0 0 24 24" fill="#fbbf24" style="width:44px;height:44px;"><path d="M12 2l2.9 6.9 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.5l7.1-.6L12 2z"/></svg>`,
+        color: '#fbbf24', tag: 'vip', tagLabel: 'FERNODD+'
+      }
     };
     const ROLE_ICONS = {
-      'Модератор': { icon: '🛡️', color: '#3b82f6', tagLabel: 'МОДЕРАТОР' },
-      'Старший модератор': { icon: '⭐', color: '#4ade80', tagLabel: 'СТ. МОДЕРАТОР' },
-      'Главный модератор': { icon: '👑', color: '#22d3ee', tagLabel: 'ГЛ. МОДЕРАТОР' },
-      'Куратор': { icon: '🎯', color: '#e10600', tagLabel: 'КУРАТОР' },
-      'Следящий': { icon: '👁️', color: '#e10600', tagLabel: 'СЛЕДЯЩИЙ' },
-      'Техническая поддержка': { icon: '🔧', color: '#e10600', tagLabel: 'ТЕХ. ПОДДЕРЖКА' },
+      'Модератор': { svg: `<svg viewBox="0 0 24 24" fill="none" stroke="#5865f2" stroke-width="1.8" style="width:40px;height:40px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`, color: '#5865f2', tagLabel: 'МОДЕРАТОР' },
+      'Старший модератор': { svg: `<svg viewBox="0 0 24 24" fill="none" stroke="#23a55a" stroke-width="1.8" style="width:40px;height:40px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`, color: '#23a55a', tagLabel: 'СТ. МОДЕРАТОР' },
+      'Главный модератор': { svg: `<svg viewBox="0 0 24 24" fill="none" stroke="#00a8fc" stroke-width="1.8" style="width:40px;height:40px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`, color: '#00a8fc', tagLabel: 'ГЛ. МОДЕРАТОР' },
+      'Куратор': { svg: `<svg viewBox="0 0 24 24" fill="none" stroke="#f0b232" stroke-width="1.8" style="width:40px;height:40px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`, color: '#f0b232', tagLabel: 'КУРАТОР' },
+      'Следящий': { svg: `<svg viewBox="0 0 24 24" fill="none" stroke="#f0b232" stroke-width="1.8" style="width:40px;height:40px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`, color: '#f0b232', tagLabel: 'СЛЕДЯЩИЙ' },
+      'Техническая поддержка': { svg: `<svg viewBox="0 0 24 24" fill="none" stroke="#5865f2" stroke-width="1.8" style="width:40px;height:40px;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`, color: '#5865f2', tagLabel: 'ТЕХ. ПОДДЕРЖКА' },
     };
+    const NON_REMOVABLE = [
+      'Модератор', 'Старший модератор', 'Главный модератор', 'Медиа', 'Разработчик',
+      'Куратор', 'Следящий', 'Техническая поддержка', 'Главная администрация', 'Владелец'
+    ];
     grid.innerHTML = items.map(it => {
       let meta;
-      if (it.isRole) {
-        meta = ROLE_ICONS[it.itemName] || { icon: '🎭', color: 'var(--red)', tagLabel: 'РОЛЬ' };
-      } else {
-        meta = ICONS[it.itemId] || { icon: '🎁', color: 'var(--red)', tag: 'vip', tagLabel: 'Услуга' };
-      }
+      if (it.isRole) meta = ROLE_ICONS[it.itemName] || { svg: '🎭', color: 'var(--red)', tagLabel: 'РОЛЬ' };
+      else meta = ICONS[it.itemId] || { svg: '🎁', color: 'var(--red)', tag: 'vip', tagLabel: 'Услуга' };
+
+      const canRemove = isOwnProfile && (
+        (it.isRole && !NON_REMOVABLE.includes(it.itemName)) ||
+        !it.isRole
+      );
+
       const lastDate = new Date(it.lastPurchase).toLocaleDateString('ru-RU');
       let duration = 'Активно';
       if (it.isRole) duration = 'Навсегда';
@@ -1338,12 +722,13 @@ async function loadInventory(steamId) {
       return `
         <div class="inv-card" style="--item-color:${meta.color};">
           <span class="inv-tag ${meta.tag || ''}">${meta.tagLabel}${it.count > 1 ? ` ×${it.count}` : ''}</span>
-          <div class="inv-image">${meta.icon}</div>
+          <div class="inv-image">${meta.svg}</div>
           <div class="inv-name">${escapeHtml(it.itemName)}</div>
           <div class="inv-info">
             <span>Действует: <b>${duration}</b></span>
             <span>${it.isRole ? 'Роль' : 'Покупка'}: <b>${lastDate}</b></span>
           </div>
+          ${canRemove ? `<button class="inv-remove-btn" onclick="removeInventoryItem('${it.itemId}', '${escapeHtml(it.itemName)}')" title="Удалить">Удалить</button>` : ''}
         </div>`;
     }).join('');
   } catch (e) {
@@ -1351,7 +736,25 @@ async function loadInventory(steamId) {
   }
 }
 
-/* ============ FRIENDS ============ */
+window.removeInventoryItem = async function (itemId, itemName) {
+  if (!confirm(`Удалить «${itemName}» из инвентаря?\n\nЭто действие необратимо. Роль также снимется в Discord.`)) return;
+  try {
+    await api('/api/inventory/remove', { method: 'POST', body: JSON.stringify({ itemId }) });
+    showToast(`«${itemName}» удалено`, 'success');
+    loadProfile();
+  } catch (e) {
+    const errors = {
+      non_removable_role: 'Эту роль нельзя удалить',
+      role_not_owned: 'У вас нет этой роли',
+      subscription_not_found: 'Подписка не найдена',
+      missing_item_id: 'Ошибка: неверный ID',
+      no_db: 'Ошибка базы данных',
+    };
+    const key = e.message.split(' — ')[0];
+    showToast((errors[key] || e.message), 'error');
+  }
+};
+
 async function loadFriends(steamId) {
   const list = document.getElementById('friendsList');
   list.innerHTML = '<div class="loading-state"><div class="spinner"></div> Загрузка друзей...</div>';
@@ -1374,16 +777,19 @@ function renderFriends() {
   if (currentFriendFilter === 'registered') arr = arr.filter(f => f.registered);
   if (currentFriendFilter === 'online') arr = arr.filter(f => f.status === 'online');
   if (!arr.length) {
-    list.innerHTML = `<div class="empty-state"><div class="ico">👥</div>Никого не найдено</div>`;
+    list.innerHTML = `<div class="empty-state">Никого не найдено</div>`;
     return;
   }
   list.innerHTML = arr.map(f => {
     const href = f.registered && f.steamId ? `/profile/${f.steamId}` : f.profileUrl;
     const target = f.registered ? '' : 'target="_blank" rel="noopener"';
     const statusText = f.status === 'online' ? 'В сети' : (f.status === 'busy' ? 'Занят' : 'Не в сети');
+    const avatarHTML = f.avatar
+      ? `<img class="friend-avatar" src="${f.avatar}" alt="">`
+      : `<div class="friend-avatar friend-avatar-empty"></div>`;
     return `<a class="friend-row" href="${href}" ${target}>
       <div class="friend-avatar-wrap">
-        <img class="friend-avatar" src="${f.avatar}" alt="" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
+        ${avatarHTML}
         <span class="friend-status ${f.status}"></span>
       </div>
       <div class="friend-info">
@@ -1401,7 +807,6 @@ function switchFTab(el, filter) {
   renderFriends();
 }
 
-/* ============ TRANSACTIONS ============ */
 async function loadTransactions(steamId) {
   const list = document.getElementById('txList');
   list.innerHTML = '<div class="loading-state"><div class="spinner"></div> Загрузка...</div>';
@@ -1410,7 +815,7 @@ async function loadTransactions(steamId) {
     const data = await api('/api/transactions' + q);
     const items = data.transactions || [];
     if (!items.length) {
-      list.innerHTML = `<div class="empty-state"><div class="ico">💸</div>Пока нет транзакций</div>`;
+      list.innerHTML = `<div class="empty-state">Пока нет транзакций</div>`;
       return;
     }
     list.innerHTML = items.map(t => {
@@ -1434,9 +839,9 @@ async function loadTransactions(steamId) {
   }
 }
 
-/* ============ SETTINGS ============ */
 async function loadSettingsDataFor(user) {
   try {
+    window.__originalProfileLink = user.profileLink || '';
     document.getElementById('descInput').value = user.description || 'Is it worth it?';
     document.getElementById('bgInput').value = user.backgroundUrl || '';
     document.getElementById('linkInput').value = user.profileLink || '';
@@ -1457,16 +862,12 @@ async function loadSettingsDataFor(user) {
     if (notice) {
       const showNotice = isStaff && !isOwn;
       notice.style.display = showNotice ? 'block' : 'none';
-      if (showNotice) {
-        notice.innerHTML = `⚠️ Вы редактируете профиль <b>${escapeHtml(user.username || user.steamId)}</b> от имени персонала`;
-      }
+      if (showNotice) notice.innerHTML = `Вы редактируете профиль <b>${escapeHtml(user.username || user.steamId)}</b> от имени персонала`;
     }
-
     updateLinkUI();
   } catch (e) { console.error(e); }
 }
 
-/* ============ LINK INPUT ============ */
 const linkInput = document.getElementById('linkInput');
 linkInput.addEventListener('input', () => {
   let v = linkInput.value.replace(/[^a-zA-Z0-9_\-]/g, '').toLowerCase().slice(0, 20);
@@ -1479,32 +880,25 @@ function updateLinkUI() {
   const statusEl = document.getElementById('linkStatus');
   const statusText = document.getElementById('linkStatusText');
   const counter = document.getElementById('linkCounter');
-
   counter.textContent = `${v.length} / 20`;
-
   if (!v) {
     statusEl.className = 'link-status idle';
     statusText.textContent = '3–20 символов: латиница, цифры, «_» и «-»';
-    statusEl.querySelector('.dot-indicator').style.display = '';
     linkStatus = 'idle';
     lastCheckedLink = '';
     return;
   }
-
   if (v.length < 3 || !/^[a-zA-Z0-9_\-]{3,20}$/.test(v)) {
     statusEl.className = 'link-status err';
     statusText.textContent = v.length < 3 ? 'Минимум 3 символа' : 'Неверный формат';
     linkStatus = 'err';
     return;
   }
-
   if (v === lastCheckedLink) return;
   clearTimeout(linkCheckTimer);
   linkStatus = 'checking';
   statusEl.className = 'link-status checking';
   statusText.textContent = 'Проверяем...';
-  statusEl.querySelector('.dot-indicator').style.display = 'none';
-
   linkCheckTimer = setTimeout(async () => {
     try {
       const r = await api('/api/profile/check-link?link=' + encodeURIComponent(v));
@@ -1552,17 +946,15 @@ function applyFernoddPlusLock(hasPlus, currentLink) {
   iconBtns.forEach(b => b.disabled = true);
   if (badge) badge.style.display = 'none';
   if (noPlusBadge) noPlusBadge.style.display = 'inline-block';
-
   const oldOv = block.querySelector('.link-lock-overlay');
   if (oldOv) oldOv.remove();
-
   const overlay = document.createElement('div');
   overlay.className = 'link-lock-overlay';
   overlay.innerHTML = `
     <div class="link-lock-icon">🔒</div>
     <div class="link-lock-title">Только для FERNODD+</div>
     <div class="link-lock-desc">Оформите подписку, чтобы установить свою ссылку профиля</div>
-    <a class="link-lock-btn" href="/shop">В магазин →</a>
+    <a class="link-lock-btn" href="/shop">В магазин</a>
   `;
   block.appendChild(overlay);
 }
@@ -1577,17 +969,14 @@ window.copyProfileUrl = function () {
   const v = linkInput.value.trim();
   if (!v) { showToast('Введите ссылку', 'error'); return; }
   const url = `${window.location.origin}/profile/${v}`;
-  navigator.clipboard.writeText(url).then(() => showToast('✅ Скопировано', 'success')).catch(() => showToast('Ошибка', 'error'));
+  navigator.clipboard.writeText(url).then(() => showToast('Скопировано', 'success')).catch(() => showToast('Ошибка', 'error'));
 };
 
-/* ============ SAVE ============ */
 async function saveAllSettings() {
   const btn = document.getElementById('saveAllBtn');
   btn.disabled = true;
   btn.textContent = 'Сохранение...';
-
   const isOwn = isOwnProfile;
-  const hasPlus = document.getElementById('plusBadge')?.style.display !== 'none';
 
   const payload = {
     description: document.getElementById('descInput').value.trim(),
@@ -1597,37 +986,34 @@ async function saveAllSettings() {
   };
 
   const linkVal = linkInput.value.trim();
-  if (linkVal) {
-    if (isOwn && hasPlus) {
-      payload.profileLink = linkVal;
-    } else if (!isOwn && canEditSettings) {
-      payload.profileLink = linkVal;
-      payload.steamId = targetUserId;
-    }
+  const originalLink = window.__originalProfileLink || '';
+  if (linkVal !== originalLink) {
+    payload.profileLink = linkVal;
+    if (!isOwn && canEditSettings) payload.steamId = targetUserId;
   }
 
   try {
     await api('/api/profile/update', { method: 'POST', body: JSON.stringify(payload) });
-    showToast('✅ Настройки сохранены', 'success');
+    showToast('Настройки сохранены', 'success');
+    window.__originalProfileLink = linkVal;
     loadProfile();
   } catch (e) {
     const errors = {
       bad_link_format: 'Неверный формат ссылки',
       link_taken: 'Ссылка уже занята',
-      fernodd_plus_required: 'Только для FERNODD+ (только для ссылки профиля)',
+      fernodd_plus_required: 'Только для FERNODD+ (ссылка профиля)',
       not_allowed_for_others: 'Нет прав на изменение чужого профиля',
       bad_steam_id: 'Неверный Steam ID',
       no_db: 'Ошибка базы данных',
     };
     const key = e.message.split(' — ')[0];
-    showToast('❌ ' + (errors[key] || e.message), 'error');
+    showToast((errors[key] || e.message), 'error');
   } finally {
     btn.disabled = false;
     btn.textContent = 'Сохранить';
   }
 }
 
-/* ============ DISCORD ============ */
 async function loadDiscordInfo(discordId) {
   const box = document.getElementById('discordBox');
   if (!discordId) {
@@ -1640,7 +1026,7 @@ async function loadDiscordInfo(discordId) {
   }
   try {
     const data = await api('/api/discord-info/' + discordId);
-    document.getElementById('discordAvatar').src = data.avatar;
+    document.getElementById('discordAvatar').src = data.avatar || '/logo.png';
     document.getElementById('discordName').textContent = data.nickname || data.global_name || data.username;
   } catch {
     document.getElementById('discordName').textContent = 'Ошибка';
@@ -1650,9 +1036,7 @@ async function loadDiscordInfo(discordId) {
 async function unlinkDiscord() {
   if (!confirm('Отвязать Discord?')) return;
   const payload = {};
-  if (!isOwnProfile && canEditSettings) {
-    payload.steamId = targetUserId;
-  }
+  if (!isOwnProfile && canEditSettings) payload.steamId = targetUserId;
   try {
     await api('/api/unlink-discord', { method: 'POST', body: JSON.stringify(payload) });
     showToast('Discord отвязан', 'success');
