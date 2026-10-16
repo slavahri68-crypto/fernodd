@@ -33,7 +33,8 @@
   @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
   .stats-info { background: linear-gradient(145deg, #0e0e0e, #0a0a0a); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 12px; }
-  .stats-info-icon { width: 36px; height: 36px; border-radius: 10px; background: rgba(255,68,0,0.12); border: 1px solid rgba(255,68,0,0.35); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; color: #ff4400; }
+  .stats-info-icon { width: 36px; height: 36px; border-radius: 10px; background: rgba(255,68,0,0.12); border: 1px solid rgba(255,68,0,0.35); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #ff4400; }
+  .stats-info-icon svg { width: 18px; height: 18px; fill: currentColor; }
   .stats-info-text { font-size: 12px; color: var(--text-dim); line-height: 1.5; }
   .stats-info-text b { color: #ff4400; font-family: 'Unbounded', sans-serif; font-weight: 700; }
 
@@ -64,13 +65,17 @@
 
   .stat-fire { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; background: linear-gradient(135deg, rgba(255,68,0,0.15), rgba(255,68,0,0.05)); border: 1px solid rgba(255,68,0,0.4); border-radius: 100px; font-family: 'Unbounded', sans-serif; font-weight: 800; font-size: 13px; color: #ff4400; flex-shrink: 0; }
   .stat-fire.frozen { background: linear-gradient(135deg, rgba(96,165,250,0.15), rgba(96,165,250,0.05)); border-color: rgba(96,165,250,0.4); color: #60a5fa; }
+  .stat-fire .fire-icon { display: inline-flex; width: 12px; height: 12px; align-items: center; justify-content: center; }
+  .stat-fire .fire-icon svg { width: 12px; height: 12px; fill: currentColor; }
+  .stat-fire.frozen .fire-icon svg { fill: none; stroke: currentColor; stroke-width: 2; }
 
   .players-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 10px; flex-wrap: wrap; }
   .players-count { font-family: 'Unbounded', sans-serif; font-size: 13px; color: var(--text-dim); font-weight: 700; }
   .players-search { flex: 1; min-width: 180px; position: relative; }
   .players-search input { width: 100%; padding: 10px 14px 10px 38px; background: var(--bg-elevated); border: 1px solid var(--border-bright); border-radius: 10px; color: #fff; font-family: 'Inter', sans-serif; font-size: 13px; outline: none; transition: all 0.25s; }
   .players-search input:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(225,6,0,0.12); }
-  .players-search::before { content: '🔍'; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 13px; opacity: 0.5; }
+  .players-search .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: var(--text-dim); pointer-events: none; }
+  .players-search .search-icon svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
 
   .player-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: linear-gradient(145deg, #0e0e0e, #0a0a0a); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; transition: all 0.25s; }
   .player-row:hover { border-color: rgba(225,6,0,0.4); transform: translateX(4px); }
@@ -127,9 +132,7 @@
 
     <div class="stats-panel active" id="panel-streak">
       <div class="stats-info">
-        <div class="stats-info-icon">
-          <svg viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px;"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67z"/></svg>
-        </div>
+        <div class="stats-info-icon" id="statsInfoIcon"></div>
         <div class="stats-info-text">
           <b>+1 день к стрику</b> за 5 минут активности на сайте.
         </div>
@@ -143,6 +146,7 @@
       <div class="players-header">
         <div class="players-count">Всего: <span id="playersTotal">0</span></div>
         <div class="players-search">
+          <span class="search-icon" id="searchIcon"></span>
           <input type="text" id="playersSearchInput" placeholder="Поиск по нику..." oninput="filterPlayers()">
         </div>
       </div>
@@ -164,6 +168,7 @@
 
 <div class="toast-wrap" id="toastWrap"></div>
 
+<script src="/js/icons.js"></script>
 <script src="/js/common.js"></script>
 <script src="/js/my-profile.js"></script>
 <script src="/js/auth.js"></script>
@@ -172,6 +177,11 @@ let currentStatsTab = 'streak';
 let streakUsers = [];
 let playersUsers = [];
 let playersFilter = '';
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('statsInfoIcon').innerHTML = window.ICONS.flame;
+  document.getElementById('searchIcon').innerHTML = window.ICONS.search;
+});
 
 window.addEventListener('auth:changed', (e) => {
   const user = e.detail.user;
@@ -259,6 +269,7 @@ function renderPlayers() {
     const avatarHTML = u.avatar
       ? `<img class="stat-avatar" src="${u.avatar}" alt="">`
       : `<div class="stat-avatar stat-avatar-empty"></div>`;
+    const fireIcon = u.frozen ? window.ICONS.snowflake : window.ICONS.flame;
     return `
       <a class="player-row" href="/profile/${u.steamId}">
         <div class="stat-avatar-wrap">
@@ -268,7 +279,7 @@ function renderPlayers() {
         <div class="stat-body">
           <div class="stat-name">${escapeHtml(u.name)}</div>
         </div>
-        ${u.streak > 0 ? `<div class="stat-fire ${frozenCls}" style="padding:4px 9px;font-size:11px;">${u.frozen ? '🧊' : '🔥'} ${u.streak}</div>` : ''}
+        ${u.streak > 0 ? `<div class="stat-fire ${frozenCls}" style="padding:4px 9px;font-size:11px;"><span class="fire-icon">${fireIcon}</span> ${u.streak}</div>` : ''}
       </a>`;
   }).join('');
 }

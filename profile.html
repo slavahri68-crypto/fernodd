@@ -19,41 +19,63 @@
   .steam-profile { position: relative; border-radius: 18px; overflow: hidden; background: linear-gradient(145deg, #0e0e0e, #060606); border: 1px solid var(--border); margin-bottom: 14px; }
   .steam-banner { height: 140px; background: linear-gradient(135deg, #1a1a1a 0%, #060606 100%); background-size: cover; background-position: center; position: relative; }
   .steam-banner::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 120%, rgba(225,6,0,0.25), transparent 60%); pointer-events: none; }
+
+  .steam-social-corner { position: absolute; top: 14px; right: 14px; display: flex; gap: 8px; z-index: 3; }
+  .steam-social-corner a { width: 36px; height: 36px; border-radius: 10px; background: rgba(10,10,10,0.75); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; transition: all 0.25s; color: #b0b0b0; }
+  .steam-social-corner a:hover { transform: translateY(-3px); color: #fff; border-color: var(--red); background: rgba(225,6,0,0.15); box-shadow: 0 6px 20px rgba(225,6,0,0.35); }
+  .steam-social-corner svg { width: 18px; height: 18px; fill: currentColor; }
+
   .steam-avatar-wrap { position: relative; width: 110px; height: 110px; margin: -55px auto 12px; border-radius: 14px; border: 3px solid #0e0e0e; overflow: hidden; background: #060606; z-index: 2; box-shadow: 0 8px 24px rgba(0,0,0,0.7); }
   .steam-avatar { width: 100%; height: 100%; object-fit: cover; display: block; }
   .steam-avatar-empty { display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.03); color: var(--text-dim); font-size: 20px; }
   .steam-avatar-empty::after { content: '—'; opacity: 0.4; }
+
   .steam-body { padding: 0 20px 22px; text-align: center; }
   .steam-role-badge { display: inline-block; padding: 5px 14px; background: rgba(96,165,250,0.12); border: 1px solid rgba(96,165,250,0.5); border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 600; color: #60a5fa; margin-bottom: 12px; }
   .steam-name-row { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
   .steam-name { font-family: 'Unbounded', sans-serif; font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.5px; word-break: break-word; line-height: 1.15; max-width: 100%; }
+
   .steam-badge-item { display: inline-flex; align-items: center; gap: 3px; padding: 3px 8px; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; line-height: 1; }
-  .steam-badge-item.verify { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.4); padding: 4px 6px; }
-  .steam-badge-item.fire { background: rgba(255,68,0,0.15); color: #ff4400; border: 1px solid rgba(255,68,0,0.35); }
-  .steam-badge-item.tag { background: rgba(255,255,255,0.06); color: var(--text-dim); border: 1px solid var(--border-bright); font-size: 10.5px; }
-  @keyframes firePulse {
-    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,68,0,0.6); }
-    50% { transform: scale(1.15); box-shadow: 0 0 20px 6px rgba(255,68,0,0.5); }
-    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,68,0,0); }
+  .steam-badge-item.verify { background: transparent; border: none; padding: 0; filter: drop-shadow(0 0 8px rgba(251,191,36,0.6)); animation: fernoddPlusPulse 3s ease-in-out infinite; }
+  @keyframes fernoddPlusPulse {
+    0%, 100% { filter: drop-shadow(0 0 8px rgba(251,191,36,0.5)); }
+    50% { filter: drop-shadow(0 0 16px rgba(251,191,36,0.9)); }
   }
+  .steam-badge-item.verify svg { width: 18px; height: 18px; }
+  .steam-badge-item.fire { background: rgba(255,68,0,0.15); color: #ff4400; border: 1px solid rgba(255,68,0,0.35); padding: 4px 10px; font-family: 'Unbounded', sans-serif; font-weight: 800; font-size: 12px; }
+  .steam-badge-item .badge-icon { display: inline-flex; width: 12px; height: 12px; align-items: center; justify-content: center; }
+  .steam-badge-item .badge-icon svg { width: 12px; height: 12px; fill: currentColor; }
+
   .steam-status-text { font-size: 12.5px; font-weight: 600; margin-bottom: 14px; font-family: 'Unbounded', sans-serif; letter-spacing: -0.2px; }
   .steam-status-text.online { color: #4ade80; }
   .steam-status-text.offline { color: #8a8a8a; }
   .steam-desc { font-size: 13px; color: var(--text-dim); line-height: 1.6; margin-bottom: 16px; padding: 0 8px; }
+
+  .profile-reactions { display: flex; align-items: center; gap: 18px; margin: 10px 0 16px; padding: 0 20px; justify-content: center; }
+  .reaction-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-bright); border-radius: 100px; font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 13px; color: var(--text-dim); cursor: pointer; transition: all 0.25s; user-select: none; }
+  .reaction-btn svg { width: 16px; height: 16px; fill: currentColor; }
+  .reaction-btn:hover { transform: translateY(-2px); border-color: rgba(225,6,0,0.4); color: #fff; }
+  .reaction-btn.active-like { background: rgba(74,222,128,0.12); border-color: rgba(74,222,128,0.5); color: #4ade80; }
+  .reaction-btn.active-dislike { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.5); color: #ef4444; }
+  .reaction-views { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 13px; color: var(--text-dim); }
+  .reaction-views svg { width: 16px; height: 16px; fill: currentColor; }
 
   .streak-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 2500; display: none; align-items: center; justify-content: center; padding: 20px; }
   .streak-modal.visible { display: flex; }
   .streak-modal-inner { background: linear-gradient(145deg, #0e0e0e, #060606); border: 1px solid var(--border-bright); border-radius: 22px; padding: 24px; max-width: 380px; width: 100%; position: relative; overflow: hidden; animation: streakIn 0.35s cubic-bezier(0.22, 1, 0.36, 1); text-align: center; }
   .streak-modal-inner::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #ff4400, #ff8c00, #ff4400); }
   @keyframes streakIn { from { opacity: 0; transform: scale(0.92) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-  .streak-fire-big { font-size: 64px; margin: 4px 0 8px; filter: drop-shadow(0 0 30px rgba(255,68,0,0.6)); animation: fireGlow 3s ease-in-out infinite; }
+  .streak-fire-big { display: flex; align-items: center; justify-content: center; width: 80px; height: 80px; margin: 4px auto 8px; filter: drop-shadow(0 0 30px rgba(255,68,0,0.6)); animation: fireGlow 3s ease-in-out infinite; }
+  .streak-fire-big svg { width: 64px; height: 64px; fill: currentColor; }
   .streak-fire-big.frozen { filter: drop-shadow(0 0 30px rgba(96,165,250,0.6)); }
+  .streak-fire-big.frozen svg { fill: none; stroke: currentColor; stroke-width: 1.5; }
   @keyframes fireGlow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
   .streak-count { font-family: 'Unbounded', sans-serif; font-size: 42px; font-weight: 900; color: #fff; letter-spacing: -2px; line-height: 1; margin-bottom: 4px; }
   .streak-count-label { font-size: 12px; color: var(--text-dim); font-family: 'Unbounded', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; }
   .streak-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
   .streak-stat { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 12px 10px; }
-  .streak-stat-icon { font-size: 18px; margin-bottom: 4px; opacity: 0.7; }
+  .streak-stat-icon { display: flex; align-items: center; justify-content: center; height: 22px; margin-bottom: 6px; }
+  .streak-stat-icon svg { width: 20px; height: 20px; fill: currentColor; }
   .streak-stat-value { font-family: 'Unbounded', sans-serif; font-size: 18px; font-weight: 800; color: #fff; letter-spacing: -0.5px; line-height: 1; margin-bottom: 3px; }
   .streak-stat-label { font-size: 10px; color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; }
   .streak-today { padding: 10px 14px; border-radius: 10px; font-size: 12.5px; font-weight: 600; margin-bottom: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; }
@@ -75,7 +97,7 @@
   .steam-menu-icon { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--text-dim); transition: color 0.2s; }
   .steam-menu-item:hover .steam-menu-icon { color: var(--red); }
   .steam-menu-item.active .steam-menu-icon { color: var(--red); }
-  .steam-menu-icon svg { width: 20px; height: 20px; }
+  .steam-menu-icon svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; }
 
   .tab-panel { display: none; animation: fadeUp 0.35s; }
   .tab-panel.active { display: block; }
@@ -85,19 +107,25 @@
   .section-title .cnt { padding: 3px 10px; background: rgba(255,255,255,0.06); border-radius: 100px; font-size: 11px; color: var(--text-dim); font-weight: 700; }
 
   .inv-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
-  .inv-card { background: linear-gradient(145deg, #0e0e0e, #060606); border: 1px solid var(--border); border-radius: 14px; padding: 14px 12px; position: relative; overflow: hidden; display: flex; flex-direction: column; transition: all 0.3s; }
+  .inv-card { background: linear-gradient(145deg, #0e0e0e, #060606); border: 1px solid var(--border); border-radius: 14px; padding: 14px 12px; position: relative; overflow: visible; display: flex; flex-direction: column; transition: all 0.3s; }
   .inv-card:hover { transform: translateY(-4px); border-color: var(--item-color, var(--red)); }
-  .inv-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--item-color, var(--red)); box-shadow: 0 0 15px var(--item-color, var(--red)); opacity: 0.7; }
+  .inv-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--item-color, var(--red)); box-shadow: 0 0 15px var(--item-color, var(--red)); opacity: 0.7; border-radius: 14px 14px 0 0; }
   .inv-tag { display: inline-block; align-self: flex-start; padding: 3px 9px; border-radius: 6px; font-size: 10px; font-weight: 800; font-family: 'Unbounded', sans-serif; letter-spacing: 0.3px; margin-bottom: 10px; background: rgba(225,6,0,0.15); color: var(--red); }
   .inv-tag.vip { background: rgba(251,191,36,0.15); color: #fbbf24; }
-  .inv-image { height: 70px; display: flex; align-items: center; justify-content: center; font-size: 44px; margin-bottom: 8px; filter: drop-shadow(0 0 20px rgba(251,191,36,0.25)); }
-  .inv-image svg { width: 44px; height: 44px; }
+  .inv-image { height: 70px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; filter: drop-shadow(0 0 20px rgba(251,191,36,0.25)); color: var(--item-color, var(--red)); }
+  .inv-image svg { width: 44px; height: 44px; fill: currentColor; }
   .inv-name { font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 800; color: #fff; text-align: center; margin-bottom: 6px; letter-spacing: -0.3px; min-height: 32px; display: flex; align-items: center; justify-content: center; }
   .inv-info { display: flex; flex-direction: column; gap: 3px; font-size: 10.5px; color: var(--text-dim); padding-top: 8px; border-top: 1px solid var(--border); margin-top: auto; }
   .inv-info b { color: #fff; font-weight: 600; }
 
-  .inv-remove-btn { margin-top: 10px; padding: 8px 12px; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 9px; color: #ef4444; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 11.5px; cursor: pointer; transition: all 0.25s; display: flex; align-items: center; justify-content: center; gap: 5px; width: 100%; }
-  .inv-remove-btn:hover { background: rgba(239,68,68,0.22); border-color: rgba(239,68,68,0.6); }
+  .inv-actions-btn { position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; border-radius: 8px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); color: var(--text-dim); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.25s; z-index: 5; padding: 0; }
+  .inv-actions-btn:hover { background: rgba(225,6,0,0.12); border-color: rgba(225,6,0,0.5); color: var(--red); }
+  .inv-actions-btn svg { width: 14px; height: 14px; fill: currentColor; }
+  .inv-actions-menu { position: absolute; top: 44px; right: 10px; min-width: 140px; background: #0e0e0e; border: 1px solid var(--border-bright); border-radius: 10px; padding: 5px; box-shadow: 0 12px 40px rgba(0,0,0,0.85), 0 0 0 1px rgba(225,6,0,0.08); opacity: 0; visibility: hidden; transform: translateY(-6px) scale(0.96); transform-origin: top right; transition: opacity 0.2s, transform 0.2s, visibility 0s linear 0.2s; z-index: 10; }
+  .inv-card.menu-open .inv-actions-menu { opacity: 1; visibility: visible; transform: translateY(0) scale(1); transition: opacity 0.2s, transform 0.2s, visibility 0s; }
+  .inv-actions-item { display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 10px; background: transparent; border: none; border-radius: 7px; color: var(--text-dim); font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; text-align: left; cursor: pointer; transition: all 0.2s; }
+  .inv-actions-item:hover { background: rgba(239,68,68,0.12); color: #ef4444; }
+  .inv-actions-item svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
 
   .friends-tabs { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
   .f-tab { padding: 8px 14px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-bright); border-radius: 100px; color: var(--text-dim); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12px; cursor: pointer; transition: all 0.25s; display: inline-flex; align-items: center; gap: 6px; }
@@ -156,7 +184,8 @@
   .link-block { position: relative; padding: 14px 16px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-bright); border-radius: 12px; margin-bottom: 16px; }
   .link-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
   .link-head-title { font-family: 'Unbounded', sans-serif; font-size: 12.5px; font-weight: 700; color: #fff; display: inline-flex; align-items: center; gap: 8px; }
-  .link-head-title .ico { width: 26px; height: 26px; border-radius: 7px; background: rgba(225,6,0,0.12); border: 1px solid rgba(225,6,0,0.3); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; color: var(--red); }
+  .link-head-title .ico { width: 26px; height: 26px; border-radius: 7px; background: rgba(225,6,0,0.12); border: 1px solid rgba(225,6,0,0.3); display: inline-flex; align-items: center; justify-content: center; color: var(--red); }
+  .link-head-title .ico svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
   .link-head-clear { font-size: 11.5px; color: var(--text-dim); cursor: pointer; text-decoration: none; padding: 4px 10px; border-radius: 8px; transition: all 0.2s; background: transparent; border: 1px solid transparent; font-family: 'Inter', sans-serif; }
   .link-head-clear:hover { color: var(--red); background: rgba(225,6,0,0.08); }
 
@@ -185,7 +214,8 @@
   .link-counter { font-family: 'Unbounded', sans-serif; font-size: 11px; color: var(--text-dim); font-weight: 700; margin-top: 8px; display: block; }
   .link-block.locked .link-input-row, .link-block.locked .link-status-row, .link-block.locked .link-counter { filter: blur(3px); opacity: 0.4; pointer-events: none; }
   .link-lock-overlay { position: absolute; inset: 0; background: linear-gradient(145deg, rgba(10,10,10,0.85), rgba(6,6,6,0.92)); backdrop-filter: blur(6px); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 16px; gap: 6px; z-index: 5; }
-  .link-lock-icon { font-size: 26px; filter: drop-shadow(0 0 16px rgba(251,191,36,0.5)); }
+  .link-lock-icon { width: 30px; height: 30px; color: #fbbf24; filter: drop-shadow(0 0 16px rgba(251,191,36,0.5)); }
+  .link-lock-icon svg { width: 30px; height: 30px; stroke: currentColor; fill: none; stroke-width: 2; }
   .link-lock-title { font-family: 'Unbounded', sans-serif; font-size: 12.5px; font-weight: 800; color: #fbbf24; letter-spacing: -0.2px; }
   .link-lock-desc { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--text-dim); line-height: 1.4; max-width: 240px; }
   .link-lock-btn { padding: 8px 16px; background: linear-gradient(135deg, #fbbf24, #d97706); color: #000; border-radius: 8px; font-family: 'Unbounded', sans-serif; font-weight: 800; font-size: 11px; text-decoration: none; box-shadow: 0 6px 20px rgba(251,191,36,0.4); margin-top: 4px; }
@@ -233,11 +263,14 @@
     </div>
 
     <div class="steam-profile" id="steamProfile">
-      <div class="steam-banner" id="steamBanner"></div>
+      <div class="steam-banner" id="steamBanner">
+        <div class="steam-social-corner" id="steamSocialCorner"></div>
+      </div>
       <div class="steam-avatar-wrap" id="steamAvatarWrap">
         <img class="steam-avatar" id="steamAvatar" src="" alt="" style="display:none;">
         <div class="steam-avatar steam-avatar-empty" id="steamAvatarEmpty" style="display:none;"></div>
       </div>
+      <div class="profile-reactions" id="profileReactions"></div>
       <div class="steam-body" id="steamBody">
         <div class="loading-state"><div class="spinner"></div> Загрузка...</div>
       </div>
@@ -320,7 +353,7 @@
 
         <div class="link-block" id="linkBlock">
           <div class="link-head">
-            <div class="link-head-title"><span class="ico">🔗</span> Ссылка профиля</div>
+            <div class="link-head-title"><span class="ico" id="linkHeadIco"></span> Ссылка профиля</div>
             <span class="badge-tag" id="plusBadge" style="display:none;">FERNODD+</span>
             <span class="badge-tag no-plus" id="noPlusBadge" style="display:none;">ТРЕБУЕТСЯ FERNODD+</span>
             <button class="link-head-clear" onclick="clearProfileLink()">Убрать</button>
@@ -328,7 +361,7 @@
 
           <div class="link-input-row">
             <div class="link-prefix">/profile/</div>
-            <input class="link-input" id="linkInput" placeholder="love" maxlength="20" autocomplete="off" spellcheck="false">
+            <input class="link-input" id="linkInput" placeholder="твой адрес" maxlength="20" autocomplete="off" spellcheck="false">
             <div class="link-input-actions">
               <button class="link-icon-btn" onclick="copyProfileUrl()" title="Скопировать">
                 <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
@@ -384,6 +417,7 @@
 
 <div class="toast-wrap" id="toastWrap"></div>
 
+<script src="/js/icons.js"></script>
 <script src="/js/common.js"></script>
 <script src="/js/my-profile.js"></script>
 <script src="/js/auth.js"></script>
@@ -400,6 +434,11 @@ let canViewTransactions = false;
 
 let allFriends = [];
 let currentFriendFilter = 'all';
+
+document.addEventListener('DOMContentLoaded', () => {
+  const ico = document.getElementById('linkHeadIco');
+  if (ico) ico.innerHTML = window.ICONS.link;
+});
 
 window.addEventListener('auth:changed', (e) => {
   const user = e.detail.user;
@@ -424,7 +463,6 @@ window.addEventListener('auth:changed', (e) => {
 
   loadProfile();
 
-  // Открыть вкладку по хэшу
   const openTabFromHash = () => {
     const h = window.location.hash.replace('#', '');
     if (h && ['profile', 'skins', 'inventory', 'friends', 'transactions', 'settings'].includes(h)) {
@@ -461,6 +499,8 @@ async function loadProfile() {
     canViewTransactions = !!user.canViewTransactions && (isOwnProfile || isStaff);
 
     renderSteamProfile(user);
+    renderProfileSocials(user);
+    renderProfileReactions(user);
     document.getElementById('profileDesc').innerHTML = escapeHtml(user.description || 'Is it worth it?');
     applyProfileVisibility(user);
     loadInventory(user.steamId);
@@ -489,16 +529,33 @@ function renderSteamProfile(user) {
 
   const banner = document.getElementById('steamBanner');
   if (user.backgroundUrl) {
-    banner.style.background = `linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.6)), url('${user.backgroundUrl}') center/cover`;
+    try {
+      const u = new URL(user.backgroundUrl);
+      if (u.protocol === 'http:' || u.protocol === 'https:') {
+        banner.style.background =
+          `linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.6)), url("${u.href}") center/cover`;
+      } else {
+        banner.style.background = '';
+      }
+    } catch {
+      banner.style.background = '';
+    }
+  } else {
+    banner.style.background = '';
   }
 
   const name = user.nickname || user.global_name || user.username || 'Пользователь';
 
   const ROLE_COLORS = {
-    'Техническая поддержка': '#5865f2', 'Владелец': '#5865f2',
-    'Следящий': '#f0b232', 'Куратор': '#f0b232',
-    'Главный модератор': '#00a8fc', 'Старший модератор': '#23a55a',
-    'Модератор': '#5865f2', 'Игрок': '#a855f7',
+    'Владелец': '#5865f2',
+    'Главная администрация': '#5865f2',
+    'Техническая поддержка': '#5865f2',
+    'Следящий': '#f0b232',
+    'Куратор': '#f0b232',
+    'Главный модератор': '#00a8fc',
+    'Старший модератор': '#23a55a',
+    'Модератор': '#5865f2',
+    'Игрок': '#a855f7',
   };
   const topRole = user.topRole || (user.roles || [])[0] || 'Игрок';
   const roleColor = ROLE_COLORS[topRole] || '#60a5fa';
@@ -507,35 +564,47 @@ function renderSteamProfile(user) {
   const statusText = status === 'online' ? 'В сети' : 'Не в сети';
 
   const tagMatch = name.match(/#\S+/);
-  const cleanName = name.replace(/#\S+/, '').trim();
+  const cleanName = name.replace(/#\S+/g, '').trim();
   const tag = user.tag || (tagMatch ? tagMatch[0] : '');
 
   const verifyBadge = user.isVerified
     ? `<span class="steam-badge-item verify" title="FERNODD+">
-         <svg width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24">
-           <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+         <svg viewBox="0 0 24 24" fill="none">
+           <path d="M12 2l2.4 1.8 3-.3 1.2 2.7 2.7 1.2-.3 3L22 12l-1.8 2.4.3 3-2.7 1.2-1.2 2.7-3-.3L12 22l-2.4-1.8-3 .3-1.2-2.7-2.7-1.2.3-3L2 12l1.8-2.4-.3-3 2.7-1.2 1.2-2.7 3 .3L12 2z"
+                 fill="url(#fernoddPlusGrad)"/>
+           <path d="M8.5 12.5l2.2 2.2 4.8-4.8" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+           <defs>
+             <linearGradient id="fernoddPlusGrad" x1="0" y1="0" x2="1" y2="1">
+               <stop offset="0%" stop-color="#fbbf24"/>
+               <stop offset="100%" stop-color="#d97706"/>
+             </linearGradient>
+           </defs>
          </svg>
        </span>` : '';
 
   let activityBadge = '';
+  const fireIcon = window.ICONS.flame;
+  const snowIcon = window.ICONS.snowflake;
+
   if (user.activity > 0) {
     const frozen = user.streakFrozen;
-    const icon = frozen ? '🧊' : '🔥';
+    const icon = frozen ? snowIcon : fireIcon;
     const color = frozen ? '#60a5fa' : '#ff4400';
     const borderColor = frozen ? 'rgba(96,165,250,0.4)' : 'rgba(255,68,0,0.35)';
     const bgColor = frozen ? 'rgba(96,165,250,0.15)' : 'rgba(255,68,0,0.15)';
-    const clickAttr = isOwnProfile
-      ? `onclick="openStreakModal(event)" style="cursor:pointer;"`
-      : `style="cursor:default;"`;
-    activityBadge = `<span class="steam-badge-item fire" id="activityBadge" ${clickAttr} style="display:inline-flex;background:${bgColor};color:${color};border-color:${borderColor};">${icon} <span id="activityCount">${user.activity}</span></span>`;
+    const clickAttr = isOwnProfile ? `onclick="openStreakModal(event)"` : '';
+    activityBadge = `<span class="steam-badge-item fire" id="activityBadge" ${clickAttr} style="cursor:${isOwnProfile ? 'pointer' : 'default'};background:${bgColor};color:${color};border-color:${borderColor};">
+      <span class="badge-icon">${icon}</span>
+      <span id="activityCount">${user.activity}</span>
+    </span>`;
   } else {
-    const clickAttr = isOwnProfile
-      ? `onclick="openStreakModal(event)" style="cursor:pointer;"`
-      : `style="cursor:default;"`;
-    activityBadge = `<span class="steam-badge-item fire" id="activityBadge" ${clickAttr} style="display:inline-flex;background:rgba(255,68,0,0.08);color:rgba(255,68,0,0.6);border-color:rgba(255,68,0,0.2);opacity:0.8;">🔥 <span id="activityCount">0</span></span>`;
+    activityBadge = `<span class="steam-badge-item fire" id="activityBadge" ${isOwnProfile ? 'onclick="openStreakModal(event)"' : ''} style="cursor:${isOwnProfile ? 'pointer' : 'default'};background:rgba(255,68,0,0.08);color:rgba(255,68,0,0.6);border-color:rgba(255,68,0,0.2);opacity:0.8;">
+      <span class="badge-icon">${fireIcon}</span>
+      <span id="activityCount">0</span>
+    </span>`;
   }
 
-  const tagBadge = tag ? `<span class="steam-badge-item tag">${escapeHtml(tag)}</span>` : '';
+  const tagBadge = tag ? `<span class="steam-badge-item tag" style="background:rgba(255,255,255,0.06);color:var(--text-dim);border:1px solid var(--border-bright);font-size:10.5px;">${escapeHtml(tag)}</span>` : '';
 
   document.getElementById('steamBody').innerHTML = `
     <div class="steam-role-badge" style="background:${roleColor}15;border-color:${roleColor}66;color:${roleColor};">
@@ -550,6 +619,89 @@ function renderSteamProfile(user) {
     <div class="steam-status-text ${status}">${statusText}</div>
     <div class="steam-desc">${escapeHtml(desc)}</div>
   `;
+}
+
+function renderProfileSocials(user) {
+  const corner = document.getElementById('steamSocialCorner');
+  if (!corner) return;
+  const socials = [];
+  socials.push({
+    url: user.profileUrl || `https://steamcommunity.com/profiles/${user.steamId}`,
+    label: 'Steam',
+    icon: window.ICONS.steam
+  });
+  if (user.telegram) socials.push({ url: user.telegram, label: 'Telegram', icon: window.ICONS.telegram });
+  if (user.discordId) socials.push({ url: `https://discord.com/users/${user.discordId}`, label: 'Discord', icon: window.ICONS.discord });
+  if (user.vk) socials.push({ url: user.vk, label: 'VK', icon: window.ICONS.vk });
+
+  corner.innerHTML = socials.map(s =>
+    `<a href="${s.url}" target="_blank" rel="noopener" title="${s.label}">${s.icon}</a>`
+  ).join('');
+}
+
+async function renderProfileReactions(user) {
+  const box = document.getElementById('profileReactions');
+  if (!box) return;
+
+  box.innerHTML = `
+    <button class="reaction-btn" data-type="like" disabled>
+      ${window.ICONS.thumbsUp}
+      <span id="likeCount">0</span>
+    </button>
+    <button class="reaction-btn" data-type="dislike" disabled>
+      ${window.ICONS.thumbsDown}
+      <span id="dislikeCount">0</span>
+    </button>
+    <span class="reaction-views">
+      ${window.ICONS.eye}
+      <span id="viewsCount">0</span>
+    </span>
+  `;
+
+  try {
+    const r = await api(`/api/reactions/${user.steamId}`);
+    document.getElementById('likeCount').textContent = r.likes || 0;
+    document.getElementById('dislikeCount').textContent = r.dislikes || 0;
+    document.getElementById('viewsCount').textContent = r.views || 0;
+
+    const likeBtn = box.querySelector('[data-type="like"]');
+    const dislikeBtn = box.querySelector('[data-type="dislike"]');
+    likeBtn.disabled = false;
+    dislikeBtn.disabled = false;
+
+    if (r.myReaction === 'like') likeBtn.classList.add('active-like');
+    if (r.myReaction === 'dislike') dislikeBtn.classList.add('active-dislike');
+
+    const handler = async (type) => {
+      if (!window.getToken()) {
+        showToast('Войдите через Steam', 'error');
+        return;
+      }
+      try {
+        await api(`/api/reactions/${user.steamId}`, {
+          method: 'POST',
+          body: JSON.stringify({ type })
+        });
+        const updated = await api(`/api/reactions/${user.steamId}`);
+        document.getElementById('likeCount').textContent = updated.likes || 0;
+        document.getElementById('dislikeCount').textContent = updated.dislikes || 0;
+        likeBtn.classList.toggle('active-like', updated.myReaction === 'like');
+        dislikeBtn.classList.toggle('active-dislike', updated.myReaction === 'dislike');
+      } catch (e) {
+        const errors = {
+          self_reaction: 'Нельзя реагировать на свой профиль',
+          bad_type: 'Ошибка типа реакции',
+        };
+        const key = e.message.split(' — ')[0];
+        showToast(errors[key] || e.message, 'error');
+      }
+    };
+
+    likeBtn.onclick = () => handler('like');
+    dislikeBtn.onclick = () => handler('dislike');
+  } catch (e) {
+    console.error('[reactions]', e);
+  }
 }
 
 window.openStreakModal = async function(e) {
@@ -568,13 +720,13 @@ window.openStreakModal = async function(e) {
     const frozen = data.frozen;
     const hasPlus = data.hasFernoddPlus;
 
-    const fireIcon = frozen ? '🧊' : '🔥';
+    const fireIcon = frozen ? window.ICONS.snowflake : window.ICONS.flame;
     const fireCls = frozen ? 'frozen' : '';
+    const fireColor = frozen ? '#60a5fa' : '#ff4400';
 
     let todayBlock = '';
     if (frozen) todayBlock = `<div class="streak-today frozen">Стрик заморожен · пропуск 1 дня не сгорит</div>`;
     else if (countedToday) todayBlock = `<div class="streak-today ok">Огонёк засчитан сегодня</div>`;
-    else if (streak > 0) todayBlock = `<div class="streak-today no">Проведи 5 минут на сайте</div>`;
     else todayBlock = `<div class="streak-today no">Проведи 5 минут на сайте</div>`;
 
     let freezeBlock = '';
@@ -585,12 +737,20 @@ window.openStreakModal = async function(e) {
     }
 
     inner.innerHTML = `
-      <div class="streak-fire-big ${fireCls}">${fireIcon}</div>
+      <div class="streak-fire-big ${fireCls}" style="color:${fireColor};">${fireIcon}</div>
       <div class="streak-count">${streak}</div>
       <div class="streak-count-label">${streak === 1 ? 'день подряд' : 'дней подряд'}</div>
       <div class="streak-stats">
-        <div class="streak-stat"><div class="streak-stat-icon">🔥</div><div class="streak-stat-value">${streak}</div><div class="streak-stat-label">Текущий</div></div>
-        <div class="streak-stat"><div class="streak-stat-icon">🏆</div><div class="streak-stat-value">${maxStreak}</div><div class="streak-stat-label">Рекорд</div></div>
+        <div class="streak-stat">
+          <div class="streak-stat-icon" style="color:#ff4400;">${window.ICONS.flame}</div>
+          <div class="streak-stat-value">${streak}</div>
+          <div class="streak-stat-label">Текущий</div>
+        </div>
+        <div class="streak-stat">
+          <div class="streak-stat-icon" style="color:#fbbf24;">${window.ICONS.trophy}</div>
+          <div class="streak-stat-value">${maxStreak}</div>
+          <div class="streak-stat-label">Рекорд</div>
+        </div>
       </div>
       ${todayBlock}
       ${freezeBlock}
@@ -608,23 +768,30 @@ window.closeStreakModal = function() {
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeStreakModal(); });
 
 window.freezeStreakFromModal = async function() {
-  if (!confirm('Заморозить стрик?\n\nПропустишь 1 день — стрик не сгорит. Пропустишь 2 — сгорит.')) return;
-  try {
-    const r = await api('/api/activity/freeze', { method: 'POST' });
-    showToast(`Заморозено (${r.streak})`, 'success');
-    closeStreakModal();
-    setTimeout(() => { loadProfile(); openStreakModal(); }, 500);
-  } catch (e) {
-    const errors = {
-      fernodd_plus_required: 'Только для владельцев FERNODD+',
-      no_streak_to_freeze: 'У вас ещё нет стрика',
-      already_frozen: 'Заморозка уже активна',
-      must_visit_first: 'Сначала зайдите сегодня',
-      no_db: 'Ошибка базы данных',
-    };
-    const key = e.message.split(' — ')[0];
-    showToast((errors[key] || e.message), 'error');
-  }
+  window.confirmSiteModal({
+    title: 'Заморозить стрик?',
+    desc: 'Пропустишь 1 день — стрик не сгорит.\nПропустишь 2 — сгорит.',
+    confirmText: 'Заморозить',
+    cancelText: 'Отмена',
+    onConfirm: async () => {
+      try {
+        const r = await api('/api/activity/freeze', { method: 'POST' });
+        showToast(`Заморозено (${r.streak})`, 'success');
+        closeStreakModal();
+        setTimeout(() => { loadProfile(); openStreakModal(); }, 500);
+      } catch (e) {
+        const errors = {
+          fernodd_plus_required: 'Только для владельцев FERNODD+',
+          no_streak_to_freeze: 'У вас ещё нет стрика',
+          already_frozen: 'Заморозка уже активна',
+          must_visit_first: 'Сначала зайдите сегодня',
+          no_db: 'Ошибка базы данных',
+        };
+        const key = e.message.split(' — ')[0];
+        showToast((errors[key] || e.message), 'error');
+      }
+    }
+  });
 };
 
 window.addEventListener('activity:changed', (e) => {
@@ -638,7 +805,8 @@ window.addEventListener('activity:changed', (e) => {
     void badge.offsetWidth;
     badge.style.animation = 'firePulse 0.6s ease';
     if (e.detail.frozen) {
-      badge.innerHTML = `🧊 <span id="activityCount">${e.detail.points}</span>`;
+      const iceIcon = window.ICONS.snowflake;
+      badge.innerHTML = `<span class="badge-icon">${iceIcon}</span><span id="activityCount">${e.detail.points}</span>`;
       badge.style.background = 'rgba(96,165,250,0.15)';
       badge.style.color = '#60a5fa';
       badge.style.borderColor = 'rgba(96,165,250,0.4)';
@@ -682,28 +850,35 @@ async function loadInventory(steamId) {
       grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">Пока нет покупок</div>`;
       return;
     }
+
     const ICONS = {
       fernodd_plus: {
-        svg: `<svg viewBox="0 0 24 24" fill="#fbbf24" style="width:44px;height:44px;"><path d="M12 2l2.9 6.9 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.5l7.1-.6L12 2z"/></svg>`,
-        color: '#fbbf24', tag: 'vip', tagLabel: 'FERNODD+'
+        svg: window.ICONS.star,
+        color: '#fbbf24',
+        tag: 'vip',
+        tagLabel: 'FERNODD+'
       }
     };
+
     const ROLE_ICONS = {
-      'Модератор': { svg: `<svg viewBox="0 0 24 24" fill="none" stroke="#5865f2" stroke-width="1.8" style="width:40px;height:40px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`, color: '#5865f2', tagLabel: 'МОДЕРАТОР' },
-      'Старший модератор': { svg: `<svg viewBox="0 0 24 24" fill="none" stroke="#23a55a" stroke-width="1.8" style="width:40px;height:40px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`, color: '#23a55a', tagLabel: 'СТ. МОДЕРАТОР' },
-      'Главный модератор': { svg: `<svg viewBox="0 0 24 24" fill="none" stroke="#00a8fc" stroke-width="1.8" style="width:40px;height:40px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`, color: '#00a8fc', tagLabel: 'ГЛ. МОДЕРАТОР' },
-      'Куратор': { svg: `<svg viewBox="0 0 24 24" fill="none" stroke="#f0b232" stroke-width="1.8" style="width:40px;height:40px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`, color: '#f0b232', tagLabel: 'КУРАТОР' },
-      'Следящий': { svg: `<svg viewBox="0 0 24 24" fill="none" stroke="#f0b232" stroke-width="1.8" style="width:40px;height:40px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`, color: '#f0b232', tagLabel: 'СЛЕДЯЩИЙ' },
-      'Техническая поддержка': { svg: `<svg viewBox="0 0 24 24" fill="none" stroke="#5865f2" stroke-width="1.8" style="width:40px;height:40px;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`, color: '#5865f2', tagLabel: 'ТЕХ. ПОДДЕРЖКА' },
+      'Модератор': { svg: window.ICONS.shield, color: '#5865f2', tagLabel: 'МОДЕРАТОР' },
+      'Старший модератор': { svg: window.ICONS.shield, color: '#23a55a', tagLabel: 'СТ. МОДЕРАТОР' },
+      'Главный модератор': { svg: window.ICONS.shield, color: '#00a8fc', tagLabel: 'ГЛ. МОДЕРАТОР' },
+      'Куратор': { svg: window.ICONS.user, color: '#f0b232', tagLabel: 'КУРАТОР' },
+      'Следящий': { svg: window.ICONS.eye, color: '#f0b232', tagLabel: 'СЛЕДЯЩИЙ' },
+      'Техническая поддержка': { svg: window.ICONS.settings, color: '#5865f2', tagLabel: 'ТЕХ. ПОДДЕРЖКА' },
+      'Главная администрация': { svg: window.ICONS.star, color: '#5865f2', tagLabel: 'ГЛ. АДМИН' },
     };
+
     const NON_REMOVABLE = [
       'Модератор', 'Старший модератор', 'Главный модератор', 'Медиа', 'Разработчик',
       'Куратор', 'Следящий', 'Техническая поддержка', 'Главная администрация', 'Владелец'
     ];
+
     grid.innerHTML = items.map(it => {
       let meta;
-      if (it.isRole) meta = ROLE_ICONS[it.itemName] || { svg: '🎭', color: 'var(--red)', tagLabel: 'РОЛЬ' };
-      else meta = ICONS[it.itemId] || { svg: '🎁', color: 'var(--red)', tag: 'vip', tagLabel: 'Услуга' };
+      if (it.isRole) meta = ROLE_ICONS[it.itemName] || { svg: window.ICONS.shield, color: 'var(--red)', tagLabel: 'РОЛЬ' };
+      else meta = ICONS[it.itemId] || { svg: window.ICONS.gift, color: 'var(--red)', tag: 'vip', tagLabel: 'Услуга' };
 
       const canRemove = isOwnProfile && (
         (it.isRole && !NON_REMOVABLE.includes(it.itemName)) ||
@@ -719,16 +894,32 @@ async function loadInventory(steamId) {
         duration = diff > 0 ? `до ${new Date(it.expiresAt).toLocaleDateString('ru-RU')}` : 'Истекла';
       } else if (it.totalDays > 0) duration = `${it.totalDays} дн.`;
 
+      const menuBtn = canRemove
+        ? `<button class="inv-actions-btn" onclick="toggleInvMenu(event, '${it.itemId}')" title="Действия">
+             <svg viewBox="0 0 24 24">
+               <circle cx="12" cy="5" r="1.6"/>
+               <circle cx="12" cy="12" r="1.6"/>
+               <circle cx="12" cy="19" r="1.6"/>
+             </svg>
+           </button>
+           <div class="inv-actions-menu" id="menu-${it.itemId}">
+             <button class="inv-actions-item" onclick="removeInventoryItem('${it.itemId}', '${escapeHtml(it.itemName).replace(/'/g, "\\'")}')">
+               <svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+               Удалить
+             </button>
+           </div>`
+        : '';
+
       return `
-        <div class="inv-card" style="--item-color:${meta.color};">
+        <div class="inv-card" style="--item-color:${meta.color};" data-item-id="${it.itemId}">
+          ${menuBtn}
           <span class="inv-tag ${meta.tag || ''}">${meta.tagLabel}${it.count > 1 ? ` ×${it.count}` : ''}</span>
-          <div class="inv-image">${meta.svg}</div>
+          <div class="inv-image" style="color:${meta.color};">${meta.svg}</div>
           <div class="inv-name">${escapeHtml(it.itemName)}</div>
           <div class="inv-info">
             <span>Действует: <b>${duration}</b></span>
             <span>${it.isRole ? 'Роль' : 'Покупка'}: <b>${lastDate}</b></span>
           </div>
-          ${canRemove ? `<button class="inv-remove-btn" onclick="removeInventoryItem('${it.itemId}', '${escapeHtml(it.itemName)}')" title="Удалить">Удалить</button>` : ''}
         </div>`;
     }).join('');
   } catch (e) {
@@ -736,23 +927,56 @@ async function loadInventory(steamId) {
   }
 }
 
-window.removeInventoryItem = async function (itemId, itemName) {
-  if (!confirm(`Удалить «${itemName}» из инвентаря?\n\nЭто действие необратимо. Роль также снимется в Discord.`)) return;
-  try {
-    await api('/api/inventory/remove', { method: 'POST', body: JSON.stringify({ itemId }) });
-    showToast(`«${itemName}» удалено`, 'success');
-    loadProfile();
-  } catch (e) {
-    const errors = {
-      non_removable_role: 'Эту роль нельзя удалить',
-      role_not_owned: 'У вас нет этой роли',
-      subscription_not_found: 'Подписка не найдена',
-      missing_item_id: 'Ошибка: неверный ID',
-      no_db: 'Ошибка базы данных',
-    };
-    const key = e.message.split(' — ')[0];
-    showToast((errors[key] || e.message), 'error');
+window.toggleInvMenu = function (e, itemId) {
+  e.stopPropagation();
+  const card = e.currentTarget.closest('.inv-card');
+  if (!card) return;
+  const wasOpen = card.classList.contains('menu-open');
+  document.querySelectorAll('.inv-card.menu-open').forEach(c => c.classList.remove('menu-open'));
+  if (!wasOpen) card.classList.add('menu-open');
+};
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.inv-card')) {
+    document.querySelectorAll('.inv-card.menu-open').forEach(c => c.classList.remove('menu-open'));
   }
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.inv-card.menu-open').forEach(c => c.classList.remove('menu-open'));
+  }
+});
+
+window.removeInventoryItem = async function (itemId, itemName) {
+  document.querySelectorAll('.inv-card.menu-open').forEach(c => c.classList.remove('menu-open'));
+
+  window.confirmSiteModal({
+    title: `Удалить «${itemName}»?`,
+    desc: `Это действие необратимо.\nРоль также снимется в Discord.`,
+    confirmText: 'Удалить',
+    cancelText: 'Отмена',
+    onConfirm: async () => {
+      try {
+        await api('/api/inventory/remove', {
+          method: 'POST',
+          body: JSON.stringify({ itemId })
+        });
+        showToast(`«${itemName}» удалено`, 'success');
+        loadProfile();
+      } catch (e) {
+        const errors = {
+          non_removable_role: 'Эту роль нельзя удалить',
+          role_not_owned: 'У вас нет этой роли',
+          subscription_not_found: 'Подписка не найдена',
+          missing_item_id: 'Ошибка: неверный ID',
+          no_db: 'Ошибка базы данных',
+        };
+        const key = e.message.split(' — ')[0];
+        showToast((errors[key] || e.message), 'error');
+      }
+    }
+  });
 };
 
 async function loadFriends(steamId) {
@@ -951,7 +1175,7 @@ function applyFernoddPlusLock(hasPlus, currentLink) {
   const overlay = document.createElement('div');
   overlay.className = 'link-lock-overlay';
   overlay.innerHTML = `
-    <div class="link-lock-icon">🔒</div>
+    <div class="link-lock-icon">${window.ICONS.lock}</div>
     <div class="link-lock-title">Только для FERNODD+</div>
     <div class="link-lock-desc">Оформите подписку, чтобы установить свою ссылку профиля</div>
     <a class="link-lock-btn" href="/shop">В магазин</a>
@@ -1004,6 +1228,9 @@ async function saveAllSettings() {
       fernodd_plus_required: 'Только для FERNODD+ (ссылка профиля)',
       not_allowed_for_others: 'Нет прав на изменение чужого профиля',
       bad_steam_id: 'Неверный Steam ID',
+      bad_background_url: 'Некорректный URL фона',
+      bad_telegram_url: 'Некорректный URL Telegram',
+      bad_vk_url: 'Некорректный URL VK',
       no_db: 'Ошибка базы данных',
     };
     const key = e.message.split(' — ')[0];
@@ -1034,14 +1261,23 @@ async function loadDiscordInfo(discordId) {
 }
 
 async function unlinkDiscord() {
-  if (!confirm('Отвязать Discord?')) return;
-  const payload = {};
-  if (!isOwnProfile && canEditSettings) payload.steamId = targetUserId;
-  try {
-    await api('/api/unlink-discord', { method: 'POST', body: JSON.stringify(payload) });
-    showToast('Discord отвязан', 'success');
-    setTimeout(() => location.reload(), 800);
-  } catch (e) { showToast('Ошибка: ' + e.message, 'error'); }
+  window.confirmSiteModal({
+    title: 'Отвязать Discord?',
+    desc: 'Discord будет отвязан от вашего Steam-аккаунта.',
+    confirmText: 'Отвязать',
+    cancelText: 'Отмена',
+    onConfirm: async () => {
+      const payload = {};
+      if (!isOwnProfile && canEditSettings) payload.steamId = targetUserId;
+      try {
+        await api('/api/unlink-discord', { method: 'POST', body: JSON.stringify(payload) });
+        showToast('Discord отвязан', 'success');
+        setTimeout(() => location.reload(), 800);
+      } catch (e) {
+        showToast('Ошибка: ' + e.message, 'error');
+      }
+    }
+  });
 }
 </script>
 </body>

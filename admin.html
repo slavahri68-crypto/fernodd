@@ -23,6 +23,7 @@ body > .auth-widget { display: none !important; }
 .tab-block.active { border-color: var(--tab-color, var(--red)); box-shadow: 0 12px 40px rgba(0,0,0,0.5); }
 .tab-block.active::before { opacity: 1; height: 4px; }
 .tab-block-icon { width: 48px; height: 48px; border-radius: 13px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); display: flex; align-items: center; justify-content: center; color: var(--tab-color, var(--red)); flex-shrink: 0; }
+.tab-block-icon svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .tab-block-info { flex: 1; min-width: 0; }
 .tab-block-title { font-family: 'Unbounded', sans-serif; font-size: 16px; font-weight: 800; color: #fff; letter-spacing: -0.4px; margin-bottom: 3px; }
 .tab-block-desc { font-size: 12px; color: var(--text-dim); line-height: 1.4; }
@@ -87,7 +88,8 @@ body > .auth-widget { display: none !important; }
 .search-wrap { position: relative; margin-bottom: 16px; }
 .search-input { width: 100%; padding: 12px 16px 12px 42px; background: var(--bg-elevated); border: 1px solid var(--border-bright); border-radius: 12px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 13.5px; outline: none; }
 .search-input:focus { border-color: var(--red); box-shadow: 0 0 0 4px rgba(225,6,0,0.12); }
-.search-wrap::before { content: '🔍'; position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 13px; opacity: 0.5; z-index: 1; }
+.search-wrap .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--text-dim); pointer-events: none; z-index: 1; }
+.search-wrap .search-icon svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
 .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
 .stat-tile { background: linear-gradient(145deg, var(--bg-card), rgba(14,14,14,0.5)); border: 1px solid var(--border); border-radius: 16px; padding: 18px 20px; position: relative; overflow: hidden; }
@@ -143,7 +145,6 @@ body > .auth-widget { display: none !important; }
 
 .balance-search-hero { text-align: center; padding: 30px 20px; background: linear-gradient(145deg, #0e0e0e, #060606); border: 1px solid var(--border); border-radius: 18px; margin-bottom: 16px; position: relative; overflow: hidden; }
 .balance-search-hero::before { content: ''; position: absolute; top: -50%; left: 50%; transform: translateX(-50%); width: 240px; height: 240px; background: radial-gradient(circle, rgba(225,6,0,0.18), transparent 65%); filter: blur(40px); pointer-events: none; }
-.balance-search-icon { font-size: 48px; margin-bottom: 12px; position: relative; z-index: 1; filter: drop-shadow(0 0 20px rgba(225,6,0,0.5)); }
 .balance-search-title { font-family: 'Unbounded', sans-serif; font-size: 18px; font-weight: 800; color: #fff; letter-spacing: -0.5px; margin-bottom: 6px; position: relative; z-index: 1; }
 .balance-search-desc { font-size: 12.5px; color: var(--text-dim); margin-bottom: 20px; position: relative; z-index: 1; }
 .balance-search-input-wrap { max-width: 480px; margin: 0 auto; display: flex; gap: 8px; position: relative; z-index: 1; }
@@ -191,11 +192,42 @@ body > .auth-widget { display: none !important; }
 
 .balance-result-empty { background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.3); border-radius: 14px; padding: 24px; text-align: center; color: var(--red); font-size: 13px; }
 
+/* Привилегии */
+.priv-owned-list { display: flex; flex-direction: column; gap: 8px; }
+.priv-owned-card { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-left: 3px solid var(--item-color, #4ade80); border-radius: 12px; padding: 12px 16px; }
+.priv-owned-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 6px; flex-wrap: wrap; }
+.priv-owned-name { font-family: 'Unbounded', sans-serif; font-size: 13.5px; font-weight: 700; color: #fff; }
+.priv-owned-meta { display: flex; gap: 14px; font-size: 11.5px; color: var(--text-dim); }
+.priv-owned-meta b { color: #fff; }
+.priv-revoke-btn { padding: 6px 14px; background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.4); border-radius: 8px; color: #ef4444; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 11.5px; cursor: pointer; transition: all 0.2s; }
+.priv-revoke-btn:hover { background: rgba(239,68,68,0.25); border-color: rgba(239,68,68,0.7); }
+
+.priv-grant-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+.priv-grant-card { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-top: 3px solid var(--item-color, var(--red)); border-radius: 14px; padding: 14px 16px; transition: all 0.3s; cursor: pointer; }
+.priv-grant-card:hover { border-color: var(--item-color, var(--red)); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.4); }
+.priv-grant-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+.priv-grant-name { font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 800; letter-spacing: -0.3px; }
+.priv-grant-owned { padding: 2px 8px; background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.4); border-radius: 100px; font-size: 9.5px; font-weight: 700; color: #4ade80; text-transform: uppercase; letter-spacing: 0.5px; }
+.priv-grant-desc { font-size: 11.5px; color: var(--text-dim); margin-bottom: 10px; line-height: 1.4; }
+.priv-grant-action { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 11.5px; color: var(--item-color, var(--red)); text-align: right; letter-spacing: 0.3px; transition: all 0.25s; }
+.priv-grant-card:hover .priv-grant-action { color: #fff; letter-spacing: 1px; }
+
+/* Пресеты срока */
+.duration-preset-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+.duration-preset-btn { padding: 14px 12px; background: rgba(255,255,255,0.03); border: 1.5px solid var(--border-bright); border-radius: 12px; color: var(--text); font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.25s; text-align: center; }
+.duration-preset-btn:hover { border-color: var(--red); background: rgba(225,6,0,0.08); transform: translateY(-2px); }
+.duration-preset-btn.selected { border-color: var(--red); background: linear-gradient(135deg, rgba(225,6,0,0.2), rgba(139,0,0,0.1)); color: #fff; box-shadow: 0 0 20px rgba(225,6,0,0.3); }
+.duration-forever-row { display: flex; gap: 8px; margin-bottom: 4px; }
+.duration-forever-btn { flex: 1; padding: 12px; background: linear-gradient(135deg, rgba(251,191,36,0.1), rgba(217,119,6,0.05)); border: 1.5px solid rgba(251,191,36,0.4); border-radius: 12px; color: #fbbf24; font-family: 'Unbounded', sans-serif; font-weight: 800; font-size: 13px; cursor: pointer; transition: all 0.25s; letter-spacing: -0.2px; }
+.duration-forever-btn:hover { background: linear-gradient(135deg, rgba(251,191,36,0.2), rgba(217,119,6,0.1)); transform: translateY(-2px); }
+.duration-forever-btn.selected { background: linear-gradient(135deg, #fbbf24, #d97706); color: #000; border-color: transparent; box-shadow: 0 6px 24px rgba(251,191,36,0.4); }
+
 .fd-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; }
 .fd-modal-overlay.visible { display: flex; }
 .fd-modal { background: linear-gradient(145deg, #0e0e0e, #060606); border: 1px solid var(--border-bright); border-radius: 22px; padding: 28px; max-width: 480px; width: 100%; position: relative; overflow: hidden; }
 .fd-modal::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--red), var(--red-dark), var(--red)); }
-.fd-modal-icon { width: 56px; height: 56px; border-radius: 16px; background: rgba(225,6,0,0.12); border: 1px solid rgba(225,6,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 26px; margin-bottom: 16px; }
+.fd-modal-icon { width: 56px; height: 56px; border-radius: 16px; background: rgba(225,6,0,0.12); border: 1px solid rgba(225,6,0,0.3); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; color: var(--red); }
+.fd-modal-icon svg { width: 26px; height: 26px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .fd-modal h3 { font-family: 'Unbounded', sans-serif; font-size: 19px; margin-bottom: 8px; color: #fff; }
 .fd-modal p { color: var(--text-dim); font-size: 13.5px; margin-bottom: 20px; line-height: 1.6; white-space: pre-line; }
 .fd-modal-input { width: 100%; padding: 14px 16px; background: var(--bg-elevated); border: 1px solid var(--border-bright); border-radius: 12px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; outline: none; margin-bottom: 12px; }
@@ -207,7 +239,8 @@ body > .auth-widget { display: none !important; }
 .fd-btn-confirm.green { background: linear-gradient(135deg, #4ade80, #16a34a); }
 
 .denied { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; text-align: center; gap: 16px; padding: 20px; }
-.denied-icon { font-size: 70px; }
+.denied-icon { color: var(--red); width: 70px; height: 70px; }
+.denied-icon svg { width: 70px; height: 70px; stroke: currentColor; fill: none; stroke-width: 1.5; }
 .denied h1 { font-family: 'Unbounded', sans-serif; font-size: clamp(28px, 4.5vw, 46px); color: var(--red); letter-spacing: -2px; }
 .denied p { color: var(--text-dim); max-width: 460px; line-height: 1.7; font-size: 14px; }
 
@@ -238,7 +271,7 @@ body > .auth-widget { display: none !important; }
 <div class="auth-widget" id="authWidget"></div>
 
 <div class="denied" id="deniedBlock" style="display:none;">
-  <div class="denied-icon">🔒</div>
+  <div class="denied-icon" id="deniedIcon"></div>
   <h1>Доступ запрещён</h1>
   <p>Эта страница доступна только персоналу проекта Fernodd.</p>
   <a class="btn-act ghost" href="/" style="padding: 12px 22px; font-size: 13px; text-decoration: none;">На главную</a>
@@ -257,7 +290,7 @@ body > .auth-widget { display: none !important; }
 
   <div class="admin-tabs">
     <button class="tab-block active" data-tab="moderator" style="--tab-color: #60a5fa;" onclick="switchTab('moderator')">
-      <div class="tab-block-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <div class="tab-block-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
       <div class="tab-block-info">
         <div class="tab-block-title">Модератор</div>
         <div class="tab-block-desc">Заявки, жалобы, логи модерации</div>
@@ -265,10 +298,10 @@ body > .auth-widget { display: none !important; }
       <span class="tab-block-badge" id="modBadge">0</span>
     </button>
     <button class="tab-block" data-tab="manage" style="--tab-color: #4ade80;" onclick="switchTab('manage')">
-      <div class="tab-block-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+      <div class="tab-block-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
       <div class="tab-block-info">
         <div class="tab-block-title">Управление</div>
-        <div class="tab-block-desc">Персонал, статистика, промокоды, роли</div>
+        <div class="tab-block-desc">Персонал, статистика, привилегии, роли</div>
       </div>
     </button>
   </div>
@@ -282,12 +315,15 @@ body > .auth-widget { display: none !important; }
 
 <div class="toast-wrap" id="toastWrap"></div>
 
+<script src="/js/icons.js"></script>
 <script src="/js/common.js"></script>
 <script src="/js/my-profile.js"></script>
 <script src="/js/auth.js"></script>
 <script>
 const ROLE_COLOR_OVERRIDE = {
-  'Техническая поддержка': '#5865f2', 'Владелец': '#5865f2',
+  'Техническая поддержка': '#5865f2',
+  'Владелец': '#5865f2',
+  'Главная администрация': '#5865f2',
   'Следящий': '#f0b232', 'Куратор': '#f0b232',
   'Главный модератор': '#00a8fc', 'Старший модератор': '#23a55a',
   'Модератор': '#5865f2', 'Игрок': '#a855f7',
@@ -305,10 +341,12 @@ let ticketsData = { open: [], closed: [] };
 let ticketsFilter = 'open';
 let currentTicketId = null;
 let ticketPoll = null;
-let lastMessages = '';
+let lastMessageId = null;
 let selectedMember = null;
 let availableRoles = [];
 let currentBalanceUser = null;
+let selectedPrivilegeUser = null;
+let privilegesCache = [];
 
 function esc(s) {
   return String(s == null ? '' : s)
@@ -316,13 +354,23 @@ function esc(s) {
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+  const di = document.getElementById('deniedIcon');
+  if (di) di.innerHTML = window.ICONS.lock;
+});
+
 function toast(text, type = 'info') {
   const wrap = document.getElementById('toastWrap');
   if (!wrap) return;
-  const icons = { success: '✓', error: '✕', info: 'ℹ' };
+  const icons = {
+    success: window.ICONS.checkCircle,
+    error: window.ICONS.x,
+    info: window.ICONS.info,
+  };
+  const cleanText = window.stripEmoji(text);
   const el = document.createElement('div');
   el.className = 'toast ' + type;
-  el.innerHTML = `<span style="font-weight:900;">${icons[type] || 'ℹ'}</span><span>${esc(text)}</span>`;
+  el.innerHTML = `<span class="toast-icon">${icons[type] || icons.info}</span><span>${esc(cleanText)}</span>`;
   wrap.appendChild(el);
   setTimeout(() => { el.classList.add('fade'); setTimeout(() => el.remove(), 300); }, 3000);
 }
@@ -332,10 +380,11 @@ function closeModal() {
   document.getElementById('fdModalBox').innerHTML = '';
 }
 
-function confirmModal({ icon = '?', title, desc, confirmText = 'OK', confirmClass = '', onConfirm }) {
+function confirmModal({ icon, title, desc, confirmText = 'OK', confirmClass = '', onConfirm }) {
   const box = document.getElementById('fdModalBox');
+  const iconHTML = icon || window.ICONS.alert;
   box.innerHTML = `
-    <div class="fd-modal-icon">${icon}</div>
+    <div class="fd-modal-icon">${iconHTML}</div>
     <h3>${esc(title)}</h3>
     <p>${esc(desc || '')}</p>
     <div class="fd-modal-actions">
@@ -351,7 +400,7 @@ function confirmModal({ icon = '?', title, desc, confirmText = 'OK', confirmClas
   };
 }
 
-function radioModal({ icon = '?', title, desc, options = [], confirmText = 'Применить', confirmClass = 'green', onConfirm }) {
+function radioModal({ icon, title, desc, options = [], confirmText = 'Применить', confirmClass = 'green', onConfirm }) {
   const box = document.getElementById('fdModalBox');
   const optsHtml = options.map(o => `
     <label class="fd-radio" data-val="${esc(o.value)}" style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;cursor:pointer;margin-bottom:8px;">
@@ -360,7 +409,7 @@ function radioModal({ icon = '?', title, desc, options = [], confirmText = 'Пр
     </label>
   `).join('');
   box.innerHTML = `
-    <div class="fd-modal-icon">${icon}</div>
+    <div class="fd-modal-icon">${icon || window.ICONS.alert}</div>
     <h3>${esc(title)}</h3>
     <p>${esc(desc || '')}</p>
     <div>${optsHtml}</div>
@@ -514,7 +563,10 @@ async function loadAppsBlock(body) {
           <button class="subtab ${appsFilter === 'approved' ? 'active' : ''}" onclick="setAppsFilter('approved')">Одобрено <span class="subtab-count">${appsData.approved.length}</span></button>
           <button class="subtab ${appsFilter === 'rejected' ? 'active' : ''}" onclick="setAppsFilter('rejected')">Отклонено <span class="subtab-count">${appsData.rejected.length}</span></button>
         </div>
-        <div class="search-wrap"><input class="search-input" id="appsSearch" placeholder="Поиск по нику..." oninput="renderAppsList()"></div>
+        <div class="search-wrap">
+          <span class="search-icon">${window.ICONS.search}</span>
+          <input class="search-input" id="appsSearch" placeholder="Поиск по нику..." oninput="renderAppsList()">
+        </div>
         <div class="cards-list" id="appsList"></div>
       </div>
     `;
@@ -577,7 +629,7 @@ function renderAppsList() {
 
 function quickStatus(id, action) {
   confirmModal({
-    icon: action === 'approve' ? '✓' : '✕',
+    icon: action === 'approve' ? window.ICONS.check : window.ICONS.x,
     title: action === 'approve' ? 'Одобрить заявку?' : 'Отклонить заявку?',
     desc: 'Действие изменит статус заявки в Discord.',
     confirmText: action === 'approve' ? 'Одобрить' : 'Отклонить',
@@ -595,7 +647,9 @@ function quickStatus(id, action) {
 
 function openChange(id) {
   radioModal({
-    icon: '↻', title: 'Изменить статус', desc: 'Выберите новый статус заявки',
+    icon: window.ICONS.refresh,
+    title: 'Изменить статус',
+    desc: 'Выберите новый статус заявки',
     options: [
       { value: 'approved', label: 'Одобрить' },
       { value: 'rejected', label: 'Отклонить' },
@@ -614,7 +668,9 @@ function openChange(id) {
 
 function openDelete(id) {
   confirmModal({
-    icon: 'X', title: 'Удалить заявку?', desc: 'Заявка будет навсегда удалена из Discord.',
+    icon: window.ICONS.trash,
+    title: 'Удалить заявку?',
+    desc: 'Заявка будет навсегда удалена из Discord.',
     confirmText: 'Удалить',
     onConfirm: async () => {
       try {
@@ -682,14 +738,14 @@ function renderTicketsList() {
 
 async function openTicket(id, name) {
   currentTicketId = id;
-  lastMessages = '';
+  lastMessageId = null;
   document.getElementById('ticketsMain').style.display = 'none';
   document.getElementById('ticketDetail').style.display = 'block';
   document.getElementById('ticketHeader').innerHTML = `<h3 style="font-family:'Unbounded';font-size:16px;margin-bottom:10px;color:#fff;">#${esc(name)}</h3>`;
   document.getElementById('ticketChat').innerHTML = '<div class="loading-state"><div class="spinner"></div> Загрузка...</div>';
   await loadTicketMessages();
   if (ticketPoll) clearInterval(ticketPoll);
-  ticketPoll = setInterval(loadTicketMessages, 5000);
+  ticketPoll = setInterval(loadTicketMessages, 15000);
 }
 function closeTicket() {
   if (ticketPoll) { clearInterval(ticketPoll); ticketPoll = null; }
@@ -701,12 +757,14 @@ async function loadTicketMessages() {
   if (!currentTicketId) return;
   try {
     const data = await api(`/api/tickets/${currentTicketId}/messages`);
-    const json = JSON.stringify(data.messages);
-    if (json === lastMessages) return;
-    lastMessages = json;
+    const messages = data.messages || [];
+    const lastId = messages[messages.length - 1]?.id;
+    if (lastId && lastId === lastMessageId) return;
+    lastMessageId = lastId;
+
     const el = document.getElementById('ticketChat');
-    if (!data.messages.length) { el.innerHTML = '<div class="empty-state">Сообщений нет.</div>'; return; }
-    el.innerHTML = data.messages.map(m => {
+    if (!messages.length) { el.innerHTML = '<div class="empty-state">Сообщений нет.</div>'; return; }
+    el.innerHTML = messages.map(m => {
       const time = new Date(m.date).toLocaleString('ru-RU');
       const body = m.content || m.embedDescription || '';
       const atts = (m.attachments || []).map(a => {
@@ -770,6 +828,7 @@ function renderManage() {
       <button class="subtab ${manageSub === 'staff' ? 'active' : ''}" onclick="setMgSub('staff')">Персонал</button>
       <button class="subtab ${manageSub === 'analytics' ? 'active' : ''}" onclick="setMgSub('analytics')">Статистика</button>
       ${isFullAdmin ? `<button class="subtab ${manageSub === 'balances' ? 'active' : ''}" onclick="setMgSub('balances')">Баланс</button>` : ''}
+      <button class="subtab ${manageSub === 'privileges' ? 'active' : ''}" onclick="setMgSub('privileges')">Привилегии</button>
       <button class="subtab ${manageSub === 'roles' ? 'active' : ''}" onclick="setMgSub('roles')">Выдача ролей</button>
       ${isOwner() ? `<button class="subtab ${manageSub === 'promo' ? 'active' : ''}" onclick="setMgSub('promo')">Промокоды</button>` : ''}
       ${isFullAdmin ? `<button class="subtab ${manageSub === 'orders' ? 'active' : ''}" onclick="setMgSub('orders')">Покупки привилегий</button>` : ''}
@@ -787,6 +846,7 @@ async function loadMgBody() {
   if (manageSub === 'staff') return loadStaffBlock(body);
   if (manageSub === 'analytics') return loadAnalyticsBlock(body);
   if (manageSub === 'balances') return loadBalancesBlock(body);
+  if (manageSub === 'privileges') return loadPrivilegesBlock(body);
   if (manageSub === 'settings') return loadSettingsBlock(body);
   if (manageSub === 'roles') return loadRolesBlock(body);
   if (manageSub === 'promo') return loadPromoBlock(body);
@@ -832,7 +892,7 @@ function renderStaffGrid() {
   if (!list.length) { grid.innerHTML = '<div class="empty-state">Нет участников.</div>'; return; }
   grid.innerHTML = list.map(s => {
     const status = (s.presence && s.presence.status) || 'offline';
-    const color = ROLE_COLOR_OVERRIDE[s.topRole] || s.topRoleColor;
+    const color = ROLE_COLOR_OVERRIDE[s.topRole] || s.topRoleColor || '#5865f2';
     const profileId = s.steamId;
     const avatarHTML = s.steamAvatar
       ? `<img class="staff-avatar" src="${s.steamAvatar}" alt="">`
@@ -1086,7 +1146,7 @@ window.submitBalance = async function(mode) {
   if (!Number.isFinite(amount) || (mode !== 'set' && amount <= 0)) { toast('Введите корректную сумму', 'error'); return; }
   const labels = { add: 'выдать', subtract: 'снять', set: 'установить' };
   confirmModal({
-    icon: mode === 'add' ? '+' : mode === 'subtract' ? '-' : '=',
+    icon: mode === 'add' ? window.ICONS.plus : mode === 'subtract' ? window.ICONS.minus : window.ICONS.settings,
     title: `${mode === 'add' ? 'Выдать' : mode === 'subtract' ? 'Снять' : 'Установить'} ${amount}₽?`,
     desc: `Пользователь: ${currentBalanceUser.username}\nSteam ID: ${currentBalanceUser.steamId}`,
     confirmText: `Да, ${labels[mode]}`,
@@ -1109,12 +1169,328 @@ window.submitBalance = async function(mode) {
   });
 };
 
+/* ============ ПРИВИЛЕГИИ (АДМИН) ============ */
+async function loadPrivilegesBlock(body) {
+  if (!isCuratorOrAbove()) {
+    body.innerHTML = '<div class="empty-state">Доступно кураторам и выше.</div>';
+    return;
+  }
+  body.innerHTML = `
+    <div class="section-block">
+      <div class="section-block-head">
+        <div>
+          <div class="section-block-title">Управление привилегиями</div>
+          <div class="section-block-sub">Выдача и снятие привилегий у пользователей</div>
+        </div>
+      </div>
+
+      <div class="search-wrap">
+        <span class="search-icon">${window.ICONS.search}</span>
+        <input class="search-input" id="privSteamSearch"
+               placeholder="Steam ID (17 цифр)"
+               maxlength="17"
+               inputmode="numeric"
+               oninput="onPrivSteamInput(this.value)"
+               onkeydown="if(event.key==='Enter')findPrivilegeUser()">
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+        <button class="btn-act blue" id="privFindBtn" onclick="findPrivilegeUser()" disabled>Найти пользователя</button>
+      </div>
+
+      <div id="privUserArea"></div>
+    </div>
+  `;
+  const input = document.getElementById('privSteamSearch');
+  if (input) setTimeout(() => input.focus(), 100);
+}
+
+function onPrivSteamInput(v) {
+  const cleaned = v.replace(/\D/g, '').slice(0, 17);
+  const input = document.getElementById('privSteamSearch');
+  if (input.value !== cleaned) input.value = cleaned;
+  const btn = document.getElementById('privFindBtn');
+  if (btn) btn.disabled = cleaned.length !== 17;
+}
+
+async function findPrivilegeUser() {
+  const steamId = document.getElementById('privSteamSearch').value.trim();
+  if (!/^\d{17}$/.test(steamId)) { toast('Введите корректный Steam ID (17 цифр)', 'error'); return; }
+  const btn = document.getElementById('privFindBtn');
+  btn.disabled = true;
+  btn.textContent = 'Поиск...';
+  const area = document.getElementById('privUserArea');
+  area.innerHTML = '<div class="loading-state"><div class="spinner"></div> Поиск пользователя...</div>';
+  try {
+    const [userData, privList] = await Promise.all([
+      api('/api/admin/privileges/find?steamId=' + steamId),
+      api('/api/admin/privileges/list'),
+    ]);
+    privilegesCache = privList.privileges || [];
+    selectedPrivilegeUser = userData.user;
+    renderPrivilegeUser(userData.user, privilegesCache);
+  } catch (e) {
+    const errors = { bad_steam_id: 'Неверный Steam ID', not_found: 'Пользователь не найден', no_db: 'Ошибка базы данных', forbidden: 'Нет прав' };
+    const key = e.message.split(' — ')[0];
+    area.innerHTML = `<div class="balance-result-empty">${esc(errors[key] || e.message)}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Найти пользователя';
+  }
+}
+
+function renderPrivilegeUser(user, privileges) {
+  const area = document.getElementById('privUserArea');
+  const avatarHTML = user.avatar
+    ? `<img class="balance-user-avatar" src="${esc(user.avatar)}" alt="">`
+    : `<div class="balance-user-avatar balance-user-avatar-empty"></div>`;
+
+  const ownedIds = new Set((user.privileges || []).map(p => p.itemId));
+
+  const ownedHTML = (user.privileges || []).length
+    ? user.privileges.map(p => {
+        const priv = privileges.find(x => x.id === p.itemId);
+        const color = priv?.color || '#4ade80';
+        const duration = p.forever
+          ? 'Навсегда'
+          : p.expiresAt
+            ? `до ${new Date(p.expiresAt).toLocaleDateString('ru-RU')}`
+            : '—';
+        return `
+          <div class="priv-owned-card" style="--item-color:${color};">
+            <div class="priv-owned-head">
+              <span class="priv-owned-name">${esc(p.itemName)}</span>
+              <button class="priv-revoke-btn" onclick="revokePrivilege('${esc(p.itemId)}', '${esc(p.itemName)}')">Снять</button>
+            </div>
+            <div class="priv-owned-meta">
+              <span>Срок: <b>${duration}</b></span>
+            </div>
+          </div>
+        `;
+      }).join('')
+    : '<div class="empty-state" style="padding:20px;">У пользователя нет активных привилегий</div>';
+
+  const grantHTML = privileges.length
+    ? privileges.map(p => {
+        const owned = ownedIds.has(p.id);
+        return `
+          <div class="priv-grant-card" style="--item-color:${p.color};" onclick="openDurationPicker('${p.id}', '${esc(p.name)}', ${owned ? 'true' : 'false'})">
+            <div class="priv-grant-head">
+              <span class="priv-grant-name" style="color:${p.color};">${esc(p.name)}</span>
+              ${owned ? '<span class="priv-grant-owned">Активна</span>' : ''}
+            </div>
+            <div class="priv-grant-desc">${esc(p.description || '')}</div>
+            <div class="priv-grant-action">Выдать →</div>
+          </div>
+        `;
+      }).join('')
+    : '<div class="empty-state">Нет доступных привилегий</div>';
+
+  area.innerHTML = `
+    <div class="balance-result">
+      <div class="balance-user-row">
+        ${avatarHTML}
+        <div class="balance-user-info">
+          <div class="balance-user-name">${esc(user.username)}</div>
+          <a class="balance-user-steam" href="https://steamcommunity.com/profiles/${esc(user.steamId)}" target="_blank" rel="noopener">${esc(user.steamId)}</a>
+          ${user.discordId
+            ? `<div style="font-size:11px;color:var(--text-dim);margin-top:2px;">Discord: ${esc(user.discordId)}</div>`
+            : '<div style="font-size:11px;color:var(--text-dim);margin-top:2px;">Discord не привязан</div>'}
+        </div>
+      </div>
+
+      <div class="section-block-title" style="font-size:14px;margin-bottom:12px;">Активные привилегии</div>
+      <div class="priv-owned-list">${ownedHTML}</div>
+
+      <div class="section-block-title" style="font-size:14px;margin:20px 0 12px;">Выдать привилегию</div>
+      <div class="priv-grant-list">${grantHTML}</div>
+    </div>
+  `;
+}
+
+window.openDurationPicker = function (privilegeId, privilegeName, isAlreadyOwned) {
+  if (!selectedPrivilegeUser) return;
+
+  const presets = [
+    { id: 'd1',  label: '1 день',    minutes: 60 * 24 },
+    { id: 'd7',  label: '7 дней',    minutes: 60 * 24 * 7 },
+    { id: 'd30', label: '30 дней',   minutes: 60 * 24 * 30 },
+    { id: 'd90', label: '90 дней',   minutes: 60 * 24 * 90 },
+  ];
+
+  const box = document.getElementById('fdModalBox');
+  box.innerHTML = `
+    <div class="fd-modal-icon">${window.ICONS.clock}</div>
+    <h3>Выдать «${esc(privilegeName)}»</h3>
+    <p style="margin-bottom:16px;">Пользователь: <b style="color:#fff;">${esc(selectedPrivilegeUser.username)}</b>${isAlreadyOwned ? '<br><span style="color:#fbbf24;">У пользователя уже есть эта привилегия — срок продлится.</span>' : ''}</p>
+
+    <div class="fd-modal-label">Выберите срок</div>
+    <div class="duration-preset-row">
+      ${presets.map(p => `
+        <button class="duration-preset-btn" data-minutes="${p.minutes}">${esc(p.label)}</button>
+      `).join('')}
+    </div>
+
+    <div class="duration-forever-row">
+      <button class="duration-forever-btn" data-forever="1">Навсегда</button>
+    </div>
+
+    <div class="fd-modal-label" style="margin-top:18px;">Или свой срок (в минутах)</div>
+    <input type="number" min="1" step="1" class="fd-modal-input" id="fdCustomMinutes" placeholder="Например, 1440 (= 1 день)" autocomplete="off">
+    <div id="fdCustomHint" style="font-size:11.5px;color:var(--text-dim);margin-top:-6px;margin-bottom:10px;">
+      Будет выдано: <b style="color:#fff;">—</b>
+    </div>
+
+    <div class="fd-modal-actions">
+      <button class="fd-btn-cancel" onclick="closeModal()">Отмена</button>
+      <button class="fd-btn-confirm green" id="fdGrantConfirmBtn" disabled>Выдать</button>
+    </div>
+  `;
+
+  document.getElementById('fdModal').classList.add('visible');
+
+  let selectedMinutes = null;
+  const customInput = document.getElementById('fdCustomMinutes');
+  const customHint = document.getElementById('fdCustomHint');
+  const confirmBtn = document.getElementById('fdGrantConfirmBtn');
+
+  const clearPresetSelection = () => {
+    box.querySelectorAll('.duration-preset-btn, .duration-forever-btn').forEach(b => b.classList.remove('selected'));
+  };
+
+  const updateConfirmState = () => {
+    if (selectedMinutes === 'forever') { confirmBtn.disabled = false; return; }
+    if (typeof selectedMinutes === 'number' && selectedMinutes > 0) { confirmBtn.disabled = false; return; }
+    confirmBtn.disabled = true;
+  };
+
+  const formatMinutes = (mins) => {
+    if (!mins || mins <= 0) return '0 мин';
+    const total = Math.round(mins);
+    const days = Math.floor(total / (60 * 24));
+    const hours = Math.floor((total % (60 * 24)) / 60);
+    const m = total % 60;
+    const parts = [];
+    if (days > 0) parts.push(`${days} д`);
+    if (hours > 0) parts.push(`${hours} ч`);
+    if (m > 0 && days === 0) parts.push(`${m} мин`);
+    return parts.join(' ') || '0 мин';
+  };
+
+  box.querySelectorAll('.duration-preset-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      clearPresetSelection();
+      btn.classList.add('selected');
+      selectedMinutes = Number(btn.dataset.minutes);
+      customInput.value = '';
+      customHint.innerHTML = `Будет выдано: <b style="color:#fff;">${formatMinutes(selectedMinutes)}</b>`;
+      updateConfirmState();
+    });
+  });
+
+  box.querySelectorAll('.duration-forever-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      clearPresetSelection();
+      btn.classList.add('selected');
+      selectedMinutes = 'forever';
+      customInput.value = '';
+      customHint.innerHTML = `Будет выдано: <b style="color:#fff;">Навсегда</b>`;
+      updateConfirmState();
+    });
+  });
+
+  customInput.addEventListener('input', () => {
+    const v = customInput.value.replace(/\D/g, '').slice(0, 8);
+    if (customInput.value !== v) customInput.value = v;
+    const num = Number(v);
+    if (num > 0) {
+      clearPresetSelection();
+      selectedMinutes = num;
+      customHint.innerHTML = `Будет выдано: <b style="color:#fff;">${formatMinutes(num)}</b>`;
+    } else {
+      selectedMinutes = null;
+      customHint.innerHTML = `Будет выдано: <b style="color:#fff;">—</b>`;
+    }
+    updateConfirmState();
+  });
+
+  confirmBtn.onclick = async () => {
+    if (selectedMinutes === null) return;
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = 'Выдача...';
+    const durationMinutes = selectedMinutes === 'forever' ? 0 : selectedMinutes;
+    try {
+      const r = await api('/api/admin/privileges/grant', {
+        method: 'POST',
+        body: JSON.stringify({
+          steamId: selectedPrivilegeUser.steamId,
+          privilegeId,
+          durationMinutes,
+        }),
+      });
+      toast(`«${privilegeName}» (${r.durationLabel}) выдана`, 'success');
+      if (!r.roleApplied) {
+        setTimeout(() => toast('В Discord применится после привязки', 'info'), 1200);
+      }
+      closeModal();
+      findPrivilegeUser();
+    } catch (e) {
+      const errors = {
+        bad_steam_id: 'Неверный Steam ID',
+        privilege_not_found: 'Привилегия не найдена',
+        bad_duration: 'Некорректный срок',
+        no_db: 'Ошибка базы данных',
+        forbidden: 'Нет прав',
+      };
+      const key = e.message.split(' — ')[0];
+      toast(errors[key] || e.message, 'error');
+      confirmBtn.disabled = false;
+      confirmBtn.textContent = 'Выдать';
+    }
+  };
+};
+
+async function revokePrivilege(privilegeId, privilegeName) {
+  if (!selectedPrivilegeUser) return;
+  confirmModal({
+    icon: window.ICONS.x,
+    title: `Снять «${privilegeName}»?`,
+    desc: `Пользователь: ${selectedPrivilegeUser.username}\nРоль также снимется в Discord.`,
+    confirmText: 'Снять',
+    onConfirm: async () => {
+      try {
+        const r = await api('/api/admin/privileges/revoke', {
+          method: 'POST',
+          body: JSON.stringify({ steamId: selectedPrivilegeUser.steamId, privilegeId }),
+        });
+        toast(`«${privilegeName}» снята`, 'success');
+        if (!r.roleRemoved) {
+          setTimeout(() => toast('Роль не была найдена в Discord', 'info'), 1200);
+        }
+        findPrivilegeUser();
+      } catch (e) {
+        const errors = {
+          privilege_not_owned: 'У пользователя нет этой привилегии',
+          bad_steam_id: 'Неверный Steam ID',
+          no_db: 'Ошибка базы данных',
+          forbidden: 'Нет прав',
+        };
+        const key = e.message.split(' — ')[0];
+        toast(errors[key] || e.message, 'error');
+      }
+    },
+  });
+}
+
 async function loadRolesBlock(body) {
   if (!isCuratorOrAbove()) { body.innerHTML = '<div class="empty-state">Доступно только кураторам и выше.</div>'; return; }
   body.innerHTML = `
     <div class="section-block">
       <div class="section-block-head"><div><div class="section-block-title">Выдача ролей</div><div class="section-block-sub">Роль выдаётся на сайте сразу. В Discord применится автоматически при привязке.</div></div></div>
-      <div class="search-wrap"><input class="search-input" id="steamSearch" placeholder="Steam ID" oninput="searchSteamUsers()"></div>
+      <div class="search-wrap">
+        <span class="search-icon">${window.ICONS.search}</span>
+        <input class="search-input" id="steamSearch" placeholder="Steam ID" oninput="searchSteamUsers()">
+      </div>
       <div class="cards-list" id="steamResults"><div class="empty-state">Введите Steam ID</div></div>
       <div id="rolePickArea" style="display:none;margin-top:20px;">
         <div class="section-block-title" style="font-size:14px;margin-bottom:12px;">Роль для <b id="selectedUserName" style="margin-left:6px;"></b></div>
@@ -1175,7 +1551,8 @@ function giveRole(roleId, roleName) {
     ? 'Роль будет выдана на сайте и сразу в Discord.'
     : 'Роль будет выдана на сайте. В Discord она применится автоматически после привязки аккаунта.';
   confirmModal({
-    icon: '+', title: `Выдать роль "${roleName}"?`,
+    icon: window.ICONS.plus,
+    title: `Выдать роль "${roleName}"?`,
     desc: `Пользователь: ${selectedMember.name}. ${warn}`,
     confirmText: 'Выдать', confirmClass: 'green',
     onConfirm: async () => {
@@ -1211,8 +1588,8 @@ async function loadPromoList() {
     if (!list.length) { el.innerHTML = '<div class="empty-state">Промокодов нет</div>'; return; }
     el.innerHTML = list.map(p => `
       <div class="app-card compact">
-        <div style="width:40px;height:40px;border-radius:10px;background:rgba(225,6,0,0.12);border:1px solid rgba(225,6,0,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#e10600" stroke-width="1.8" style="width:18px;height:18px;"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/></svg>
+        <div style="width:40px;height:40px;border-radius:10px;background:rgba(225,6,0,0.12);border:1px solid rgba(225,6,0,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#e10600;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:18px;height:18px;"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/></svg>
         </div>
         <div class="app-body">
           <div class="app-head"><span class="app-name" style="font-family:'Unbounded',monospace;letter-spacing:1.5px;font-size:13px;">${esc(p.code)}</span><span class="app-date">${new Date(p.createdAt).toLocaleDateString('ru-RU')}</span></div>
@@ -1227,7 +1604,7 @@ async function loadPromoList() {
 function openPromoCreate() {
   const box = document.getElementById('fdModalBox');
   box.innerHTML = `
-    <div class="fd-modal-icon">+</div>
+    <div class="fd-modal-icon">${window.ICONS.plus}</div>
     <h3>Новый промокод</h3>
     <p style="margin-bottom:14px;">Код автоматически переводится в верхний регистр. Поддерживаются латиница, <b style="color:#fff;">кириллица</b>, цифры, «_» и «-».</p>
     <label class="fd-modal-label">Код промокода</label>
@@ -1312,7 +1689,9 @@ window.fdPresetCode = function(prefix) {
 
 function deletePromo(code) {
   confirmModal({
-    icon: 'X', title: `Удалить «${code}»?`, desc: 'Промокод будет удалён безвозвратно.',
+    icon: window.ICONS.trash,
+    title: `Удалить «${code}»?`,
+    desc: 'Промокод будет удалён безвозвратно.',
     confirmText: 'Удалить',
     onConfirm: async () => {
       try {
@@ -1337,8 +1716,8 @@ async function loadOrdersBlock(body) {
         <div class="cards-list">
           ${orders.map(o => `
             <div class="app-card compact">
-              <div style="width:40px;height:40px;border-radius:10px;background:rgba(225,6,0,0.12);border:1px solid rgba(225,6,0,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#e10600" stroke-width="1.8" style="width:18px;height:18px;"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+              <div style="width:40px;height:40px;border-radius:10px;background:rgba(225,6,0,0.12);border:1px solid rgba(225,6,0,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#e10600;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:18px;height:18px;"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
               </div>
               <div class="app-body">
                 <div class="app-head"><span class="app-name">${esc(o.userName)}</span><span class="app-date">${new Date(o.createdAt).toLocaleDateString('ru-RU')}</span></div>
@@ -1365,6 +1744,8 @@ async function loadSettingsBlock(body) {
           <div class="setting-card"><div class="setting-label">Discord сервер</div><div class="setting-value">${esc(s.guildId)}</div></div>
           <div class="setting-card"><div class="setting-label">Канал заявок</div><div class="setting-value">${esc(s.applyChannel)}</div></div>
           <div class="setting-card"><div class="setting-label">Канал логов</div><div class="setting-value">${esc(s.logsChannel)}</div></div>
+          <div class="setting-card"><div class="setting-label">Канал магазина</div><div class="setting-value">${esc(s.shopChannel)}</div></div>
+          <div class="setting-card"><div class="setting-label">Канал покупок</div><div class="setting-value">${esc(s.purchaseChannel || '—')}</div></div>
           <div class="setting-card"><div class="setting-label">Статус бота</div><div class="setting-value ${s.botConnected ? 'ok' : 'err'}">${s.botConnected ? 'Подключён' : 'Не подключён'}</div></div>
         </div>
       </div>
@@ -1375,9 +1756,9 @@ async function loadSettingsBlock(body) {
 async function loadMonitorBlock(body) {
   body.innerHTML = '<div class="loading-state"><div class="spinner"></div> Проверка...</div>';
   const start = performance.now();
-  let apiStatus = 'err', apiText = 'Недоступен', ping = '—';
-  try { await api('/api/me'); ping = Math.round(performance.now() - start) + ' ms'; apiStatus = 'ok'; apiText = 'Работает'; }
-  catch { apiText = 'Ошибка'; }
+  let apiStatus = 'err', ping = '—';
+  try { await api('/api/me'); ping = Math.round(performance.now() - start) + ' ms'; apiStatus = 'ok'; }
+  catch { /* error */ }
   body.innerHTML = `
     <div class="section-block">
       <div class="section-block-head"><div><div class="section-block-title">Мониторинг</div></div><button class="btn-act ghost" onclick="loadMonitorBlock(document.getElementById('mgBody'))">Обновить</button></div>
