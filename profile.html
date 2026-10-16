@@ -25,10 +25,90 @@
   .steam-social-corner a:hover { transform: translateY(-3px); color: #fff; border-color: var(--red); background: rgba(225,6,0,0.15); box-shadow: 0 6px 20px rgba(225,6,0,0.35); }
   .steam-social-corner svg { width: 18px; height: 18px; fill: currentColor; }
 
-  .steam-avatar-wrap { position: relative; width: 110px; height: 110px; margin: -55px auto 12px; border-radius: 14px; border: 3px solid #0e0e0e; overflow: hidden; background: #060606; z-index: 2; box-shadow: 0 8px 24px rgba(0,0,0,0.7); }
+  /* Ряд аватарки + огонёк слева */
+  .profile-avatar-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin: -55px auto 12px;
+    position: relative;
+    z-index: 2;
+    padding: 0 20px;
+  }
+  .steam-avatar-wrap {
+    position: relative;
+    width: 110px;
+    height: 110px;
+    border-radius: 14px;
+    border: 3px solid #0e0e0e;
+    overflow: hidden;
+    background: #060606;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+    flex-shrink: 0;
+  }
   .steam-avatar { width: 100%; height: 100%; object-fit: cover; display: block; }
   .steam-avatar-empty { display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.03); color: var(--text-dim); font-size: 20px; }
   .steam-avatar-empty::after { content: '—'; opacity: 0.4; }
+
+  .profile-streak-badge { display: flex; align-items: center; flex-shrink: 0; }
+  .profile-streak-badge:empty { display: none; }
+  .profile-streak-badge .streak-fire-badge {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.25s;
+  }
+  .profile-streak-badge .streak-fire-badge:hover { transform: scale(1.08); }
+  .profile-streak-badge .streak-fire-badge .fire-main {
+    width: 48px;
+    height: 48px;
+    color: #ff4400;
+    filter: drop-shadow(0 0 18px rgba(255,68,0,0.7));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .profile-streak-badge .streak-fire-badge .fire-main svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+  }
+  .profile-streak-badge .streak-fire-badge.frozen .fire-main {
+    color: #60a5fa;
+    filter: drop-shadow(0 0 18px rgba(96,165,250,0.7));
+  }
+  .profile-streak-badge .streak-fire-badge.frozen .fire-main svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+  }
+  .profile-streak-badge .streak-fire-badge .fire-count {
+    position: absolute;
+    bottom: -6px;
+    right: -14px;
+    min-width: 32px;
+    height: 26px;
+    padding: 0 8px;
+    background: linear-gradient(135deg, #ff4400, #ff8c00);
+    border: 3px solid #fff;
+    border-radius: 100px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900;
+    font-size: 13px;
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(255,68,0,0.6);
+    line-height: 1;
+  }
+  .profile-streak-badge .streak-fire-badge.frozen .fire-count {
+    background: linear-gradient(135deg, #60a5fa, #2563eb);
+    box-shadow: 0 6px 20px rgba(96,165,250,0.6);
+  }
 
   .steam-body { padding: 0 20px 22px; text-align: center; }
   .steam-role-badge { display: inline-block; padding: 5px 14px; background: rgba(96,165,250,0.12); border: 1px solid rgba(96,165,250,0.5); border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 600; color: #60a5fa; margin-bottom: 12px; }
@@ -59,36 +139,6 @@
   .reaction-btn.active-dislike { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.5); color: #ef4444; }
   .reaction-views { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 13px; color: var(--text-dim); }
   .reaction-views svg { width: 16px; height: 16px; fill: currentColor; }
-
-  .streak-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 2500; display: none; align-items: center; justify-content: center; padding: 20px; }
-  .streak-modal.visible { display: flex; }
-  .streak-modal-inner { background: linear-gradient(145deg, #0e0e0e, #060606); border: 1px solid var(--border-bright); border-radius: 22px; padding: 24px; max-width: 380px; width: 100%; position: relative; overflow: hidden; animation: streakIn 0.35s cubic-bezier(0.22, 1, 0.36, 1); text-align: center; }
-  .streak-modal-inner::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #ff4400, #ff8c00, #ff4400); }
-  @keyframes streakIn { from { opacity: 0; transform: scale(0.92) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-  .streak-fire-big { display: flex; align-items: center; justify-content: center; width: 80px; height: 80px; margin: 4px auto 8px; filter: drop-shadow(0 0 30px rgba(255,68,0,0.6)); animation: fireGlow 3s ease-in-out infinite; }
-  .streak-fire-big svg { width: 64px; height: 64px; fill: currentColor; }
-  .streak-fire-big.frozen { filter: drop-shadow(0 0 30px rgba(96,165,250,0.6)); }
-  .streak-fire-big.frozen svg { fill: none; stroke: currentColor; stroke-width: 1.5; }
-  @keyframes fireGlow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
-  .streak-count { font-family: 'Unbounded', sans-serif; font-size: 42px; font-weight: 900; color: #fff; letter-spacing: -2px; line-height: 1; margin-bottom: 4px; }
-  .streak-count-label { font-size: 12px; color: var(--text-dim); font-family: 'Unbounded', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; }
-  .streak-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
-  .streak-stat { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 12px 10px; }
-  .streak-stat-icon { display: flex; align-items: center; justify-content: center; height: 22px; margin-bottom: 6px; }
-  .streak-stat-icon svg { width: 20px; height: 20px; fill: currentColor; }
-  .streak-stat-value { font-family: 'Unbounded', sans-serif; font-size: 18px; font-weight: 800; color: #fff; letter-spacing: -0.5px; line-height: 1; margin-bottom: 3px; }
-  .streak-stat-label { font-size: 10px; color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; }
-  .streak-today { padding: 10px 14px; border-radius: 10px; font-size: 12.5px; font-weight: 600; margin-bottom: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-  .streak-today.ok { background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.4); color: #4ade80; }
-  .streak-today.no { background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.4); color: #fbbf24; }
-  .streak-today.frozen { background: rgba(96,165,250,0.12); border: 1px solid rgba(96,165,250,0.4); color: #60a5fa; }
-  .streak-desc { font-size: 11.5px; color: var(--text-dim); line-height: 1.5; margin-bottom: 16px; padding: 0 8px; }
-  .streak-freeze-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #60a5fa, #2563eb); border: none; border-radius: 12px; color: #fff; font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 12.5px; cursor: pointer; transition: all 0.3s; box-shadow: 0 6px 20px rgba(96,165,250,0.35); display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; }
-  .streak-freeze-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(96,165,250,0.55); }
-  .streak-freeze-btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
-  .streak-close-btn { width: 100%; padding: 10px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); border-radius: 10px; color: var(--text-dim); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12.5px; cursor: pointer; transition: all 0.2s; }
-  .streak-close-btn:hover { color: #fff; border-color: var(--red); background: rgba(225,6,0,0.08); }
-  .streak-loading { padding: 20px; color: var(--text-dim); font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 10px; }
 
   .steam-menu { background: linear-gradient(145deg, #0e0e0e, #060606); border: 1px solid var(--border); border-radius: 18px; padding: 8px; margin-bottom: 14px; }
   .steam-menu-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 12px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 500; text-decoration: none; transition: all 0.2s; background: transparent; border: none; width: 100%; text-align: left; cursor: pointer; }
@@ -227,7 +277,8 @@
 
   @media (max-width: 699px) {
     .steam-banner { height: 110px; }
-    .steam-avatar-wrap { width: 96px; height: 96px; margin-top: -48px; border-radius: 12px; }
+    .profile-avatar-row { margin-top: -48px; gap: 12px; padding: 0 16px; }
+    .steam-avatar-wrap { width: 96px; height: 96px; border-radius: 12px; }
     .steam-name { font-size: 17px; }
     .steam-body { padding: 0 16px 20px; }
     .inv-grid { gap: 8px; }
@@ -266,9 +317,12 @@
       <div class="steam-banner" id="steamBanner">
         <div class="steam-social-corner" id="steamSocialCorner"></div>
       </div>
-      <div class="steam-avatar-wrap" id="steamAvatarWrap">
-        <img class="steam-avatar" id="steamAvatar" src="" alt="" style="display:none;">
-        <div class="steam-avatar steam-avatar-empty" id="steamAvatarEmpty" style="display:none;"></div>
+      <div class="profile-avatar-row">
+        <div class="profile-streak-badge" id="profileStreakBadge"></div>
+        <div class="steam-avatar-wrap" id="steamAvatarWrap">
+          <img class="steam-avatar" id="steamAvatar" src="" alt="" style="display:none;">
+          <div class="steam-avatar steam-avatar-empty" id="steamAvatarEmpty" style="display:none;"></div>
+        </div>
       </div>
       <div class="profile-reactions" id="profileReactions"></div>
       <div class="steam-body" id="steamBody">
@@ -402,10 +456,6 @@
   </div>
 </main>
 
-<div class="streak-modal" id="streakModal" onclick="if(event.target.id==='streakModal')closeStreakModal()">
-  <div class="streak-modal-inner" id="streakModalInner"></div>
-</div>
-
 <nav class="bottom-nav">
   <a class="nav-btn" href="/"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Главная</span></a>
   <a class="nav-btn" href="/rules"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Правила</span></a>
@@ -532,8 +582,7 @@ function renderSteamProfile(user) {
     try {
       const u = new URL(user.backgroundUrl);
       if (u.protocol === 'http:' || u.protocol === 'https:') {
-        banner.style.background =
-          `linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.6)), url("${u.href}") center/cover`;
+        banner.style.background = `linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.6)), url("${u.href}") center/cover`;
       } else {
         banner.style.background = '';
       }
@@ -570,8 +619,7 @@ function renderSteamProfile(user) {
   const verifyBadge = user.isVerified
     ? `<span class="steam-badge-item verify" title="FERNODD+">
          <svg viewBox="0 0 24 24" fill="none">
-           <path d="M12 2l2.4 1.8 3-.3 1.2 2.7 2.7 1.2-.3 3L22 12l-1.8 2.4.3 3-2.7 1.2-1.2 2.7-3-.3L12 22l-2.4-1.8-3 .3-1.2-2.7-2.7-1.2.3-3L2 12l1.8-2.4-.3-3 2.7-1.2 1.2-2.7 3 .3L12 2z"
-                 fill="url(#fernoddPlusGrad)"/>
+           <path d="M12 2l2.4 1.8 3-.3 1.2 2.7 2.7 1.2-.3 3L22 12l-1.8 2.4.3 3-2.7 1.2-1.2 2.7-3-.3L12 22l-2.4-1.8-3 .3-1.2-2.7-2.7-1.2.3-3L2 12l1.8-2.4-.3-3 2.7-1.2 1.2-2.7 3 .3L12 2z" fill="url(#fernoddPlusGrad)"/>
            <path d="M8.5 12.5l2.2 2.2 4.8-4.8" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
            <defs>
              <linearGradient id="fernoddPlusGrad" x1="0" y1="0" x2="1" y2="1">
@@ -605,6 +653,25 @@ function renderSteamProfile(user) {
   }
 
   const tagBadge = tag ? `<span class="steam-badge-item tag" style="background:rgba(255,255,255,0.06);color:var(--text-dim);border:1px solid var(--border-bright);font-size:10.5px;">${escapeHtml(tag)}</span>` : '';
+
+  // Бейдж слева от аватарки (вариант B — в одном ряду с аватаром)
+  const streakBadgeEl = document.getElementById('profileStreakBadge');
+  if (streakBadgeEl) {
+    if (user.activity > 0) {
+      const frozen = user.streakFrozen;
+      const fireIconBig = frozen ? window.ICONS.snowflake : window.ICONS.flame;
+      const frozenCls = frozen ? 'frozen' : '';
+      const clickAttr = isOwnProfile ? `onclick="openStreakModal(event)"` : '';
+      streakBadgeEl.innerHTML = `
+        <div class="streak-fire-badge ${frozenCls}" ${clickAttr} title="Стрик">
+          <div class="fire-main">${fireIconBig}</div>
+          <div class="fire-count">${user.activity}</div>
+        </div>
+      `;
+    } else {
+      streakBadgeEl.innerHTML = '';
+    }
+  }
 
   document.getElementById('steamBody').innerHTML = `
     <div class="steam-role-badge" style="background:${roleColor}15;border-color:${roleColor}66;color:${roleColor};">
@@ -703,116 +770,6 @@ async function renderProfileReactions(user) {
     console.error('[reactions]', e);
   }
 }
-
-window.openStreakModal = async function(e) {
-  if (e) e.stopPropagation();
-  if (!isOwnProfile) return;
-  const modal = document.getElementById('streakModal');
-  const inner = document.getElementById('streakModalInner');
-  inner.innerHTML = `<div class="streak-loading"><div class="spinner"></div> Загрузка...</div>`;
-  modal.classList.add('visible');
-
-  try {
-    const data = await api('/api/activity/status');
-    const streak = data.streak || 0;
-    const maxStreak = data.maxStreak || 0;
-    const countedToday = data.countedToday;
-    const frozen = data.frozen;
-    const hasPlus = data.hasFernoddPlus;
-
-    const fireIcon = frozen ? window.ICONS.snowflake : window.ICONS.flame;
-    const fireCls = frozen ? 'frozen' : '';
-    const fireColor = frozen ? '#60a5fa' : '#ff4400';
-
-    let todayBlock = '';
-    if (frozen) todayBlock = `<div class="streak-today frozen">Стрик заморожен · пропуск 1 дня не сгорит</div>`;
-    else if (countedToday) todayBlock = `<div class="streak-today ok">Огонёк засчитан сегодня</div>`;
-    else todayBlock = `<div class="streak-today no">Проведи 5 минут на сайте</div>`;
-
-    let freezeBlock = '';
-    if (hasPlus && streak > 0 && !frozen && countedToday) {
-      freezeBlock = `<button class="streak-freeze-btn" onclick="freezeStreakFromModal()">Заморозить на 1 день</button>`;
-    } else if (frozen) {
-      freezeBlock = `<button class="streak-freeze-btn" disabled>Заморозка активна</button>`;
-    }
-
-    inner.innerHTML = `
-      <div class="streak-fire-big ${fireCls}" style="color:${fireColor};">${fireIcon}</div>
-      <div class="streak-count">${streak}</div>
-      <div class="streak-count-label">${streak === 1 ? 'день подряд' : 'дней подряд'}</div>
-      <div class="streak-stats">
-        <div class="streak-stat">
-          <div class="streak-stat-icon" style="color:#ff4400;">${window.ICONS.flame}</div>
-          <div class="streak-stat-value">${streak}</div>
-          <div class="streak-stat-label">Текущий</div>
-        </div>
-        <div class="streak-stat">
-          <div class="streak-stat-icon" style="color:#fbbf24;">${window.ICONS.trophy}</div>
-          <div class="streak-stat-value">${maxStreak}</div>
-          <div class="streak-stat-label">Рекорд</div>
-        </div>
-      </div>
-      ${todayBlock}
-      ${freezeBlock}
-      <div class="streak-desc">Заходи на сайт каждый день — стрик растёт.<br>Пропустишь 1 день — стрик сгорит.</div>
-      <button class="streak-close-btn" onclick="closeStreakModal()">Закрыть</button>
-    `;
-  } catch (e) {
-    inner.innerHTML = `<div class="streak-loading" style="color:var(--red);">Ошибка: ${escapeHtml(e.message)}</div><button class="streak-close-btn" style="margin-top:10px;" onclick="closeStreakModal()">Закрыть</button>`;
-  }
-};
-
-window.closeStreakModal = function() {
-  document.getElementById('streakModal').classList.remove('visible');
-};
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeStreakModal(); });
-
-window.freezeStreakFromModal = async function() {
-  window.confirmSiteModal({
-    title: 'Заморозить стрик?',
-    desc: 'Пропустишь 1 день — стрик не сгорит.\nПропустишь 2 — сгорит.',
-    confirmText: 'Заморозить',
-    cancelText: 'Отмена',
-    onConfirm: async () => {
-      try {
-        const r = await api('/api/activity/freeze', { method: 'POST' });
-        showToast(`Заморозено (${r.streak})`, 'success');
-        closeStreakModal();
-        setTimeout(() => { loadProfile(); openStreakModal(); }, 500);
-      } catch (e) {
-        const errors = {
-          fernodd_plus_required: 'Только для владельцев FERNODD+',
-          no_streak_to_freeze: 'У вас ещё нет стрика',
-          already_frozen: 'Заморозка уже активна',
-          must_visit_first: 'Сначала зайдите сегодня',
-          no_db: 'Ошибка базы данных',
-        };
-        const key = e.message.split(' — ')[0];
-        showToast((errors[key] || e.message), 'error');
-      }
-    }
-  });
-};
-
-window.addEventListener('activity:changed', (e) => {
-  const badge = document.getElementById('activityBadge');
-  const count = document.getElementById('activityCount');
-  if (!badge || !count) return;
-  count.textContent = e.detail.points;
-  if (e.detail.points > 0) {
-    badge.style.display = 'inline-flex';
-    badge.style.animation = 'none';
-    void badge.offsetWidth;
-    badge.style.animation = 'firePulse 0.6s ease';
-    if (e.detail.frozen) {
-      const iceIcon = window.ICONS.snowflake;
-      badge.innerHTML = `<span class="badge-icon">${iceIcon}</span><span id="activityCount">${e.detail.points}</span>`;
-      badge.style.background = 'rgba(96,165,250,0.15)';
-      badge.style.color = '#60a5fa';
-      badge.style.borderColor = 'rgba(96,165,250,0.4)';
-    }
-  }
-});
 
 function applyProfileVisibility(user) {
   const isOwn = !!(currentUserData && (currentUserData.steamId === user.steamId));

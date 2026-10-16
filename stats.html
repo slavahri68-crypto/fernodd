@@ -62,11 +62,48 @@
   .stat-body { flex: 1; min-width: 0; }
   .stat-name { font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-  .stat-fire { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; background: linear-gradient(135deg, rgba(255,68,0,0.15), rgba(255,68,0,0.05)); border: 1px solid rgba(255,68,0,0.4); border-radius: 100px; font-family: 'Unbounded', sans-serif; font-weight: 800; font-size: 13px; color: #ff4400; flex-shrink: 0; }
-  .stat-fire.frozen { background: linear-gradient(135deg, rgba(96,165,250,0.15), rgba(96,165,250,0.05)); border-color: rgba(96,165,250,0.4); color: #60a5fa; }
-  .stat-fire .fire-icon { display: inline-flex; width: 12px; height: 12px; align-items: center; justify-content: center; }
-  .stat-fire .fire-icon svg { width: 12px; height: 12px; fill: currentColor; }
-  .stat-fire.frozen .fire-icon svg { fill: none; stroke: currentColor; stroke-width: 2; }
+  /* Вкладка Стрик — огонёк в углу аватарки */
+  .streak-corner-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 7px 2px 4px;
+    background: linear-gradient(135deg, #ff4400, #ff8c00);
+    border: 2px solid #fff;
+    border-radius: 100px;
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900;
+    font-size: 10px;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(255,68,0,0.55), 0 0 0 2px rgba(0,0,0,0.5);
+    z-index: 3;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .streak-corner-badge .fire-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 11px;
+    height: 11px;
+  }
+  .streak-corner-badge .fire-icon svg {
+    width: 11px;
+    height: 11px;
+    fill: #fff;
+  }
+  .streak-corner-badge.frozen {
+    background: linear-gradient(135deg, #60a5fa, #2563eb);
+    box-shadow: 0 4px 14px rgba(96,165,250,0.55), 0 0 0 2px rgba(0,0,0,0.5);
+  }
+  .streak-corner-badge.frozen .fire-icon svg {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2;
+  }
 
   .players-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 10px; flex-wrap: wrap; }
   .players-count { font-family: 'Unbounded', sans-serif; font-size: 13px; color: var(--text-dim); font-weight: 700; }
@@ -87,7 +124,6 @@
   @media (max-width: 480px) {
     .stat-avatar { width: 38px; height: 38px; }
     .stat-name { font-size: 12px; }
-    .stat-fire { padding: 5px 10px; font-size: 12px; }
     .stat-rank { width: 28px; height: 28px; font-size: 12px; }
     .stats-tab { font-size: 12px; padding: 10px 12px; }
   }
@@ -220,10 +256,15 @@ async function loadStreak() {
       const avatarHTML = u.avatar
         ? `<img class="stat-avatar" src="${u.avatar}" alt="">`
         : `<div class="stat-avatar stat-avatar-empty"></div>`;
+      const fireIcon = u.frozen ? window.ICONS.snowflake : window.ICONS.flame;
+      const frozenCls = u.frozen ? 'frozen' : '';
       return `
         <a class="stat-row ${cls}" href="/profile/${u.steamId}">
           <div class="stat-rank">${rank}</div>
-          ${avatarHTML}
+          <div class="stat-avatar-wrap">
+            ${avatarHTML}
+            ${u.activity > 0 ? `<div class="streak-corner-badge ${frozenCls}"><span class="fire-icon">${fireIcon}</span><span class="fire-count">${u.activity}</span></div>` : ''}
+          </div>
           <div class="stat-body">
             <div class="stat-name">${escapeHtml(u.name)}</div>
           </div>
@@ -264,11 +305,9 @@ function renderPlayers() {
 
   list.innerHTML = arr.map(u => {
     const statusCls = u.siteStatus === 'online' ? 'online' : 'offline';
-    const frozenCls = u.frozen ? 'frozen' : '';
     const avatarHTML = u.avatar
       ? `<img class="stat-avatar" src="${u.avatar}" alt="">`
       : `<div class="stat-avatar stat-avatar-empty"></div>`;
-    const fireIcon = u.frozen ? window.ICONS.snowflake : window.ICONS.flame;
     return `
       <a class="player-row" href="/profile/${u.steamId}">
         <div class="stat-avatar-wrap">
@@ -278,7 +317,6 @@ function renderPlayers() {
         <div class="stat-body">
           <div class="stat-name">${escapeHtml(u.name)}</div>
         </div>
-        ${u.streak > 0 ? `<div class="stat-fire ${frozenCls}" style="padding:4px 9px;font-size:11px;"><span class="fire-icon">${fireIcon}</span> ${u.streak}</div>` : ''}
       </a>`;
   }).join('');
 }

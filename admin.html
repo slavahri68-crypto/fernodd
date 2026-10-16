@@ -255,21 +255,184 @@ body > .auth-widget { display: none !important; }
 .logs-page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 .logs-page-info { margin-left: 10px; font-size: 11.5px; color: var(--text-dim); font-family: 'Unbounded', sans-serif; font-weight: 600; }
 
-.fd-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; }
+/* Рулетка — редактор призов */
+.roulette-editor-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto 40px;
+  gap: 12px;
+  align-items: end;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: border-color 0.2s;
+}
+.roulette-editor-row:hover { border-color: rgba(225,6,0,0.3); }
+.roulette-editor-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.roulette-editor-field label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--text-dim);
+  font-weight: 700;
+}
+.roulette-editor-field input {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-bright);
+  border-radius: 10px;
+  color: #fff;
+  font-family: 'Unbounded', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  outline: none;
+  transition: all 0.2s;
+}
+.roulette-editor-field input:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(225,6,0,0.12);
+}
+.roulette-editor-tier {
+  justify-content: flex-end;
+  padding-bottom: 10px;
+}
+.roulette-tier-pill {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 100px;
+  border: 1px solid;
+  font-family: 'Unbounded', sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+.roulette-editor-remove {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.35);
+  color: #ef4444;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.2s;
+}
+.roulette-editor-remove:hover {
+  background: rgba(239,68,68,0.25);
+  border-color: rgba(239,68,68,0.7);
+}
+.roulette-editor-remove svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+@media (max-width: 600px) {
+  .roulette-editor-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .roulette-editor-tier { grid-column: 1 / -1; padding-bottom: 0; }
+  .roulette-editor-remove { grid-column: 2; justify-self: end; width: 36px; height: 36px; }
+}
+
+.fd-modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(8px);
+  z-index: 5000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
 .fd-modal-overlay.visible { display: flex; }
-.fd-modal { background: linear-gradient(145deg, #0e0e0e, #060606); border: 1px solid var(--border-bright); border-radius: 22px; padding: 28px; max-width: 480px; width: 100%; position: relative; overflow: hidden; }
-.fd-modal::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--red), var(--red-dark), var(--red)); }
-.fd-modal-icon { width: 56px; height: 56px; border-radius: 16px; background: rgba(225,6,0,0.12); border: 1px solid rgba(225,6,0,0.3); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; color: var(--red); }
-.fd-modal-icon svg { width: 26px; height: 26px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.fd-modal h3 { font-family: 'Unbounded', sans-serif; font-size: 19px; margin-bottom: 8px; color: #fff; }
-.fd-modal p { color: var(--text-dim); font-size: 13.5px; margin-bottom: 20px; line-height: 1.6; white-space: pre-line; }
-.fd-modal-input { width: 100%; padding: 14px 16px; background: var(--bg-elevated); border: 1px solid var(--border-bright); border-radius: 12px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; outline: none; margin-bottom: 12px; }
-.fd-modal-label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); font-weight: 700; margin-bottom: 8px; }
-.fd-modal-actions { display: flex; gap: 10px; margin-top: 22px; justify-content: flex-end; }
-.fd-modal-actions button { padding: 12px 22px; border-radius: 12px; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13.5px; cursor: pointer; border: 1px solid transparent; }
-.fd-btn-cancel { background: rgba(255,255,255,0.04); color: var(--text); border-color: var(--border-bright); }
-.fd-btn-confirm { background: linear-gradient(135deg, var(--red), var(--red-dark)); color: #fff; }
-.fd-btn-confirm.green { background: linear-gradient(135deg, #4ade80, #16a34a); }
+.fd-modal {
+  background: linear-gradient(145deg, #1a1a1a, #0e0e0e);
+  border: 1px solid #2a2a2a;
+  border-radius: 22px;
+  padding: 26px 26px 20px;
+  max-width: 420px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+.fd-modal::before { display: none; }
+.fd-modal-icon { display: none; }
+.fd-modal h3 {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.4px;
+  margin-bottom: 12px;
+  line-height: 1.25;
+}
+.fd-modal p {
+  font-family: 'Inter', sans-serif;
+  font-size: 13.5px;
+  color: #8a8a8a;
+  line-height: 1.55;
+  white-space: pre-line;
+  margin-bottom: 22px;
+}
+.fd-modal-input {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-bright);
+  border-radius: 12px;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  outline: none;
+  margin-bottom: 12px;
+}
+.fd-modal-input:focus { border-color: var(--red); box-shadow: 0 0 0 4px rgba(225,6,0,0.12); }
+.fd-modal-label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.fd-modal-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 22px;
+}
+.fd-btn-cancel,
+.fd-btn-confirm {
+  background: transparent;
+  border: none;
+  color: #60a5fa;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 13.5px;
+  cursor: pointer;
+  padding: 11px 22px;
+  border-radius: 11px;
+  transition: color 0.2s;
+}
+.fd-btn-cancel:hover { color: #93c5fd; }
+.fd-btn-confirm { font-weight: 700; }
+.fd-btn-confirm:hover { color: #93c5fd; }
 
 .denied { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; text-align: center; gap: 16px; padding: 20px; }
 .denied-icon { color: var(--red); width: 70px; height: 70px; }
@@ -386,6 +549,9 @@ let siteLogsFilter = { category: '', action: '', search: '', page: 1 };
 let siteLogsMeta = { categories: [], actions: [] };
 let siteLogsSearchTimeout = null;
 
+/* Рулетка */
+let roulettePrizesCache = [];
+
 const CATEGORY_LABELS = {
   general: 'Общее', auth: 'Авторизация', profile: 'Профиль', shop: 'Магазин',
   moderation: 'Модерация', admin: 'Админ', roles: 'Роли', privileges: 'Привилегии',
@@ -399,6 +565,9 @@ const ACTION_LABELS = {
   inventory_remove: 'Удаление из инвентаря', balance_change: 'Изменение баланса',
   give_role: 'Выдача роли', privilege_grant: 'Выдача привилегии', privilege_revoke: 'Снятие привилегии',
   application_status: 'Статус заявки', application_delete: 'Удаление заявки',
+  roulette_spin: 'Спин рулетки',
+  roulette_config_update: 'Изменение конфига рулетки',
+  roulette_config_reset: 'Сброс конфига рулетки',
 };
 
 function esc(s) {
@@ -433,16 +602,14 @@ function closeModal() {
   document.getElementById('fdModalBox').innerHTML = '';
 }
 
-function confirmModal({ icon, title, desc, confirmText = 'OK', confirmClass = '', onConfirm }) {
+function confirmModal({ title, desc, confirmText = 'OK', onConfirm }) {
   const box = document.getElementById('fdModalBox');
-  const iconHTML = icon || window.ICONS.alert;
   box.innerHTML = `
-    <div class="fd-modal-icon">${iconHTML}</div>
     <h3>${esc(title)}</h3>
-    <p>${esc(desc || '')}</p>
+    ${desc ? `<p>${esc(desc)}</p>` : ''}
     <div class="fd-modal-actions">
       <button class="fd-btn-cancel" onclick="closeModal()">Отмена</button>
-      <button class="fd-btn-confirm ${confirmClass}" id="fdConfirmBtn">${esc(confirmText)}</button>
+      <button class="fd-btn-confirm" id="fdConfirmBtn">${esc(confirmText)}</button>
     </div>
   `;
   document.getElementById('fdModal').classList.add('visible');
@@ -453,7 +620,7 @@ function confirmModal({ icon, title, desc, confirmText = 'OK', confirmClass = ''
   };
 }
 
-function radioModal({ icon, title, desc, options = [], confirmText = 'Применить', confirmClass = 'green', onConfirm }) {
+function radioModal({ title, desc, options = [], confirmText = 'Применить', onConfirm }) {
   const box = document.getElementById('fdModalBox');
   const optsHtml = options.map(o => `
     <label class="fd-radio" data-val="${esc(o.value)}" style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;cursor:pointer;margin-bottom:8px;">
@@ -462,13 +629,12 @@ function radioModal({ icon, title, desc, options = [], confirmText = 'Приме
     </label>
   `).join('');
   box.innerHTML = `
-    <div class="fd-modal-icon">${icon || window.ICONS.alert}</div>
     <h3>${esc(title)}</h3>
-    <p>${esc(desc || '')}</p>
+    ${desc ? `<p>${esc(desc)}</p>` : ''}
     <div>${optsHtml}</div>
     <div class="fd-modal-actions">
       <button class="fd-btn-cancel" onclick="closeModal()">Отмена</button>
-      <button class="fd-btn-confirm ${confirmClass}" id="fdConfirmBtn" disabled>${esc(confirmText)}</button>
+      <button class="fd-btn-confirm" id="fdConfirmBtn" disabled>${esc(confirmText)}</button>
     </div>
   `;
   document.getElementById('fdModal').classList.add('visible');
@@ -651,7 +817,7 @@ function renderAppsList() {
     return;
   }
   el.innerHTML = list.map(a => {
-    const date = new Date(a.date).toLocaleString('ru-RU', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
+    const date = new Date(a.date).toLocaleString('ru-RU', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit' });
     const statusLabel = a.status === 'approved' ? 'Одобрено' : a.status === 'rejected' ? 'Отклонено' : 'Ожидание';
     const borderColor = a.status === 'approved' ? '#4ade80' : a.status === 'rejected' ? '#ef4444' : '#fbbf24';
     let actions = '';
@@ -660,22 +826,14 @@ function renderAppsList() {
     } else if (a.status !== 'pending' && canApprove()) {
       actions = `<div class="app-actions"><button class="btn-act blue" onclick="openChange('${a.id}')">Изменить</button><button class="btn-act red" onclick="openDelete('${a.id}')">Удалить</button></div>`;
     }
-    const avatarHTML = a.steamAvatar
-      ? `<img class="app-avatar" src="${a.steamAvatar}" alt="">`
-      : `<div class="app-avatar app-avatar-empty"></div>`;
     return `<div class="app-card compact" style="border-left:3px solid ${borderColor};">
-      ${avatarHTML}
       <div class="app-body">
-        <div class="app-head">
-          <div><span class="app-name">${esc(a.steamName || a.steam || a.authorName)}</span> <span class="status-pill ${a.status}">${statusLabel}</span></div>
-          <span class="app-date">${date}</span>
-        </div>
-        <div class="app-row">
-          <span>Возраст: <b>${esc(a.age || '—')}</b></span>
-          <span>Онлайн: <b>${esc(a.online || '—')}</b></span>
-          <span>Опыт: <b>${esc(a.experience || '—')}</b></span>
-        </div>
-        <div class="app-text">${esc(a.motivation || '—')}</div>
+        <div class="app-row"><b>Telegram:</b> ${esc(a.telegram || '—')}</div>
+        <div class="app-row"><b>Discord:</b> ${esc(a.discordNick || a.discord || '—')}</div>
+        <div class="app-row"><b>Возраст:</b> ${esc(a.age || '—')}</div>
+        <div class="app-row"><b>Причина подачи заявки:</b> ${esc(a.motivation || '—')}</div>
+        <div class="app-date" style="margin-top:8px;">Дата подачи: ${date}</div>
+        <div style="margin-top:8px;"><span class="status-pill ${a.status}">${statusLabel}</span></div>
         ${actions}
       </div>
     </div>`;
@@ -684,11 +842,9 @@ function renderAppsList() {
 
 function quickStatus(id, action) {
   confirmModal({
-    icon: action === 'approve' ? window.ICONS.check : window.ICONS.x,
     title: action === 'approve' ? 'Одобрить заявку?' : 'Отклонить заявку?',
     desc: 'Действие изменит статус заявки в Discord.',
     confirmText: action === 'approve' ? 'Одобрить' : 'Отклонить',
-    confirmClass: action === 'approve' ? 'green' : '',
     onConfirm: async () => {
       try {
         await api(`/api/applications/${id}/${action}`, { method: 'POST' });
@@ -702,7 +858,6 @@ function quickStatus(id, action) {
 
 function openChange(id) {
   radioModal({
-    icon: window.ICONS.refresh,
     title: 'Изменить статус',
     desc: 'Выберите новый статус заявки',
     options: [
@@ -723,7 +878,6 @@ function openChange(id) {
 
 function openDelete(id) {
   confirmModal({
-    icon: window.ICONS.trash,
     title: 'Удалить заявку?',
     desc: 'Заявка будет навсегда удалена из Discord.',
     confirmText: 'Удалить',
@@ -1050,6 +1204,11 @@ function renderSiteLogRow(l) {
   if (m.roleApplied === true) metaParts.push('роль выдана');
   if (m.roleApplied === false) metaParts.push('роль ожидает');
   if (m.roleRemoved === true) metaParts.push('роль снята');
+  if (m.tier) metaParts.push(`тир: ${m.tier}`);
+  if (m.isWin != null) metaParts.push(m.isWin ? 'выигрыш' : 'пусто');
+  if (m.type) metaParts.push(`тип: ${m.type}`);
+  if (m.paid != null && m.paid > 0) metaParts.push(`оплата ${m.paid} ₽`);
+  if (m.count != null) metaParts.push(`позиций: ${m.count}`);
 
   const metaHTML = metaParts.length
     ? `<div class="logs-meta">${metaParts.map(p => `<span class="logs-meta-item">${esc(p)}</span>`).join('')}</div>`
@@ -1086,6 +1245,7 @@ function renderManage() {
       <button class="subtab ${manageSub === 'privileges' ? 'active' : ''}" onclick="setMgSub('privileges')">Привилегии</button>
       <button class="subtab ${manageSub === 'roles' ? 'active' : ''}" onclick="setMgSub('roles')">Выдача ролей</button>
       ${isOwner() ? `<button class="subtab ${manageSub === 'promo' ? 'active' : ''}" onclick="setMgSub('promo')">Промокоды</button>` : ''}
+      ${isOwner() ? `<button class="subtab ${manageSub === 'roulette' ? 'active' : ''}" onclick="setMgSub('roulette')">Рулетка</button>` : ''}
       ${isFullAdmin ? `<button class="subtab ${manageSub === 'orders' ? 'active' : ''}" onclick="setMgSub('orders')">Покупки</button>` : ''}
       ${isFullAdmin ? `<button class="subtab ${manageSub === 'settings' ? 'active' : ''}" onclick="setMgSub('settings')">Настройки</button>` : ''}
       <button class="subtab ${manageSub === 'monitor' ? 'active' : ''}" onclick="setMgSub('monitor')">Мониторинг</button>
@@ -1105,6 +1265,7 @@ async function loadMgBody() {
   if (manageSub === 'settings') return loadSettingsBlock(body);
   if (manageSub === 'roles') return loadRolesBlock(body);
   if (manageSub === 'promo') return loadPromoBlock(body);
+  if (manageSub === 'roulette') return loadRouletteBlock(body);
   if (manageSub === 'orders') return loadOrdersBlock(body);
   if (manageSub === 'monitor') return loadMonitorBlock(body);
 }
@@ -1401,11 +1562,9 @@ window.submitBalance = async function(mode) {
   if (!Number.isFinite(amount) || (mode !== 'set' && amount <= 0)) { toast('Введите корректную сумму', 'error'); return; }
   const labels = { add: 'выдать', subtract: 'снять', set: 'установить' };
   confirmModal({
-    icon: mode === 'add' ? window.ICONS.plus : mode === 'subtract' ? window.ICONS.minus : window.ICONS.settings,
     title: `${mode === 'add' ? 'Выдать' : mode === 'subtract' ? 'Снять' : 'Установить'} ${amount}₽?`,
     desc: `Пользователь: ${currentBalanceUser.username}\nSteam ID: ${currentBalanceUser.steamId}`,
     confirmText: `Да, ${labels[mode]}`,
-    confirmClass: mode === 'add' ? 'green' : '',
     onConfirm: async () => {
       try {
         const r = await api('/api/admin/balance/change', { method: 'POST', body: JSON.stringify({ steamId: currentBalanceUser.steamId, mode, amount }) });
@@ -1570,7 +1729,6 @@ window.openDurationPicker = function (privilegeId, privilegeName, isAlreadyOwned
 
   const box = document.getElementById('fdModalBox');
   box.innerHTML = `
-    <div class="fd-modal-icon">${window.ICONS.clock}</div>
     <h3>Выдать «${esc(privilegeName)}»</h3>
     <p style="margin-bottom:16px;">Пользователь: <b style="color:#fff;">${esc(selectedPrivilegeUser.username)}</b>${isAlreadyOwned ? '<br><span style="color:#fbbf24;">У пользователя уже есть эта привилегия — срок продлится.</span>' : ''}</p>
 
@@ -1593,7 +1751,7 @@ window.openDurationPicker = function (privilegeId, privilegeName, isAlreadyOwned
 
     <div class="fd-modal-actions">
       <button class="fd-btn-cancel" onclick="closeModal()">Отмена</button>
-      <button class="fd-btn-confirm green" id="fdGrantConfirmBtn" disabled>Выдать</button>
+      <button class="fd-btn-confirm" id="fdGrantConfirmBtn" disabled>Выдать</button>
     </div>
   `;
 
@@ -1703,7 +1861,6 @@ window.openDurationPicker = function (privilegeId, privilegeName, isAlreadyOwned
 async function revokePrivilege(privilegeId, privilegeName) {
   if (!selectedPrivilegeUser) return;
   confirmModal({
-    icon: window.ICONS.x,
     title: `Снять «${privilegeName}»?`,
     desc: `Пользователь: ${selectedPrivilegeUser.username}\nРоль также снимется в Discord.`,
     confirmText: 'Снять',
@@ -1802,10 +1959,9 @@ function giveRole(roleId, roleName) {
     ? 'Роль будет выдана на сайте и сразу в Discord.'
     : 'Роль будет выдана на сайте. В Discord она применится автоматически после привязки аккаунта.';
   confirmModal({
-    icon: window.ICONS.plus,
     title: `Выдать роль "${roleName}"?`,
     desc: `Пользователь: ${selectedMember.name}. ${warn}`,
-    confirmText: 'Выдать', confirmClass: 'green',
+    confirmText: 'Выдать',
     onConfirm: async () => {
       try {
         const result = await api('/api/give-role', { method: 'POST', body: JSON.stringify({ steamId: selectedMember.steamId, discordId: selectedMember.discordId, roleId }) });
@@ -1856,7 +2012,6 @@ async function loadPromoList() {
 function openPromoCreate() {
   const box = document.getElementById('fdModalBox');
   box.innerHTML = `
-    <div class="fd-modal-icon">${window.ICONS.plus}</div>
     <h3>Новый промокод</h3>
     <p style="margin-bottom:14px;">Код автоматически переводится в верхний регистр. Поддерживаются латиница, <b style="color:#fff;">кириллица</b>, цифры, «_» и «-».</p>
     <label class="fd-modal-label">Код промокода</label>
@@ -1941,7 +2096,6 @@ window.fdPresetCode = function(prefix) {
 
 function deletePromo(code) {
   confirmModal({
-    icon: window.ICONS.trash,
     title: `Удалить «${code}»?`,
     desc: 'Промокод будет удалён безвозвратно.',
     confirmText: 'Удалить',
@@ -1954,6 +2108,168 @@ function deletePromo(code) {
     }
   });
 }
+
+/* ============ РУЛЕТКА (только владелец) ============ */
+async function loadRouletteBlock(body) {
+  if (!isOwner()) {
+    body.innerHTML = '<div class="empty-state">Только для владельца</div>';
+    return;
+  }
+  body.innerHTML = '<div class="skeleton"></div>';
+  try {
+    const data = await api('/api/admin/roulette/prizes');
+    roulettePrizesCache = data.prizes || [];
+    renderRouletteBlock(body, data);
+  } catch (e) {
+    body.innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${esc(e.message)}</div>`;
+  }
+}
+
+function renderRouletteBlock(body, data) {
+  const prizes = data.prizes || [];
+  const totalWeight = prizes.reduce((s, p) => s + Number(p.weight || 0), 0);
+
+  body.innerHTML = `
+    <div class="section-block">
+      <div class="section-block-head">
+        <div>
+          <div class="section-block-title">Рулетка — настройка шансов</div>
+          <div class="section-block-sub">Меняйте вес каждого приза. Чем выше вес — тем чаще выпадает. Сумма весов: <b>${totalWeight.toFixed(2)}</b></div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn-act ghost" onclick="resetRoulettePrizes()">Сбросить к дефолту</button>
+          <button class="btn-act green" onclick="saveRoulettePrizes()">Сохранить</button>
+        </div>
+      </div>
+
+      <div id="rouletteEditor" style="display:flex;flex-direction:column;gap:8px;"></div>
+
+      <div style="margin-top:16px;padding:14px 16px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;">
+        <div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.4px;font-weight:700;margin-bottom:8px;">Итоговые шансы</div>
+        <div id="rouletteChances" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+      </div>
+
+      <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-act blue" onclick="addRoulettePrize()">+ Добавить приз</button>
+      </div>
+    </div>
+  `;
+
+  renderRouletteEditor();
+  renderRouletteChances();
+}
+
+function renderRouletteEditor() {
+  const el = document.getElementById('rouletteEditor');
+  if (!el) return;
+
+  const tierColor = (t) => t === 'red' ? '#ef4444' : t === 'purple' ? '#a855f7' : t === 'empty' ? '#6b7280' : '#60a5fa';
+
+  el.innerHTML = roulettePrizesCache.map((p, i) => {
+    const tier = p.amount === 0 ? 'empty' : p.amount >= 300 ? 'red' : p.amount >= 50 ? 'purple' : 'blue';
+    const color = tierColor(tier);
+    return `
+      <div class="roulette-editor-row" data-index="${i}" style="border-left:4px solid ${color};">
+        <div class="roulette-editor-field">
+          <label>Сумма (₽)</label>
+          <input type="number" min="0" step="1" value="${p.amount}" oninput="onRoulettePrizeChange(${i}, 'amount', this.value)">
+        </div>
+        <div class="roulette-editor-field">
+          <label>Вес (шанс)</label>
+          <input type="number" min="0.01" step="0.01" value="${p.weight}" oninput="onRoulettePrizeChange(${i}, 'weight', this.value)">
+        </div>
+        <div class="roulette-editor-field roulette-editor-tier">
+          <span class="roulette-tier-pill" style="background:${color}22;border-color:${color}66;color:${color};">
+            ${tier === 'red' ? 'КРАСНЫЙ' : tier === 'purple' ? 'ФИОЛЕТ' : tier === 'empty' ? 'ПУСТО' : 'СИНИЙ'}
+          </span>
+        </div>
+        <button class="roulette-editor-remove" onclick="removeRoulettePrize(${i})" title="Удалить">
+          ${window.ICONS.trash}
+        </button>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderRouletteChances() {
+  const el = document.getElementById('rouletteChances');
+  if (!el) return;
+  const total = roulettePrizesCache.reduce((s, p) => s + Number(p.weight || 0), 0);
+  if (total <= 0) { el.innerHTML = '<div style="color:var(--text-dim);font-size:12px;">Нет данных</div>'; return; }
+  el.innerHTML = roulettePrizesCache.map((p, i) => {
+    const chance = (Number(p.weight) / total) * 100;
+    const tier = p.amount === 0 ? 'empty' : p.amount >= 300 ? 'red' : p.amount >= 50 ? 'purple' : 'blue';
+    const color = tier === 'red' ? '#ef4444' : tier === 'purple' ? '#a855f7' : tier === 'empty' ? '#6b7280' : '#60a5fa';
+    return `<span style="padding:4px 10px;background:${color}18;border:1px solid ${color}55;border-radius:100px;font-family:'Unbounded',sans-serif;font-weight:700;font-size:11px;color:${color};">
+      ${p.amount > 0 ? p.amount + '₽' : 'пусто'} — ${chance.toFixed(2)}%
+    </span>`;
+  }).join('');
+}
+
+window.onRoulettePrizeChange = function (index, field, value) {
+  if (!roulettePrizesCache[index]) return;
+  const num = Number(value);
+  if (!Number.isFinite(num)) return;
+  roulettePrizesCache[index][field] = num;
+  renderRouletteEditor();
+  renderRouletteChances();
+};
+
+window.removeRoulettePrize = function (index) {
+  if (!roulettePrizesCache[index]) return;
+  roulettePrizesCache.splice(index, 1);
+  renderRouletteEditor();
+  renderRouletteChances();
+};
+
+window.addRoulettePrize = function () {
+  roulettePrizesCache.push({ amount: 0, weight: 1 });
+  renderRouletteEditor();
+  renderRouletteChances();
+};
+
+window.saveRoulettePrizes = async function () {
+  try {
+    const cleaned = roulettePrizesCache
+      .map(p => ({ amount: Number(p.amount), weight: Number(p.weight) }))
+      .filter(p => Number.isFinite(p.amount) && p.amount >= 0 && Number.isFinite(p.weight) && p.weight > 0);
+
+    if (!cleaned.length) { toast('Добавьте хотя бы один приз', 'error'); return; }
+
+    const res = await api('/api/admin/roulette/prizes', {
+      method: 'POST',
+      body: JSON.stringify({ prizes: cleaned }),
+    });
+    toast('Конфиг рулетки сохранён', 'success');
+    roulettePrizesCache = res.prizes;
+    loadRouletteBlock(document.getElementById('mgBody'));
+  } catch (e) {
+    const errors = {
+      bad_prizes: 'Некорректный список призов',
+      bad_amount: 'Некорректная сумма',
+      bad_weight: 'Некорректный вес',
+    };
+    const key = e.message.split(' — ')[0];
+    toast(errors[key] || e.message, 'error');
+  }
+};
+
+window.resetRoulettePrizes = function () {
+  confirmModal({
+    title: 'Сбросить конфиг рулетки?',
+    desc: 'Все призы и шансы вернутся к заводским значениям.',
+    confirmText: 'Сбросить',
+    onConfirm: async () => {
+      try {
+        await api('/api/admin/roulette/prizes/reset', { method: 'POST' });
+        toast('Конфиг сброшен', 'success');
+        loadRouletteBlock(document.getElementById('mgBody'));
+      } catch (e) {
+        toast('Ошибка: ' + e.message, 'error');
+      }
+    }
+  });
+};
 
 /* ============ ПОКУПКИ ============ */
 async function loadOrdersBlock(body) {

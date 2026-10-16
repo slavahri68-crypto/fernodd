@@ -213,7 +213,7 @@ async function loadShop() {
       color: item.color,
       iconSvg: window.ICONS.star,
       type: 'subscription',
-      features: ['Цветной ник', 'Закрытые каналы', 'Ивенты'],
+      features: ['Цветной ник', 'Закрытые каналы', 'Ивенты', '2× рулетка', 'Своя ссылка'],
       tariffs: item.tariffs.map((t, i) => ({
         id: t.id,
         label: t.label,
@@ -299,6 +299,8 @@ function openSubscriptionModal(item) {
       <div class="fd-plus-feature">${window.ICONS.check} Доступ к закрытым каналам</div>
       <div class="fd-plus-feature">${window.ICONS.check} Приоритетная поддержка</div>
       <div class="fd-plus-feature">${window.ICONS.check} Эксклюзивные ивенты</div>
+      <div class="fd-plus-feature">${window.ICONS.check} 2 бесплатных спина в рулетке каждые 7 дней</div>
+      <div class="fd-plus-feature">${window.ICONS.check} Своя ссылка профиля /profile/твой_ник</div>
     </div>
     <div class="fd-plus-section-title">Выберите тариф</div>
     <div class="fd-tariff-list" id="tariffList">
