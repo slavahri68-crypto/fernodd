@@ -75,8 +75,11 @@ const {
   DISCORD_GUILD_ID,
   DISCORD_APPLY_CHANNEL_ID,
   DISCORD_LOGS_CHANNEL_ID,
-  DISCORD_SHOP_CHANNEL_ID,
   DISCORD_PURCHASE_CHANNEL_ID,
+  DISCORD_ROLES_CHANNEL_ID,
+  DISCORD_PRIVILEGES_CHANNEL_ID,
+  DISCORD_SITE_LOGS_CHANNEL_ID,
+  DISCORD_ERRORS_CHANNEL_ID,
   DISCORD_OPEN_TICKETS_CATEGORY_ID,
   DISCORD_CLOSED_TICKETS_CATEGORY_ID,
   DISCORD_CLIENT_ID,
@@ -92,6 +95,7 @@ const {
   JWT_SECRET,
   DISCORD_WEBHOOK_URL,
   MONGO_URL,
+  ERROR_RATE_LIMIT_MS = '60000',
 } = process.env;
 
 const ADMIN_ROLES = [ROLE_CURATOR, ROLE_WATCHER, ROLE_HEADADMIN].filter(Boolean);
@@ -153,14 +157,50 @@ const PRIVILEGES = [
 let mongoDb = null;
 
 async function initMongo() {
-  if (!MONGO_URL) { console.warn('[mongo] MONGO_URL не задан'); return; }
+  if (!MONGO_URL) {
+    console.warn('[mongo] MONGO_URL не задан');
+    await notifyDiscordError({
+      title: 'MongoDB: нет подключения',
+      description: 'MONGO_URL не задан в переменных окружения',
+      color: 0xf59e0b,
+      extra: { 'Серьёзность': 'КРИТИЧНО' },
+    }).catch(() => {});
+    return;
+  }
   try {
     const client = new MongoClient(MONGO_URL);
     await client.connect();
     mongoDb = client.db('fernodd');
     console.log('[mongo] Подключено');
+
+    client.on('serverHeartbeatFailed', (event) => {
+      notifyDiscordError({
+        title: 'MongoDB: heartbeat failed',
+        description: 'Потеряно соединение с базой данных',
+        color: 0xef4444,
+        extra: { 'Ошибка': event?.failure?.message || 'неизвестно' },
+      }).catch(() => {});
+    });
+
+    client.on('topologyClosed', () => {
+      notifyDiscordError({
+        title: 'MongoDB: соединение закрыто',
+        description: 'Топология MongoDB закрыта',
+        color: 0xf59e0b,
+      }).catch(() => {});
+    });
+
     await ensureIndexes();
-  } catch (e) { console.error('[mongo]', e.message); }
+  } catch (e) {
+    console.error('[mongo]', e.message);
+    await notifyDiscordError({
+      title: 'MongoDB: ошибка подключения',
+      description: e.message,
+      color: 0xef4444,
+      stack: e.stack,
+      extra: { 'Серьёзность': 'КРИТИЧНО' },
+    }).catch(() => {});
+  }
 }
 
 async function ensureIndexes() {
@@ -188,6 +228,10 @@ async function ensureIndexes() {
     await mongoDb.collection('reactions').createIndex({ targetSteamId: 1, fromSteamId: 1 }, { unique: true });
     await mongoDb.collection('reactions').createIndex({ targetSteamId: 1 });
     await mongoDb.collection('profileViews').createIndex({ steamId: 1 }, { unique: true });
+    await mongoDb.collection('siteLogs').createIndex({ createdAt: -1 });
+    await mongoDb.collection('siteLogs').createIndex({ actorSteamId: 1, createdAt: -1 });
+    await mongoDb.collection('siteLogs').createIndex({ targetSteamId: 1, createdAt: -1 });
+    await mongoDb.collection('siteLogs').createIndex({ action: 1, createdAt: -1 });
     console.log('[mongo] Индексы готовы');
   } catch (e) { console.error('[mongo]', e.message); }
 }
@@ -429,6 +473,7 @@ async function removeAllStaffRoles(id, keep = []) {
   } catch {}
 }
 
+/* ============ Discord уведомления ============ */
 async function notifyDiscordLogs(embed) {
   if (!DISCORD_LOGS_CHANNEL_ID || !DISCORD_BOT_TOKEN) return;
   try {
@@ -440,28 +485,13 @@ async function notifyDiscordLogs(embed) {
       },
       body: JSON.stringify({ embeds: [embed] }),
     });
-  } catch (e) { console.error('[discord notify]', e.message); }
-}
-
-async function notifyDiscordShop(embed) {
-  if (!DISCORD_SHOP_CHANNEL_ID || !DISCORD_BOT_TOKEN) return;
-  try {
-    await fetch(`https://discord.com/api/channels/${DISCORD_SHOP_CHANNEL_ID}/messages`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bot ${DISCORD_BOT_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ embeds: [embed] }),
-    });
-  } catch (e) { console.error('[discord shop notify]', e.message); }
+  } catch (e) { console.error('[discord logs notify]', e.message); }
 }
 
 async function notifyDiscordPurchase(embed) {
-  const channelId = DISCORD_PURCHASE_CHANNEL_ID || DISCORD_SHOP_CHANNEL_ID;
-  if (!channelId || !DISCORD_BOT_TOKEN) return;
+  if (!DISCORD_PURCHASE_CHANNEL_ID || !DISCORD_BOT_TOKEN) return;
   try {
-    await fetch(`https://discord.com/api/channels/${channelId}/messages`, {
+    await fetch(`https://discord.com/api/channels/${DISCORD_PURCHASE_CHANNEL_ID}/messages`, {
       method: 'POST',
       headers: {
         Authorization: `Bot ${DISCORD_BOT_TOKEN}`,
@@ -470,6 +500,330 @@ async function notifyDiscordPurchase(embed) {
       body: JSON.stringify({ embeds: [embed] }),
     });
   } catch (e) { console.error('[purchase notify]', e.message); }
+}
+
+async function notifyDiscordRole(embed) {
+  if (!DISCORD_ROLES_CHANNEL_ID || !DISCORD_BOT_TOKEN) return;
+  try {
+    await fetch(`https://discord.com/api/channels/${DISCORD_ROLES_CHANNEL_ID}/messages`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bot ${DISCORD_BOT_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ embeds: [embed] }),
+    });
+  } catch (e) { console.error('[roles notify]', e.message); }
+}
+
+async function notifyDiscordPrivileges(embed) {
+  if (!DISCORD_PRIVILEGES_CHANNEL_ID || !DISCORD_BOT_TOKEN) return;
+  try {
+    await fetch(`https://discord.com/api/channels/${DISCORD_PRIVILEGES_CHANNEL_ID}/messages`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bot ${DISCORD_BOT_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ embeds: [embed] }),
+    });
+  } catch (e) { console.error('[privileges notify]', e.message); }
+}
+
+async function notifyDiscordSiteLog(embed) {
+  if (!DISCORD_SITE_LOGS_CHANNEL_ID || !DISCORD_BOT_TOKEN) return;
+  try {
+    await fetch(`https://discord.com/api/channels/${DISCORD_SITE_LOGS_CHANNEL_ID}/messages`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bot ${DISCORD_BOT_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ embeds: [embed] }),
+    });
+  } catch (e) { console.error('[site log notify]', e.message); }
+}
+
+/* ============ УВЕДОМЛЕНИЯ ОБ ОШИБКАХ ============ */
+const errorRateBuckets = new Map();
+
+async function notifyDiscordError({ title = 'Ошибка', description = '', color = 0xef4444, fields = [], stack = null, req = null, extra = {} }) {
+  if (!DISCORD_ERRORS_CHANNEL_ID || !DISCORD_BOT_TOKEN) return;
+
+  const hashKey = title + '|' + String(stack || '').slice(0, 200);
+  const now = Date.now();
+  const limit = Math.max(Number(ERROR_RATE_LIMIT_MS) || 60000, 5000);
+  const last = errorRateBuckets.get(hashKey) || 0;
+
+  if (now - last < limit) {
+    console.log('[error notify] skipped (rate limit):', title);
+    return;
+  }
+  errorRateBuckets.set(hashKey, now);
+
+  if (errorRateBuckets.size > 500) {
+    const cutoff = now - 60 * 60 * 1000;
+    for (const [k, v] of errorRateBuckets) {
+      if (v < cutoff) errorRateBuckets.delete(k);
+    }
+  }
+
+  try {
+    const allFields = [...fields];
+
+    if (req) {
+      const ip = req.headers?.['x-forwarded-for']?.split(',')[0]?.trim()
+        || req.ip
+        || req.connection?.remoteAddress
+        || 'unknown';
+      const method = req.method || '?';
+      const path = req.originalUrl || req.path || '?';
+      const ua = req.headers?.['user-agent'] || '—';
+
+      allFields.unshift(
+        { name: 'Запрос', value: `\`${method} ${path}\``, inline: false },
+        { name: 'IP', value: `\`${ip}\``, inline: true },
+        { name: 'User-Agent', value: `\`${String(ua).slice(0, 120)}\``, inline: false },
+      );
+
+      try {
+        const u = getUserFromToken(req);
+        if (u?.steamId) {
+          allFields.push({
+            name: 'Пользователь',
+            value: `[${u.global_name || u.username || u.steamId}](https://steamcommunity.com/profiles/${u.steamId})`,
+            inline: true,
+          });
+        }
+      } catch {}
+    }
+
+    if (stack) {
+      allFields.push({
+        name: 'Стек',
+        value: '```\n' + String(stack).slice(0, 1000) + '\n```',
+        inline: false,
+      });
+    }
+
+    for (const [k, v] of Object.entries(extra || {})) {
+      if (v == null) continue;
+      allFields.push({
+        name: k,
+        value: String(v).slice(0, 1024),
+        inline: false,
+      });
+    }
+
+    const embed = {
+      title: `🚨 ${title}`.slice(0, 256),
+      description: String(description || '').slice(0, 2000),
+      color,
+      fields: allFields.slice(0, 25),
+      footer: { text: 'Fernodd • Ошибки' },
+      timestamp: new Date().toISOString(),
+    };
+
+    await fetch(`https://discord.com/api/channels/${DISCORD_ERRORS_CHANNEL_ID}/messages`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bot ${DISCORD_BOT_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ embeds: [embed] }),
+    });
+  } catch (e) {
+    console.error('[error notify failed]', e.message);
+  }
+}
+
+/* ============ МОНИТОРИНГ 5xx ============ */
+app.use((req, res, next) => {
+  const skipPaths = ['/api/health', '/favicon.ico'];
+  if (skipPaths.some(p => req.path === p)) return next();
+
+  const start = Date.now();
+
+  const originalJson = res.json.bind(res);
+  res.json = function (body) {
+    try {
+      if (res.statusCode >= 500) {
+        const isKnownError = body && typeof body === 'object' && body.error;
+        notifyDiscordError({
+          title: `5xx ответ: ${res.statusCode}`,
+          description: isKnownError
+            ? `\`${body.error}\`${body.details ? '\n' + String(body.details).slice(0, 400) : ''}`
+            : 'Сервер вернул ошибку',
+          color: 0xef4444,
+          req,
+          extra: {
+            'Время': `${Date.now() - start} ms`,
+            'Статус': res.statusCode,
+          },
+        }).catch(() => {});
+      }
+    } catch {}
+    return originalJson(body);
+  };
+
+  next();
+});
+
+/* ============ САЙТ-ЛОГИ ============ */
+async function logSiteEvent({ action, category = 'general', actor = null, target = null, meta = {}, req = null, silentDiscord = false }) {
+  if (!mongoDb) return;
+  try {
+    const ip = req
+      ? (req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.ip || req.connection?.remoteAddress || null)
+      : null;
+    const ua = req ? (req.headers['user-agent'] || null) : null;
+
+    const createdAt = new Date().toISOString();
+
+    await mongoDb.collection('siteLogs').insertOne({
+      action,
+      category,
+      actorSteamId: actor?.steamId || null,
+      actorName: actor?.name || null,
+      actorAvatar: actor?.avatar || null,
+      actorIsAdmin: !!actor?.isAdmin,
+      targetSteamId: target?.steamId || null,
+      targetName: target?.name || null,
+      meta,
+      ip,
+      userAgent: ua ? ua.slice(0, 200) : null,
+      createdAt,
+    });
+
+    if (!silentDiscord) {
+      const cat = SITE_LOG_CATEGORIES[category] || SITE_LOG_CATEGORIES.general;
+      const actionLabel = SITE_LOG_ACTIONS[action] || action;
+
+      const fields = [];
+
+      if (actor?.name) {
+        fields.push({
+          name: 'Кто',
+          value: actor.steamId
+            ? `[${actor.name}](https://steamcommunity.com/profiles/${actor.steamId})${actor.isAdmin ? ' `ADMIN`' : ''}`
+            : actor.name,
+          inline: true,
+        });
+      }
+
+      if (target?.steamId || target?.name) {
+        fields.push({
+          name: 'Кому',
+          value: target.steamId
+            ? `[${target.name || target.steamId}](https://steamcommunity.com/profiles/${target.steamId})`
+            : (target.name || '—'),
+          inline: true,
+        });
+      }
+
+      const detailParts = [];
+      if (meta.privilegeName) detailParts.push(`Привилегия: **${meta.privilegeName}**`);
+      if (meta.durationLabel) detailParts.push(`Срок: **${meta.durationLabel}**`);
+      if (meta.roleName) detailParts.push(`Роль: **${meta.roleName}**`);
+      if (meta.itemName) detailParts.push(`Товар: **${meta.itemName}**`);
+      if (meta.tariffLabel) detailParts.push(`Тариф: **${meta.tariffLabel}**`);
+      if (meta.price != null) detailParts.push(`Цена: **${meta.price} ₽**`);
+      if (meta.amount != null && !meta.price) detailParts.push(`Сумма: **${meta.amount} ₽**`);
+      if (meta.mode) {
+        const modeLabel = meta.mode === 'add' ? 'выдал' : meta.mode === 'subtract' ? 'снял' : 'установил';
+        detailParts.push(`Действие: **${modeLabel}**`);
+      }
+      if (meta.oldBalance != null && meta.newBalance != null) {
+        detailParts.push(`Баланс: **${meta.oldBalance} ₽ → ${meta.newBalance} ₽**`);
+      }
+      if (meta.code) detailParts.push(`Промокод: \`${meta.code}\``);
+      if (meta.oldStatus && meta.newStatus) {
+        detailParts.push(`Статус: **${meta.oldStatus} → ${meta.newStatus}**`);
+      }
+      if (meta.fields && meta.fields.length) {
+        detailParts.push(`Изменено: **${meta.fields.join(', ')}**`);
+      }
+      if (meta.appliedToDiscord === true) detailParts.push('Discord: применено');
+      if (meta.appliedToDiscord === false) detailParts.push('Discord: ожидает привязки');
+      if (meta.roleApplied === true) detailParts.push('Роль выдана');
+      if (meta.roleApplied === false) detailParts.push('Роль ожидает');
+      if (meta.roleRemoved === true) detailParts.push('Роль снята');
+      if (meta.owner) detailParts.push(`Автор заявки: ${meta.owner}`);
+      if (meta.applicationId) detailParts.push(`Заявка: \`${meta.applicationId}\``);
+
+      if (detailParts.length) {
+        fields.push({
+          name: 'Детали',
+          value: detailParts.join('\n').slice(0, 1024),
+          inline: false,
+        });
+      }
+
+      if (ip) {
+        fields.push({
+          name: 'IP',
+          value: `\`${ip}\``,
+          inline: true,
+        });
+      }
+
+      const embed = {
+        title: `${cat.label} · ${actionLabel}`,
+        color: cat.color,
+        fields,
+        footer: { text: 'Fernodd • Логи сайта' },
+        timestamp: createdAt,
+      };
+
+      if (actor?.avatar) embed.thumbnail = { url: actor.avatar };
+
+      await notifyDiscordSiteLog(embed);
+    }
+  } catch (e) {
+    console.error('[siteLog]', e.message);
+  }
+}
+
+const SITE_LOG_CATEGORIES = {
+  auth:         { label: 'Авторизация',   color: 0x60a5fa },
+  profile:      { label: 'Профиль',       color: 0xa855f7 },
+  shop:         { label: 'Магазин',       color: 0xfbbf24 },
+  moderation:   { label: 'Модерация',     color: 0x4ade80 },
+  admin:        { label: 'Админ',         color: 0xef4444 },
+  roles:        { label: 'Роли',          color: 0x00a8fc },
+  privileges:   { label: 'Привилегии',    color: 0xfbbf24 },
+  balance:      { label: 'Баланс',        color: 0x4ade80 },
+  promo:        { label: 'Промокоды',     color: 0xeb459e },
+  referral:     { label: 'Рефералы',      color: 0x23a55a },
+  inventory:    { label: 'Инвентарь',     color: 0x8b5cf6 },
+  general:      { label: 'Общее',         color: 0x8a8a8a },
+};
+
+const SITE_LOG_ACTIONS = {
+  login:                 'Вход',
+  profile_update:        'Изменение профиля',
+  promo_activate:        'Активация промокода',
+  promo_create:          'Создание промокода',
+  promo_delete:          'Удаление промокода',
+  referral_activate:     'Активация реферала',
+  shop_purchase:         'Покупка в магазине',
+  inventory_remove:      'Удаление из инвентаря',
+  balance_change:        'Изменение баланса',
+  give_role:             'Выдача роли',
+  privilege_grant:       'Выдача привилегии',
+  privilege_revoke:      'Снятие привилегии',
+  application_status:    'Статус заявки',
+  application_delete:    'Удаление заявки',
+};
+
+function actorFromReq(req) {
+  const u = req.user || {};
+  return {
+    steamId: u.steamId || u.id || null,
+    name: u.global_name || u.username || null,
+    avatar: u.avatar || null,
+    isAdmin: !!u.isAdmin || !!u.isOwner || !!u.isHeadAdmin,
+  };
 }
 
 /* ============ Права ============ */
@@ -621,6 +975,15 @@ app.get('/auth/steam/callback', async (req, res) => {
       isAdmin: finalIsAdmin, isOwner, isHeadAdmin: finalIsHeadAdmin,
       roles: allRoles, provider: 'steam',
     }, JWT_SECRET, { expiresIn: '7d' });
+
+    await logSiteEvent({
+      action: 'login',
+      category: 'auth',
+      actor: { steamId: profile.steamid, name: profile.personaname, avatar: profile.avatar, isAdmin: finalIsAdmin },
+      meta: { provider: 'steam' },
+      silentDiscord: true,
+      req,
+    });
 
     res.redirect(`${FRONTEND_URL}/?token=${encodeURIComponent(jwtToken)}`);
   } catch (e) {
@@ -1104,12 +1467,13 @@ app.post('/api/inventory/remove', requireAuth, async (req, res) => {
       await mongoDb.collection('orders').deleteMany({ userId: steamId, itemName: roleName });
 
       const discordId = await getLink(steamId);
+      let roleRemoved = false;
       if (discordId && DISCORD_BOT_TOKEN && DISCORD_GUILD_ID) {
         try {
           rolesCache = { data: null, time: 0 };
           const roles = await getGuildRoles();
           const role = roles.find(r => r.name.toLowerCase() === roleName.toLowerCase());
-          if (role) await discordDelete(`/guilds/${DISCORD_GUILD_ID}/members/${discordId}/roles/${role.id}`);
+          if (role) { await discordDelete(`/guilds/${DISCORD_GUILD_ID}/members/${discordId}/roles/${role.id}`); roleRemoved = true; }
         } catch (e) { console.error('[inventory remove role discord]', e); }
       }
 
@@ -1123,6 +1487,14 @@ app.post('/api/inventory/remove', requireAuth, async (req, res) => {
         performedAt: new Date().toISOString(),
       });
 
+      await logSiteEvent({
+        action: 'inventory_remove',
+        category: 'inventory',
+        actor: actorFromReq(req),
+        meta: { itemId, itemName: roleName, type: 'role', roleRemoved },
+        req,
+      });
+
       return res.json({ ok: true, removed: roleName, type: 'role' });
     }
 
@@ -1133,12 +1505,13 @@ app.post('/api/inventory/remove', requireAuth, async (req, res) => {
     await mongoDb.collection('orders').deleteMany({ userId: steamId, itemId });
 
     const discordId = await getLink(steamId);
+    let roleRemoved = false;
     if (discordId && DISCORD_BOT_TOKEN && DISCORD_GUILD_ID && sub.roleName) {
       try {
         rolesCache = { data: null, time: 0 };
         const roles = await getGuildRoles();
         const role = roles.find(r => r.name.toLowerCase() === sub.roleName.toLowerCase());
-        if (role) await discordDelete(`/guilds/${DISCORD_GUILD_ID}/members/${discordId}/roles/${role.id}`);
+        if (role) { await discordDelete(`/guilds/${DISCORD_GUILD_ID}/members/${discordId}/roles/${role.id}`); roleRemoved = true; }
       } catch (e) { console.error('[inventory remove sub discord]', e); }
     }
 
@@ -1150,6 +1523,14 @@ app.post('/api/inventory/remove', requireAuth, async (req, res) => {
       performedByName: req.user.global_name || req.user.username,
       performedByAvatar: req.user.avatar,
       performedAt: new Date().toISOString(),
+    });
+
+    await logSiteEvent({
+      action: 'inventory_remove',
+      category: 'inventory',
+      actor: actorFromReq(req),
+      meta: { itemId, itemName: sub.itemName || itemId, type: 'subscription', roleRemoved },
+      req,
     });
 
     res.json({ ok: true, removed: sub.itemName || itemId, type: 'subscription' });
@@ -1218,6 +1599,14 @@ app.post('/api/referrals/activate', requireAuth, rateLimit(10, 60000), async (re
   await mongoDb.collection('referrals').insertOne({ referrerId: refDoc.steamId, invitedId: req.user.steamId, invitedName: req.user.global_name || req.user.username, createdAt: new Date().toISOString() });
   await addBalance(refDoc.steamId, 100);
   await addBalance(req.user.steamId, 50);
+  await logSiteEvent({
+    action: 'referral_activate',
+    category: 'referral',
+    actor: actorFromReq(req),
+    target: { steamId: refDoc.steamId, name: null },
+    meta: { code: clean },
+    req,
+  });
   res.json({ ok: true });
 });
 
@@ -1304,6 +1693,16 @@ app.post('/api/profile/update', requireAuth, async (req, res) => {
       performedAt: new Date().toISOString(),
     });
   }
+
+  await logSiteEvent({
+    action: 'profile_update',
+    category: 'profile',
+    actor: actorFromReq(req),
+    target: { steamId: targetSteamId, name: null },
+    meta: { fields: Object.keys(update).filter(k => k !== 'updatedAt') },
+    req,
+  });
+
   res.json({ ok: true });
 });
 
@@ -1344,6 +1743,15 @@ app.post('/api/promocodes', requireOwner, async (req, res) => {
     createdAt: new Date().toISOString(), createdBy: req.user.id,
     createdByName: req.user.global_name || req.user.username, active: true,
   });
+
+  await logSiteEvent({
+    action: 'promo_create',
+    category: 'promo',
+    actor: actorFromReq(req),
+    meta: { code: clean, amount: Number(amount), maxUses: Number(maxUses) || 0 },
+    req,
+  });
+
   res.json({ ok: true, code: clean });
 });
 
@@ -1351,6 +1759,15 @@ app.delete('/api/promocodes/:code', requireOwner, async (req, res) => {
   const code = String(req.params.code).toUpperCase();
   if (!mongoDb) return res.status(500).json({ error: 'no_db' });
   await mongoDb.collection('promocodes').deleteOne({ code });
+
+  await logSiteEvent({
+    action: 'promo_delete',
+    category: 'promo',
+    actor: actorFromReq(req),
+    meta: { code },
+    req,
+  });
+
   res.json({ ok: true });
 });
 
@@ -1374,6 +1791,15 @@ app.post('/api/promocodes/activate', requireAuth, rateLimit(10, 60000), async (r
     amount: promo.amount, usedAt: new Date().toISOString(),
   });
   await logTransaction(req.user.steamId, req.user.global_name || req.user.username, 'income', promo.amount, 'RUB', `Активация промокода ${clean}`);
+
+  await logSiteEvent({
+    action: 'promo_activate',
+    category: 'promo',
+    actor: actorFromReq(req),
+    meta: { code: clean, amount: promo.amount, newBalance },
+    req,
+  });
+
   res.json({ ok: true, amount: promo.amount, newBalance });
 });
 
@@ -1472,9 +1898,24 @@ app.post('/api/shop/buy-subscription', requireAuth, async (req, res) => {
 
   await Promise.all([
     notifyDiscordPurchase(purchaseEmbed),
-    notifyDiscordShop({ ...purchaseEmbed, title: 'Покупка привилегии (анонс)' }),
     notifyDiscordLogs({ ...purchaseEmbed, title: 'Покупка привилегии' }),
   ]);
+
+  await logSiteEvent({
+    action: 'shop_purchase',
+    category: 'shop',
+    actor: actorFromReq(req),
+    meta: {
+      itemId: item.id,
+      itemName: item.name,
+      tariffId: tariff.id,
+      tariffLabel: tariff.label,
+      price: tariff.price,
+      newBalance,
+      roleApplied,
+    },
+    req,
+  });
 
   res.json({ ok: true, item: item.name, tariff: tariff.label, newBalance, expiresAt, roleApplied, pending: !roleApplied });
 });
@@ -1589,17 +2030,33 @@ app.post('/api/give-role', requireAuth, async (req, res) => {
 
     await appendHistory({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8), action: 'give_role', targetSteamId: steamId || null, targetDiscordId: linkedDiscord || null, roleName: role.name, performedBy: req.user.id, performedByName: req.user.global_name || req.user.username, performedByAvatar: req.user.avatar, performedAt: new Date().toISOString(), appliedToDiscord });
 
-    await notifyDiscordLogs({
+    const roleEmbed = {
       title: 'Выдача роли',
       color: 0x60a5fa,
+      thumbnail: req.user.avatar ? { url: req.user.avatar } : undefined,
       fields: [
         { name: 'Роль', value: role.name, inline: true },
         { name: 'Steam ID', value: steamId ? `\`${steamId}\`` : '—', inline: true },
+        { name: 'Discord', value: linkedDiscord ? `<@${linkedDiscord}>` : '—', inline: true },
         { name: 'Выдал', value: req.user.global_name || req.user.username, inline: false },
-        { name: 'В Discord', value: appliedToDiscord ? 'Применено' : 'Ожидает привязки', inline: true },
+        { name: 'В Discord', value: appliedToDiscord ? 'Применено' : 'Ожидает привязки', inline: false },
       ],
       footer: { text: 'Fernodd • Роли' },
       timestamp: new Date().toISOString(),
+    };
+
+    await Promise.all([
+      notifyDiscordRole(roleEmbed),
+      notifyDiscordLogs(roleEmbed),
+    ]);
+
+    await logSiteEvent({
+      action: 'give_role',
+      category: 'roles',
+      actor: actorFromReq(req),
+      target: { steamId: steamId || null, name: null },
+      meta: { roleName: role.name, roleId: role.id, appliedToDiscord, discordId: linkedDiscord || null },
+      req,
     });
 
     res.json({ ok: true, role: role.name, appliedToDiscord });
@@ -1658,6 +2115,15 @@ app.post('/api/admin/balance/change', requireHeadAdmin, async (req, res) => {
       ],
       footer: { text: 'Fernodd • Балансы' },
       timestamp: new Date().toISOString(),
+    });
+
+    await logSiteEvent({
+      action: 'balance_change',
+      category: 'balance',
+      actor: actorFromReq(req),
+      target: { steamId, name: null },
+      meta: { mode, amount: delta, oldBalance: current, newBalance: newAmount },
+      req,
     });
 
     res.json({ ok: true, oldBalance: current, newBalance: newAmount });
@@ -1814,18 +2280,42 @@ app.post('/api/admin/privileges/grant', requireAuth, async (req, res) => {
       performedAt: new Date().toISOString(),
     });
 
-    await notifyDiscordLogs({
+    const privilegesEmbed = {
       title: 'Выдача привилегии',
       color: 0x4ade80,
+      thumbnail: req.user.avatar ? { url: req.user.avatar } : undefined,
       fields: [
         { name: 'Steam ID', value: `\`${steamId}\``, inline: true },
         { name: 'Привилегия', value: privilege.name, inline: true },
         { name: 'Срок', value: durationLabel, inline: true },
+        { name: 'Discord', value: discordId ? `<@${discordId}>` : '—', inline: false },
         { name: 'Выдал', value: req.user.global_name || req.user.username, inline: false },
         { name: 'Роль в Discord', value: roleApplied ? 'Применена' : 'Ожидает привязки', inline: false },
       ],
       footer: { text: 'Fernodd • Привилегии' },
       timestamp: new Date().toISOString(),
+    };
+
+    await Promise.all([
+      notifyDiscordPrivileges(privilegesEmbed),
+      notifyDiscordLogs(privilegesEmbed),
+    ]);
+
+    await logSiteEvent({
+      action: 'privilege_grant',
+      category: 'privileges',
+      actor: actorFromReq(req),
+      target: { steamId, name: null },
+      meta: {
+        privilegeId: privilege.id,
+        privilegeName: privilege.name,
+        durationMinutes: isForever ? 0 : minutes,
+        durationLabel,
+        expiresAt,
+        forever: isForever,
+        roleApplied,
+      },
+      req,
     });
 
     res.json({ ok: true, privilege: privilege.name, durationLabel, expiresAt, forever: isForever, roleApplied });
@@ -1876,17 +2366,33 @@ app.post('/api/admin/privileges/revoke', requireAuth, async (req, res) => {
       performedAt: new Date().toISOString(),
     });
 
-    await notifyDiscordLogs({
+    const revokeEmbed = {
       title: 'Снятие привилегии',
       color: 0xef4444,
+      thumbnail: req.user.avatar ? { url: req.user.avatar } : undefined,
       fields: [
         { name: 'Steam ID', value: `\`${steamId}\``, inline: true },
         { name: 'Привилегия', value: privilege.name, inline: true },
+        { name: 'Discord', value: discordId ? `<@${discordId}>` : '—', inline: false },
         { name: 'Снял', value: req.user.global_name || req.user.username, inline: false },
         { name: 'Роль в Discord', value: roleRemoved ? 'Снята' : 'Не найдена', inline: false },
       ],
       footer: { text: 'Fernodd • Привилегии' },
       timestamp: new Date().toISOString(),
+    };
+
+    await Promise.all([
+      notifyDiscordPrivileges(revokeEmbed),
+      notifyDiscordLogs(revokeEmbed),
+    ]);
+
+    await logSiteEvent({
+      action: 'privilege_revoke',
+      category: 'privileges',
+      actor: actorFromReq(req),
+      target: { steamId, name: null },
+      meta: { privilegeId: privilege.id, privilegeName: privilege.name, roleRemoved },
+      req,
     });
 
     res.json({ ok: true, privilege: privilege.name, roleRemoved });
@@ -2020,7 +2526,7 @@ app.get('/api/tickets/:id/messages', requireAuth, async (req, res) => {
   } catch { res.status(500).json({ error: 'server_error' }); }
 });
 
-/* ============ ЛОГИ ============ */
+/* ============ ЛОГИ DISCORD ============ */
 app.get('/api/logs', requireAuth, async (req, res) => {
   if (!isCuratorOrAbove(req.user)) return res.status(403).json({ error: 'forbidden' });
   if (!DISCORD_LOGS_CHANNEL_ID) return res.status(500).json({ error: 'channel_not_configured' });
@@ -2042,14 +2548,102 @@ app.get('/api/logs', requireAuth, async (req, res) => {
   } catch { res.status(500).json({ error: 'server_error' }); }
 });
 
+/* ============ ЛОГИ САЙТА (API) ============ */
+app.get('/api/admin/logs', requireAuth, async (req, res) => {
+  if (!isCuratorOrAbove(req.user)) {
+    return res.status(403).json({ error: 'forbidden' });
+  }
+  if (!mongoDb) {
+    return res.status(500).json({ error: 'no_db' });
+  }
+
+  const {
+    category = '',
+    action = '',
+    actorSteamId = '',
+    targetSteamId = '',
+    search = '',
+    page = '1',
+    limit = '50',
+  } = req.query;
+
+  const filter = {};
+  if (category) filter.category = category;
+  if (action) filter.action = action;
+  if (actorSteamId && /^\d{17}$/.test(actorSteamId)) filter.actorSteamId = actorSteamId;
+  if (targetSteamId && /^\d{17}$/.test(targetSteamId)) filter.targetSteamId = targetSteamId;
+
+  if (search) {
+    const s = String(search).trim();
+    const rx = new RegExp(s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+    filter.$or = [
+      { actorName: rx },
+      { targetName: rx },
+      { action: rx },
+      { category: rx },
+    ];
+  }
+
+  const lim = Math.min(Math.max(Number(limit) || 50, 1), 200);
+  const pg = Math.max(Number(page) || 1, 1);
+  const skip = (pg - 1) * lim;
+
+  try {
+    const [items, total] = await Promise.all([
+      mongoDb.collection('siteLogs')
+        .find(filter)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(lim)
+        .toArray(),
+      mongoDb.collection('siteLogs').countDocuments(filter),
+    ]);
+
+    res.json({
+      logs: items.map(i => { delete i._id; return i; }),
+      total,
+      page: pg,
+      limit: lim,
+      pages: Math.ceil(total / lim),
+    });
+  } catch (e) {
+    console.error('[admin/logs]', e);
+    res.status(500).json({ error: 'server_error', details: String(e) });
+  }
+});
+
+app.get('/api/admin/logs/meta', requireAuth, async (req, res) => {
+  if (!isCuratorOrAbove(req.user)) {
+    return res.status(403).json({ error: 'forbidden' });
+  }
+  if (!mongoDb) return res.status(500).json({ error: 'no_db' });
+
+  try {
+    const [categories, actions] = await Promise.all([
+      mongoDb.collection('siteLogs').distinct('category'),
+      mongoDb.collection('siteLogs').distinct('action'),
+    ]);
+    res.json({
+      categories: categories.filter(Boolean).sort(),
+      actions: actions.filter(Boolean).sort(),
+    });
+  } catch (e) {
+    console.error('[admin/logs/meta]', e);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
 /* ============ НАСТРОЙКИ ============ */
 app.get('/api/settings', requireHeadAdmin, (req, res) => {
   res.json({ settings: {
     guildId: DISCORD_GUILD_ID || '—',
     applyChannel: DISCORD_APPLY_CHANNEL_ID || '—',
     logsChannel: DISCORD_LOGS_CHANNEL_ID || '—',
-    shopChannel: DISCORD_SHOP_CHANNEL_ID || '—',
-    purchaseChannel: DISCORD_PURCHASE_CHANNEL_ID || DISCORD_SHOP_CHANNEL_ID || '—',
+    purchaseChannel: DISCORD_PURCHASE_CHANNEL_ID || '—',
+    rolesChannel: DISCORD_ROLES_CHANNEL_ID || '—',
+    privilegesChannel: DISCORD_PRIVILEGES_CHANNEL_ID || '—',
+    siteLogsChannel: DISCORD_SITE_LOGS_CHANNEL_ID || '—',
+    errorsChannel: DISCORD_ERRORS_CHANNEL_ID || '—',
     openTicketsCategory: DISCORD_OPEN_TICKETS_CATEGORY_ID || '—',
     closedTicketsCategory: DISCORD_CLOSED_TICKETS_CATEGORY_ID || '—',
     adminRoles: ADMIN_ROLES,
@@ -2342,6 +2936,14 @@ app.post('/api/applications/:id/:action', requireAuth, async (req, res) => {
       timestamp: new Date().toISOString(),
     });
 
+    await logSiteEvent({
+      action: 'application_status',
+      category: 'moderation',
+      actor: actorFromReq(req),
+      meta: { applicationId: id, oldStatus, newStatus, owner, method: 'direct' },
+      req,
+    });
+
     res.json({ ok: true });
   } catch { res.status(500).json({ error: 'discord_error' }); }
 });
@@ -2368,6 +2970,15 @@ app.delete('/api/applications/:id', requireAuth, async (req, res) => {
     if (!r.ok && r.status !== 204 && r.status !== 404) throw new Error('del_failed');
     await setOverride(req.params.id, null);
     await appendHistory({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8), action: 'delete', applicationId: req.params.id, applicationOwner: owner, oldStatus, performedBy: req.user.id, performedByName: req.user.global_name || req.user.username, performedByAvatar: req.user.avatar, performedAt: new Date().toISOString(), method: 'direct' });
+
+    await logSiteEvent({
+      action: 'application_delete',
+      category: 'moderation',
+      actor: actorFromReq(req),
+      meta: { applicationId: req.params.id, owner, oldStatus },
+      req,
+    });
+
     res.json({ ok: true });
   } catch { res.status(500).json({ error: 'discord_error' }); }
 });
@@ -2408,7 +3019,6 @@ app.get('/api/analytics-data', requireAuth, async (req, res) => {
       staffMap[key].count++;
     }
 
-    // Обогащаем аватарами/никами через батчинг
     const keys = Object.keys(staffMap);
     const steamIdsOfStaff = [];
     for (const k of keys) {
@@ -2478,20 +3088,71 @@ async function checkExpiredSubscriptions() {
         await mongoDb.collection('subscriptions').updateOne({ _id: sub._id }, { $set: { active: false, expiredAt: new Date().toISOString() } });
       } catch (e) { console.error('[subscription expire]', e); }
     }
-  } catch (e) { console.error('[checkExpiredSubscriptions]', e); }
+  } catch (e) {
+    console.error('[checkExpiredSubscriptions]', e);
+    notifyDiscordError({
+      title: 'Ошибка проверки истекших подписок',
+      description: e.message,
+      color: 0xf59e0b,
+      stack: e.stack,
+    }).catch(() => {});
+  }
 }
 
 /* ============ ERROR HANDLER ============ */
 app.use((err, req, res, next) => {
   console.error('[unhandled]', err);
+
+  if (req.path !== '/api/health') {
+    notifyDiscordError({
+      title: 'Необработанная ошибка Express',
+      description: err?.message || 'Unknown error',
+      color: 0xef4444,
+      stack: err?.stack,
+      req,
+      extra: {
+        'Имя ошибки': err?.name || 'Error',
+        'Код': err?.code || '—',
+      },
+    }).catch(() => {});
+  }
+
   if (res.headersSent) return next(err);
   res.status(500).json({ error: 'server_error' });
 });
 
-process.on('unhandledRejection', (e) => console.error('[unhandledRejection]', e));
-process.on('uncaughtException', (e) => console.error('[uncaughtException]', e));
+/* ============ GLOBAL ERROR HANDLERS ============ */
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[unhandledRejection]', reason);
+
+  const stack = reason instanceof Error ? reason.stack : String(reason);
+  notifyDiscordError({
+    title: 'Unhandled Promise Rejection',
+    description: reason instanceof Error ? reason.message : String(reason).slice(0, 500),
+    color: 0xf59e0b,
+    stack,
+    extra: { 'Тип': 'Promise' },
+  }).catch(() => {});
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('[uncaughtException]', err);
+
+  notifyDiscordError({
+    title: 'Uncaught Exception',
+    description: err?.message || 'Unknown exception',
+    color: 0xdc2626,
+    stack: err?.stack,
+    extra: {
+      'Имя': err?.name || 'Error',
+      'Код': err?.code || '—',
+      'Важно': 'Процесс может нестабильно работать. Возможно потребуется перезапуск.',
+    },
+  }).catch(() => {});
+});
 
 /* ============ INIT (Netlify) ============ */
 initMongo();
 
-export { app, initMongo, checkExpiredSubscriptions };
+/* ============ EXPORTS ============ */
+export { app, initMongo, checkExpiredSubscriptions, notifyDiscordError };

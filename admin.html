@@ -222,6 +222,39 @@ body > .auth-widget { display: none !important; }
 .duration-forever-btn:hover { background: linear-gradient(135deg, rgba(251,191,36,0.2), rgba(217,119,6,0.1)); transform: translateY(-2px); }
 .duration-forever-btn.selected { background: linear-gradient(135deg, #fbbf24, #d97706); color: #000; border-color: transparent; box-shadow: 0 6px 24px rgba(251,191,36,0.4); }
 
+/* Логи сайта */
+.logs-filters { margin-bottom: 16px; }
+.logs-filter-row { margin-bottom: 12px; }
+.logs-filter-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.4px; font-weight: 700; margin-bottom: 8px; }
+.logs-filter-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.logs-chip { padding: 6px 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-bright); border-radius: 100px; color: var(--text-dim); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 11.5px; cursor: pointer; transition: all 0.2s; }
+.logs-chip:hover { border-color: var(--red); color: #fff; }
+.logs-chip.active { background: linear-gradient(135deg, rgba(225,6,0,0.25), rgba(139,0,0,0.15)); border-color: rgba(225,6,0,0.5); color: #fff; }
+
+.logs-row { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-left: 3px solid var(--log-color, #8a8a8a); border-radius: 12px; padding: 12px 16px; margin-bottom: 8px; transition: all 0.2s; }
+.logs-row:hover { border-color: rgba(225,6,0,0.3); transform: translateX(4px); }
+.logs-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.logs-category { padding: 3px 10px; border-radius: 100px; font-size: 10px; font-weight: 800; font-family: 'Unbounded', sans-serif; letter-spacing: 0.5px; text-transform: uppercase; }
+.logs-action { font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 12.5px; color: #fff; letter-spacing: -0.2px; }
+.logs-date { margin-left: auto; font-size: 10.5px; color: var(--text-dim); font-family: 'Inter', monospace; }
+.logs-body { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12.5px; color: var(--text); margin-bottom: 6px; }
+.logs-actor { color: #fff; font-weight: 600; }
+.logs-actor-empty { color: var(--text-dim); font-weight: 400; font-style: italic; }
+.logs-admin-tag { display: inline-block; padding: 1px 6px; margin-left: 4px; background: rgba(225,6,0,0.15); border: 1px solid rgba(225,6,0,0.4); border-radius: 100px; font-size: 9px; font-weight: 700; color: var(--red); font-family: 'Unbounded', sans-serif; letter-spacing: 0.5px; vertical-align: middle; }
+.logs-arrow { color: var(--text-dim); font-size: 11px; }
+.logs-target { color: var(--text); font-weight: 500; }
+.logs-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.logs-meta-item { padding: 3px 9px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-bright); border-radius: 6px; font-size: 10.5px; color: var(--text-dim); font-family: 'Inter', monospace; }
+.logs-footer { margin-top: 6px; font-size: 10px; color: var(--text-dim); font-family: 'Inter', monospace; opacity: 0.6; }
+.logs-ip { padding: 2px 6px; background: rgba(255,255,255,0.03); border-radius: 4px; }
+
+.logs-pagination { display: flex; gap: 6px; align-items: center; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+.logs-page-btn { min-width: 34px; height: 34px; padding: 0 10px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-bright); border-radius: 8px; color: var(--text); font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+.logs-page-btn:hover:not(:disabled) { border-color: var(--red); background: rgba(225,6,0,0.08); color: #fff; }
+.logs-page-btn.active { background: linear-gradient(135deg, var(--red), var(--red-dark)); border-color: transparent; color: #fff; box-shadow: 0 4px 16px rgba(225,6,0,0.4); }
+.logs-page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.logs-page-info { margin-left: 10px; font-size: 11.5px; color: var(--text-dim); font-family: 'Unbounded', sans-serif; font-weight: 600; }
+
 .fd-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; }
 .fd-modal-overlay.visible { display: flex; }
 .fd-modal { background: linear-gradient(145deg, #0e0e0e, #060606); border: 1px solid var(--border-bright); border-radius: 22px; padding: 28px; max-width: 480px; width: 100%; position: relative; overflow: hidden; }
@@ -293,7 +326,7 @@ body > .auth-widget { display: none !important; }
       <div class="tab-block-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
       <div class="tab-block-info">
         <div class="tab-block-title">Модератор</div>
-        <div class="tab-block-desc">Заявки, жалобы, логи модерации</div>
+        <div class="tab-block-desc">Заявки, жалобы, логи</div>
       </div>
       <span class="tab-block-badge" id="modBadge">0</span>
     </button>
@@ -301,7 +334,7 @@ body > .auth-widget { display: none !important; }
       <div class="tab-block-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
       <div class="tab-block-info">
         <div class="tab-block-title">Управление</div>
-        <div class="tab-block-desc">Персонал, статистика, привилегии, роли</div>
+        <div class="tab-block-desc">Персонал, привилегии, роли, баланс</div>
       </div>
     </button>
   </div>
@@ -347,6 +380,26 @@ let availableRoles = [];
 let currentBalanceUser = null;
 let selectedPrivilegeUser = null;
 let privilegesCache = [];
+
+/* Логи сайта */
+let siteLogsFilter = { category: '', action: '', search: '', page: 1 };
+let siteLogsMeta = { categories: [], actions: [] };
+let siteLogsSearchTimeout = null;
+
+const CATEGORY_LABELS = {
+  general: 'Общее', auth: 'Авторизация', profile: 'Профиль', shop: 'Магазин',
+  moderation: 'Модерация', admin: 'Админ', roles: 'Роли', privileges: 'Привилегии',
+  balance: 'Баланс', promo: 'Промокоды', referral: 'Рефералы', inventory: 'Инвентарь',
+};
+
+const ACTION_LABELS = {
+  login: 'Вход', profile_update: 'Изменение профиля',
+  promo_activate: 'Активация промокода', promo_create: 'Создание промокода', promo_delete: 'Удаление промокода',
+  referral_activate: 'Активация реферала', shop_purchase: 'Покупка в магазине',
+  inventory_remove: 'Удаление из инвентаря', balance_change: 'Изменение баланса',
+  give_role: 'Выдача роли', privilege_grant: 'Выдача привилегии', privilege_revoke: 'Снятие привилегии',
+  application_status: 'Статус заявки', application_delete: 'Удаление заявки',
+};
 
 function esc(s) {
   return String(s == null ? '' : s)
@@ -526,6 +579,7 @@ function renderModerator() {
       <button class="subtab ${moderatorSub === 'apps' ? 'active' : ''}" onclick="setModSub('apps')">Заявки <span class="subtab-count" id="cntApps">0</span></button>
       <button class="subtab ${moderatorSub === 'tickets' ? 'active' : ''}" onclick="setModSub('tickets')">Жалобы <span class="subtab-count" id="cntTickets">0</span></button>
       <button class="subtab ${moderatorSub === 'logs' ? 'active' : ''}" onclick="setModSub('logs')">Логи Discord</button>
+      <button class="subtab ${moderatorSub === 'siteLogs' ? 'active' : ''}" onclick="setModSub('siteLogs')">Логи сайта</button>
     </div>
     <div id="modBody"></div>
   `;
@@ -538,6 +592,7 @@ async function loadModBody() {
   if (moderatorSub === 'apps') return loadAppsBlock(body);
   if (moderatorSub === 'tickets') return loadTicketsBlock(body);
   if (moderatorSub === 'logs') return loadLogsBlock(body);
+  if (moderatorSub === 'siteLogs') return loadSiteLogsBlock(body);
 }
 
 async function loadAppsBlock(body) {
@@ -821,6 +876,206 @@ async function loadLogsBlock(body) {
   } catch (e) { body.innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${esc(e.message)}</div>`; }
 }
 
+/* ============ ЛОГИ САЙТА ============ */
+async function loadSiteLogsBlock(body) {
+  if (!isCuratorOrAbove()) {
+    body.innerHTML = '<div class="empty-state">Логи доступны кураторам и выше.</div>';
+    return;
+  }
+
+  body.innerHTML = `
+    <div class="section-block">
+      <div class="section-block-head">
+        <div>
+          <div class="section-block-title">Логи сайта</div>
+          <div class="section-block-sub">Все действия пользователей и персонала</div>
+        </div>
+        <button class="btn-act ghost" onclick="loadSiteLogsBlock(document.getElementById('modBody'))">Обновить</button>
+      </div>
+
+      <div class="search-wrap">
+        <span class="search-icon">${window.ICONS.search}</span>
+        <input class="search-input" id="siteLogsSearch" placeholder="Поиск по имени, действию..." oninput="onSiteLogsSearch(this.value)">
+      </div>
+
+      <div class="logs-filters" id="siteLogsFilters"></div>
+
+      <div class="cards-list" id="siteLogsList">
+        <div class="loading-state"><div class="spinner"></div> Загрузка...</div>
+      </div>
+
+      <div id="siteLogsPagination" class="logs-pagination"></div>
+    </div>
+  `;
+
+  if (!siteLogsMeta.categories.length) {
+    try {
+      const meta = await api('/api/admin/logs/meta');
+      siteLogsMeta = meta || { categories: [], actions: [] };
+    } catch {}
+  }
+
+  renderSiteLogsFilters();
+  loadSiteLogsList();
+}
+
+function onSiteLogsSearch(v) {
+  if (siteLogsSearchTimeout) clearTimeout(siteLogsSearchTimeout);
+  siteLogsSearchTimeout = setTimeout(() => {
+    siteLogsFilter.search = v.trim();
+    siteLogsFilter.page = 1;
+    loadSiteLogsList();
+  }, 400);
+}
+
+function renderSiteLogsFilters() {
+  const wrap = document.getElementById('siteLogsFilters');
+  if (!wrap) return;
+  wrap.innerHTML = `
+    <div class="logs-filter-row">
+      <div class="logs-filter-label">Категория</div>
+      <div class="logs-filter-chips">
+        <button class="logs-chip ${!siteLogsFilter.category ? 'active' : ''}" onclick="setSiteLogsCategory('')">Все</button>
+        ${siteLogsMeta.categories.map(c => `
+          <button class="logs-chip ${siteLogsFilter.category === c ? 'active' : ''}" onclick="setSiteLogsCategory('${esc(c)}')">
+            ${esc(CATEGORY_LABELS[c] || c)}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function setSiteLogsCategory(cat) {
+  siteLogsFilter.category = cat;
+  siteLogsFilter.page = 1;
+  renderSiteLogsFilters();
+  loadSiteLogsList();
+}
+
+async function loadSiteLogsList() {
+  const list = document.getElementById('siteLogsList');
+  const pag = document.getElementById('siteLogsPagination');
+  if (!list) return;
+  list.innerHTML = '<div class="loading-state"><div class="spinner"></div> Загрузка...</div>';
+  if (pag) pag.innerHTML = '';
+
+  const params = new URLSearchParams();
+  if (siteLogsFilter.category) params.set('category', siteLogsFilter.category);
+  if (siteLogsFilter.action) params.set('action', siteLogsFilter.action);
+  if (siteLogsFilter.search) params.set('search', siteLogsFilter.search);
+  params.set('page', siteLogsFilter.page);
+  params.set('limit', '50');
+
+  try {
+    const data = await api('/api/admin/logs?' + params.toString());
+    const logs = data.logs || [];
+
+    if (!logs.length) {
+      list.innerHTML = '<div class="empty-state">Записей нет</div>';
+      return;
+    }
+
+    list.innerHTML = logs.map(l => renderSiteLogRow(l)).join('');
+
+    if (pag && data.pages > 1) {
+      const total = data.pages;
+      const cur = data.page;
+      let html = '';
+      html += `<button class="logs-page-btn" ${cur <= 1 ? 'disabled' : ''} onclick="setSiteLogsPage(${cur - 1})">←</button>`;
+      const start = Math.max(1, cur - 2);
+      const end = Math.min(total, cur + 2);
+      for (let i = start; i <= end; i++) {
+        html += `<button class="logs-page-btn ${i === cur ? 'active' : ''}" onclick="setSiteLogsPage(${i})">${i}</button>`;
+      }
+      html += `<button class="logs-page-btn" ${cur >= total ? 'disabled' : ''} onclick="setSiteLogsPage(${cur + 1})">→</button>`;
+      html += `<span class="logs-page-info">Всего: ${data.total}</span>`;
+      pag.innerHTML = html;
+    }
+  } catch (e) {
+    list.innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${esc(e.message)}</div>`;
+  }
+}
+
+function setSiteLogsPage(p) {
+  siteLogsFilter.page = p;
+  loadSiteLogsList();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderSiteLogRow(l) {
+  const date = new Date(l.createdAt).toLocaleString('ru-RU', {
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+  });
+
+  const categoryLabel = CATEGORY_LABELS[l.category] || l.category;
+  const actionLabel = ACTION_LABELS[l.action] || l.action;
+
+  const CAT_COLORS = {
+    auth: '#60a5fa', profile: '#a855f7', shop: '#fbbf24',
+    moderation: '#4ade80', admin: '#ef4444', roles: '#00a8fc',
+    privileges: '#fbbf24', balance: '#4ade80', promo: '#eb459e',
+    referral: '#23a55a', inventory: '#8b5cf6', general: '#8a8a8a',
+  };
+  const color = CAT_COLORS[l.category] || '#8a8a8a';
+
+  const actorHTML = l.actorName
+    ? `<span class="logs-actor">${esc(l.actorName)}${l.actorIsAdmin ? ' <span class="logs-admin-tag">ADMIN</span>' : ''}</span>`
+    : '<span class="logs-actor logs-actor-empty">система</span>';
+
+  const targetHTML = l.targetName || l.targetSteamId
+    ? `<span class="logs-arrow">→</span> <span class="logs-target">${esc(l.targetName || l.targetSteamId)}</span>`
+    : '';
+
+  const metaParts = [];
+  const m = l.meta || {};
+  if (m.privilegeName) metaParts.push(m.privilegeName);
+  if (m.durationLabel) metaParts.push(m.durationLabel);
+  if (m.roleName) metaParts.push(m.roleName);
+  if (m.itemName) metaParts.push(m.itemName);
+  if (m.tariffLabel) metaParts.push(m.tariffLabel);
+  if (m.price != null) metaParts.push(`${m.price} ₽`);
+  if (m.amount != null && !m.price) metaParts.push(`${m.amount} ₽`);
+  if (m.mode) {
+    const modeLabel = m.mode === 'add' ? 'выдал' : m.mode === 'subtract' ? 'снял' : 'установил';
+    metaParts.push(modeLabel);
+  }
+  if (m.oldBalance != null && m.newBalance != null) metaParts.push(`${m.oldBalance} → ${m.newBalance} ₽`);
+  if (m.code) metaParts.push(`\`${m.code}\``);
+  if (m.oldStatus && m.newStatus) metaParts.push(`${m.oldStatus} → ${m.newStatus}`);
+  if (m.fields && m.fields.length) metaParts.push(m.fields.join(', '));
+  if (m.appliedToDiscord === true) metaParts.push('Discord: применено');
+  if (m.appliedToDiscord === false) metaParts.push('Discord: ожидает');
+  if (m.roleApplied === true) metaParts.push('роль выдана');
+  if (m.roleApplied === false) metaParts.push('роль ожидает');
+  if (m.roleRemoved === true) metaParts.push('роль снята');
+
+  const metaHTML = metaParts.length
+    ? `<div class="logs-meta">${metaParts.map(p => `<span class="logs-meta-item">${esc(p)}</span>`).join('')}</div>`
+    : '';
+
+  const ipHTML = l.ip ? `<span class="logs-ip" title="IP адрес">${esc(l.ip)}</span>` : '';
+
+  return `
+    <div class="logs-row" style="--log-color:${color};">
+      <div class="logs-head">
+        <span class="logs-category" style="background:${color}22;border:1px solid ${color}66;color:${color};">
+          ${esc(categoryLabel)}
+        </span>
+        <span class="logs-action">${esc(actionLabel)}</span>
+        <span class="logs-date">${date}</span>
+      </div>
+      <div class="logs-body">
+        ${actorHTML}${targetHTML}
+      </div>
+      ${metaHTML}
+      ${ipHTML ? `<div class="logs-footer">${ipHTML}</div>` : ''}
+    </div>
+  `;
+}
+
+/* ============ УПРАВЛЕНИЕ ============ */
 function renderManage() {
   const isFullAdmin = isOwner() || isHeadAdminOrOwner();
   document.getElementById('adminContent').innerHTML = `
@@ -831,7 +1086,7 @@ function renderManage() {
       <button class="subtab ${manageSub === 'privileges' ? 'active' : ''}" onclick="setMgSub('privileges')">Привилегии</button>
       <button class="subtab ${manageSub === 'roles' ? 'active' : ''}" onclick="setMgSub('roles')">Выдача ролей</button>
       ${isOwner() ? `<button class="subtab ${manageSub === 'promo' ? 'active' : ''}" onclick="setMgSub('promo')">Промокоды</button>` : ''}
-      ${isFullAdmin ? `<button class="subtab ${manageSub === 'orders' ? 'active' : ''}" onclick="setMgSub('orders')">Покупки привилегий</button>` : ''}
+      ${isFullAdmin ? `<button class="subtab ${manageSub === 'orders' ? 'active' : ''}" onclick="setMgSub('orders')">Покупки</button>` : ''}
       ${isFullAdmin ? `<button class="subtab ${manageSub === 'settings' ? 'active' : ''}" onclick="setMgSub('settings')">Настройки</button>` : ''}
       <button class="subtab ${manageSub === 'monitor' ? 'active' : ''}" onclick="setMgSub('monitor')">Мониторинг</button>
     </div>
@@ -1169,7 +1424,7 @@ window.submitBalance = async function(mode) {
   });
 };
 
-/* ============ ПРИВИЛЕГИИ (АДМИН) ============ */
+/* ============ ПРИВИЛЕГИИ ============ */
 async function loadPrivilegesBlock(body) {
   if (!isCuratorOrAbove()) {
     body.innerHTML = '<div class="empty-state">Доступно кураторам и выше.</div>';
@@ -1186,12 +1441,7 @@ async function loadPrivilegesBlock(body) {
 
       <div class="search-wrap">
         <span class="search-icon">${window.ICONS.search}</span>
-        <input class="search-input" id="privSteamSearch"
-               placeholder="Steam ID (17 цифр)"
-               maxlength="17"
-               inputmode="numeric"
-               oninput="onPrivSteamInput(this.value)"
-               onkeydown="if(event.key==='Enter')findPrivilegeUser()">
+        <input class="search-input" id="privSteamSearch" placeholder="Steam ID (17 цифр)" maxlength="17" inputmode="numeric" oninput="onPrivSteamInput(this.value)" onkeydown="if(event.key==='Enter')findPrivilegeUser()">
       </div>
 
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
@@ -1482,6 +1732,7 @@ async function revokePrivilege(privilegeId, privilegeName) {
   });
 }
 
+/* ============ ВЫДАЧА РОЛЕЙ ============ */
 async function loadRolesBlock(body) {
   if (!isCuratorOrAbove()) { body.innerHTML = '<div class="empty-state">Доступно только кураторам и выше.</div>'; return; }
   body.innerHTML = `
@@ -1569,6 +1820,7 @@ function giveRole(roleId, roleName) {
   });
 }
 
+/* ============ ПРОМОКОДЫ ============ */
 async function loadPromoBlock(body) {
   if (!isOwner()) { body.innerHTML = '<div class="empty-state">Только для владельца</div>'; return; }
   body.innerHTML = `
@@ -1703,6 +1955,7 @@ function deletePromo(code) {
   });
 }
 
+/* ============ ПОКУПКИ ============ */
 async function loadOrdersBlock(body) {
   if (!isOwner() && !isHeadAdminOrOwner()) { body.innerHTML = '<div class="empty-state">Доступно владельцу и главной администрации.</div>'; return; }
   body.innerHTML = '<div class="loading-state"><div class="spinner"></div> Загрузка...</div>';
@@ -1731,6 +1984,7 @@ async function loadOrdersBlock(body) {
   } catch (e) { body.innerHTML = `<div class="empty-state" style="color:var(--red);">${esc(e.message)}</div>`; }
 }
 
+/* ============ НАСТРОЙКИ ============ */
 async function loadSettingsBlock(body) {
   if (!isOwner() && !isHeadAdminOrOwner()) { body.innerHTML = '<div class="empty-state">Доступно владельцу и главной администрации.</div>'; return; }
   body.innerHTML = '<div class="skeleton"></div>';
@@ -1744,8 +1998,11 @@ async function loadSettingsBlock(body) {
           <div class="setting-card"><div class="setting-label">Discord сервер</div><div class="setting-value">${esc(s.guildId)}</div></div>
           <div class="setting-card"><div class="setting-label">Канал заявок</div><div class="setting-value">${esc(s.applyChannel)}</div></div>
           <div class="setting-card"><div class="setting-label">Канал логов</div><div class="setting-value">${esc(s.logsChannel)}</div></div>
-          <div class="setting-card"><div class="setting-label">Канал магазина</div><div class="setting-value">${esc(s.shopChannel)}</div></div>
           <div class="setting-card"><div class="setting-label">Канал покупок</div><div class="setting-value">${esc(s.purchaseChannel || '—')}</div></div>
+          <div class="setting-card"><div class="setting-label">Канал ролей</div><div class="setting-value">${esc(s.rolesChannel || '—')}</div></div>
+          <div class="setting-card"><div class="setting-label">Канал привилегий</div><div class="setting-value">${esc(s.privilegesChannel || '—')}</div></div>
+          <div class="setting-card"><div class="setting-label">Канал логов сайта</div><div class="setting-value">${esc(s.siteLogsChannel || '—')}</div></div>
+          <div class="setting-card"><div class="setting-label">Канал ошибок</div><div class="setting-value">${esc(s.errorsChannel || '—')}</div></div>
           <div class="setting-card"><div class="setting-label">Статус бота</div><div class="setting-value ${s.botConnected ? 'ok' : 'err'}">${s.botConnected ? 'Подключён' : 'Не подключён'}</div></div>
         </div>
       </div>
