@@ -23,51 +23,10 @@
 
   .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 22px; }
 
-  .shop-card {
-    position: relative;
-    background: radial-gradient(circle at 50% 0%, rgba(251,191,36,0.15), transparent 55%),
-                linear-gradient(165deg, #141414 0%, #0a0a0a 55%, #050505 100%);
-    border: 1px solid rgba(251,191,36,0.25);
-    border-radius: 24px;
-    padding: 32px 24px 24px;
-    overflow: hidden;
-    transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-    display: flex;
-    flex-direction: column;
-    isolation: isolate;
-  }
-  .shop-card::before {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    border-radius: 24px;
-    padding: 1px;
-    background: linear-gradient(135deg, rgba(251,191,36,0.6) 0%, rgba(225,6,0,0.4) 35%, transparent 55%, rgba(251,191,36,0.3) 100%);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-    z-index: 2;
-    opacity: 0.6;
-    transition: opacity 0.4s;
-  }
-  .shop-card::after {
-    content: '';
-    position: absolute;
-    top: -60%; left: 50%;
-    transform: translateX(-50%);
-    width: 220px; height: 220px;
-    background: radial-gradient(circle, rgba(251,191,36,0.35), transparent 65%);
-    filter: blur(40px);
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.7;
-    animation: cardPulse 4s ease-in-out infinite;
-  }
-  @keyframes cardPulse {
-    0%,100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
-    50% { opacity: 0.9; transform: translateX(-50%) scale(1.15); }
-  }
+  .shop-card { position: relative; background: radial-gradient(circle at 50% 0%, rgba(251,191,36,0.15), transparent 55%), linear-gradient(165deg, #141414 0%, #0a0a0a 55%, #050505 100%); border: 1px solid rgba(251,191,36,0.25); border-radius: 24px; padding: 32px 24px 24px; overflow: hidden; transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1); display: flex; flex-direction: column; isolation: isolate; }
+  .shop-card::before { content: ''; position: absolute; inset: -1px; border-radius: 24px; padding: 1px; background: linear-gradient(135deg, rgba(251,191,36,0.6) 0%, rgba(225,6,0,0.4) 35%, transparent 55%, rgba(251,191,36,0.3) 100%); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; z-index: 2; opacity: 0.6; transition: opacity 0.4s; }
+  .shop-card::after { content: ''; position: absolute; top: -60%; left: 50%; transform: translateX(-50%); width: 220px; height: 220px; background: radial-gradient(circle, rgba(251,191,36,0.35), transparent 65%); filter: blur(40px); pointer-events: none; z-index: 0; opacity: 0.7; animation: cardPulse 4s ease-in-out infinite; }
+  @keyframes cardPulse { 0%,100% { opacity: 0.5; transform: translateX(-50%) scale(1); } 50% { opacity: 0.9; transform: translateX(-50%) scale(1.15); } }
   .shop-card:hover { transform: translateY(-10px); border-color: rgba(251,191,36,0.6); box-shadow: 0 30px 70px rgba(0,0,0,0.8), 0 0 60px rgba(251,191,36,0.25), inset 0 1px 0 rgba(255,255,255,0.06); }
   .shop-card:hover::before { opacity: 1; }
 
@@ -167,10 +126,7 @@
     </div>
 
     <div class="shop-tabs">
-      <button class="shop-tab active" data-tab="roles">
-        Роли
-        <span class="tab-count" id="rolesCount">0</span>
-      </button>
+      <button class="shop-tab active" data-tab="roles">Роли <span class="tab-count" id="rolesCount">0</span></button>
     </div>
 
     <div class="shop-grid" id="shopGrid"></div>
@@ -207,187 +163,74 @@ async function loadShop() {
   try {
     const data = await api('/api/shop/items');
     SHOP_DATA.roles = (data.items || []).map(item => ({
-      id: item.id,
-      name: item.name,
-      description: item.description,
-      color: item.color,
-      iconSvg: window.ICONS.star,
-      type: 'subscription',
+      id: item.id, name: item.name, description: item.description, color: item.color,
+      iconSvg: window.ICONS.star, type: 'subscription',
       features: ['Цветной ник', 'Закрытые каналы', 'Ивенты', '2× рулетка', 'Своя ссылка'],
-      tariffs: item.tariffs.map((t, i) => ({
-        id: t.id,
-        label: t.label,
-        price: t.price,
-        days: t.days,
-        sub: t.days === 0 ? 'Разовая покупка' : `${t.days} дн.`,
-        badge: i === 2 ? 'ХИТ' : (i === 3 ? 'ВЫГОДНО' : (i === 4 ? 'TOP' : '')),
-      })),
+      tariffs: item.tariffs.map((t, i) => ({ id: t.id, label: t.label, price: t.price, days: t.days, sub: t.days === 0 ? 'Разовая покупка' : `${t.days} дн.`, badge: i === 2 ? 'ХИТ' : (i === 3 ? 'ВЫГОДНО' : (i === 4 ? 'TOP' : '')) })),
     }));
     renderShop();
-  } catch (e) {
-    console.error('[shop]', e);
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--red);">Не удалось загрузить магазин</div>';
-  }
+  } catch (e) { console.error('[shop]', e); grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--red);">Не удалось загрузить магазин</div>'; }
 }
 
 window.addEventListener('auth:changed', (e) => {
   currentUser = e.detail.user;
   if (currentUser) {
-    const av = document.getElementById('headerAvatar');
-    if (av) {
-      if (currentUser.avatar) { av.src = currentUser.avatar; av.style.display = ''; }
-      else { av.style.display = 'none'; }
-    }
-    const menuBox = document.getElementById('profileMenuContent');
-    if (menuBox) menuBox.innerHTML = renderProfileMenu('shop');
+    const av = document.getElementById('headerAvatar'); if (av) { if (currentUser.avatar) { av.src = currentUser.avatar; av.style.display = ''; } else { av.style.display = 'none'; } }
+    const menuBox = document.getElementById('profileMenuContent'); if (menuBox) menuBox.innerHTML = renderProfileMenu('shop');
   }
 });
 
 function renderShop() {
-  const grid = document.getElementById('shopGrid');
-  const roles = SHOP_DATA.roles;
+  const grid = document.getElementById('shopGrid'); const roles = SHOP_DATA.roles;
   document.getElementById('rolesCount').textContent = roles.length;
-
-  if (!roles.length) {
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-dim);">Товаров пока нет</div>';
-    return;
-  }
-
+  if (!roles.length) { grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-dim);">Товаров пока нет</div>'; return; }
   grid.innerHTML = roles.map(item => {
     const minPrice = Math.min(...item.tariffs.map(t => t.price));
     const firstTariff = item.tariffs[0];
     const iconHTML = item.iconSvg || '';
     const features = item.features || [];
-    const featuresHTML = features.length
-      ? `<div class="shop-features">${features.map(f => `<span class="shop-feature">${escapeHtml(f)}</span>`).join('')}</div>` : '';
-
-    return `
-      <div class="shop-card" style="--item-color:${item.color};">
-        <div class="shop-icon-wrap"><div class="shop-icon" style="color:${item.color};">${iconHTML}</div></div>
-        <div class="shop-name">${escapeHtml(item.name)}</div>
-        <div class="shop-desc">${escapeHtml(item.description)}</div>
-        ${featuresHTML}
-        <div class="shop-price">
-          <div class="shop-price-main">от ${minPrice}₽</div>
-          <div class="shop-price-sub">/ ${escapeHtml(firstTariff.label)}</div>
-        </div>
-        <button class="shop-buy-btn" onclick="openProduct('${item.id}')">Выбрать тариф</button>
-      </div>`;
+    const featuresHTML = features.length ? `<div class="shop-features">${features.map(f => `<span class="shop-feature">${escapeHtml(f)}</span>`).join('')}</div>` : '';
+    return `<div class="shop-card" style="--item-color:${item.color};"><div class="shop-icon-wrap"><div class="shop-icon" style="color:${item.color};">${iconHTML}</div></div><div class="shop-name">${escapeHtml(item.name)}</div><div class="shop-desc">${escapeHtml(item.description)}</div>${featuresHTML}<div class="shop-price"><div class="shop-price-main">от ${minPrice}₽</div><div class="shop-price-sub">/ ${escapeHtml(firstTariff.label)}</div></div><button class="shop-buy-btn" onclick="openProduct('${item.id}')">Выбрать тариф</button></div>`;
   }).join('');
 }
 
-window.openProduct = function(itemId) {
-  const item = SHOP_DATA.roles.find(r => r.id === itemId);
-  if (!item) return;
-  if (item.type === 'subscription') openSubscriptionModal(item);
-};
+window.openProduct = function(itemId) { const item = SHOP_DATA.roles.find(r => r.id === itemId); if (!item) return; if (item.type === 'subscription') openSubscriptionModal(item); };
 
 function openSubscriptionModal(item) {
-  const modal = document.getElementById('fdPlusModal');
-  const inner = document.getElementById('fdPlusInner');
-  inner.innerHTML = `
-    <button class="fd-plus-close" onclick="closeSubscriptionModal()">${window.ICONS.close}</button>
-    <div class="fd-plus-header">
-      <div class="fd-plus-header-icon">${window.ICONS.star}</div>
-      <div style="flex:1;min-width:0;">
-        <div class="fd-plus-header-title">FERNODD<span>+</span></div>
-        <div class="fd-plus-header-desc">${escapeHtml(item.description)}</div>
-      </div>
-    </div>
-    <div class="fd-plus-features">
-      <div class="fd-plus-feature">${window.ICONS.check} Уникальный префикс и цветной ник</div>
-      <div class="fd-plus-feature">${window.ICONS.check} Доступ к закрытым каналам</div>
-      <div class="fd-plus-feature">${window.ICONS.check} Приоритетная поддержка</div>
-      <div class="fd-plus-feature">${window.ICONS.check} Эксклюзивные ивенты</div>
-      <div class="fd-plus-feature">${window.ICONS.check} 2 бесплатных спина в рулетке каждые 7 дней</div>
-      <div class="fd-plus-feature">${window.ICONS.check} Своя ссылка профиля /profile/твой_ник</div>
-    </div>
-    <div class="fd-plus-section-title">Выберите тариф</div>
-    <div class="fd-tariff-list" id="tariffList">
-      ${item.tariffs.map(t => `
-        <div class="fd-tariff ${t.id === selectedTariffId ? 'selected' : ''}" data-id="${t.id}" onclick="selectTariff('${t.id}')">
-          ${t.badge ? `<div class="fd-tariff-tag">${escapeHtml(t.badge)}</div>` : ''}
-          <div class="fd-tariff-bullet"></div>
-          <div class="fd-tariff-info">
-            <div class="fd-tariff-name">${escapeHtml(t.label)}</div>
-            <div class="fd-tariff-sub">${escapeHtml(t.sub)}</div>
-          </div>
-          <div class="fd-tariff-price">${t.price} ₽</div>
-        </div>`).join('')}
-    </div>
-    <div class="fd-total">
-      <div class="fd-total-label">Итого</div>
-      <div class="fd-total-value" id="totalPrice">— ₽</div>
-    </div>
-    <button class="fd-plus-buy-btn" id="buyBtn" onclick="buySubscription('${item.id}')">Купить FERNODD+</button>
-  `;
-  modal.classList.add('visible');
-  document.body.style.overflow = 'hidden';
-  updateTotal(item);
+  const modal = document.getElementById('fdPlusModal'); const inner = document.getElementById('fdPlusInner');
+  inner.innerHTML = `<button class="fd-plus-close" onclick="closeSubscriptionModal()">${window.ICONS.close}</button><div class="fd-plus-header"><div class="fd-plus-header-icon">${window.ICONS.star}</div><div style="flex:1;min-width:0;"><div class="fd-plus-header-title">FERNODD<span>+</span></div><div class="fd-plus-header-desc">${escapeHtml(item.description)}</div></div></div><div class="fd-plus-features"><div class="fd-plus-feature">${window.ICONS.check} Уникальный префикс и цветной ник</div><div class="fd-plus-feature">${window.ICONS.check} Доступ к закрытым каналам</div><div class="fd-plus-feature">${window.ICONS.check} Приоритетная поддержка</div><div class="fd-plus-feature">${window.ICONS.check} Эксклюзивные ивенты</div><div class="fd-plus-feature">${window.ICONS.check} 2 бесплатных спина в рулетке каждые 7 дней</div><div class="fd-plus-feature">${window.ICONS.check} Своя ссылка профиля /profile/твой_ник</div></div><div class="fd-plus-section-title">Выберите тариф</div><div class="fd-tariff-list" id="tariffList">${item.tariffs.map(t => `<div class="fd-tariff ${t.id === selectedTariffId ? 'selected' : ''}" data-id="${t.id}" onclick="selectTariff('${t.id}')">${t.badge ? `<div class="fd-tariff-tag">${escapeHtml(t.badge)}</div>` : ''}<div class="fd-tariff-bullet"></div><div class="fd-tariff-info"><div class="fd-tariff-name">${escapeHtml(t.label)}</div><div class="fd-tariff-sub">${escapeHtml(t.sub)}</div></div><div class="fd-tariff-price">${t.price} ₽</div></div>`).join('')}</div><div class="fd-total"><div class="fd-total-label">Итого</div><div class="fd-total-value" id="totalPrice">— ₽</div></div><button class="fd-plus-buy-btn" id="buyBtn" onclick="buySubscription('${item.id}')">Купить FERNODD+</button>`;
+  modal.classList.add('visible'); document.body.style.overflow = 'hidden'; updateTotal(item);
 }
 
-window.closeSubscriptionModal = function() {
-  document.getElementById('fdPlusModal').classList.remove('visible');
-  document.body.style.overflow = '';
-};
+window.closeSubscriptionModal = function() { document.getElementById('fdPlusModal').classList.remove('visible'); document.body.style.overflow = ''; };
 document.getElementById('fdPlusModal').addEventListener('click', (e) => { if (e.target.id === 'fdPlusModal') closeSubscriptionModal(); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSubscriptionModal(); });
 
-window.selectTariff = function(tariffId) {
-  selectedTariffId = tariffId;
-  document.querySelectorAll('.fd-tariff').forEach(el => { el.classList.toggle('selected', el.dataset.id === tariffId); });
-  const item = SHOP_DATA.roles.find(r => r.id === 'fernodd_plus');
-  updateTotal(item);
-};
+window.selectTariff = function(tariffId) { selectedTariffId = tariffId; document.querySelectorAll('.fd-tariff').forEach(el => { el.classList.toggle('selected', el.dataset.id === tariffId); }); const item = SHOP_DATA.roles.find(r => r.id === 'fernodd_plus'); updateTotal(item); };
 
-function updateTotal(item) {
-  if (!item) return;
-  const tariff = item.tariffs.find(t => t.id === selectedTariffId);
-  if (!tariff) return;
-  document.getElementById('totalPrice').textContent = `${tariff.price} ₽`;
-}
+function updateTotal(item) { if (!item) return; const tariff = item.tariffs.find(t => t.id === selectedTariffId); if (!tariff) return; document.getElementById('totalPrice').textContent = `${tariff.price} ₽`; }
 
 window.buySubscription = async function(itemId) {
   if (!currentUser) { showToast('Войдите через Steam', 'error'); return; }
-  const item = SHOP_DATA.roles.find(r => r.id === itemId);
-  const tariff = item.tariffs.find(t => t.id === selectedTariffId);
+  const item = SHOP_DATA.roles.find(r => r.id === itemId); const tariff = item.tariffs.find(t => t.id === selectedTariffId);
   if (!tariff) return;
   const balance = currentUser?.balance || 0;
-  if (balance < tariff.price) {
-    showToast('Недостаточно средств. Пополните баланс.', 'error');
-    return;
-  }
-  const btn = document.getElementById('buyBtn');
-  btn.disabled = true;
-  btn.textContent = 'Обработка...';
+  if (balance < tariff.price) { showToast('Недостаточно средств. Пополните баланс.', 'error'); return; }
+  const btn = document.getElementById('buyBtn'); btn.disabled = true; btn.textContent = 'Обработка...';
   try {
     await api('/api/shop/buy-subscription', { method: 'POST', body: JSON.stringify({ itemId: 'fernodd_plus', tariffId: tariff.id }) });
     showToast(`FERNODD+ (${tariff.label}) оформлен`, 'success');
     closeSubscriptionModal();
-    const me = await api('/api/me');
-    currentUser = me.user;
-    window.currentUser = currentUser;
-    const av = document.getElementById('headerAvatar');
-    if (av) {
-      if (currentUser.avatar) { av.src = currentUser.avatar; av.style.display = ''; }
-      else { av.style.display = 'none'; }
-    }
+    const me = await api('/api/me'); currentUser = me.user; window.currentUser = currentUser;
+    const av = document.getElementById('headerAvatar'); if (av) { if (currentUser.avatar) { av.src = currentUser.avatar; av.style.display = ''; } else { av.style.display = 'none'; } }
   } catch (e) {
-    const errors = {
-      insufficient_balance: 'Недостаточно средств',
-      role_not_found: 'Роль FERNODD+ не найдена на сервере',
-      item_not_found: 'Товар не найден',
-      tariff_not_found: 'Тариф не найден',
-    };
-    const key = e.message.split(' — ')[0];
-    showToast((errors[key] || e.message), 'error');
-    btn.disabled = false;
-    btn.textContent = 'Купить FERNODD+';
+    const errors = { insufficient_balance: 'Недостаточно средств', role_not_found: 'Роль FERNODD+ не найдена на сервере', item_not_found: 'Товар не найден', tariff_not_found: 'Тариф не найден' };
+    const key = e.message.split(' — ')[0]; showToast((errors[key] || e.message), 'error');
+    btn.disabled = false; btn.textContent = 'Купить FERNODD+';
   }
 };
 
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadShop);
-else loadShop();
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadShop); else loadShop();
 </script>
 </body>
 </html>

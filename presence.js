@@ -24,11 +24,7 @@ export function initPresence() {
     try {
       const members = await guild.members.fetch();
       members.forEach(m => {
-        presenceCache.set(m.id, {
-          status: m.presence?.status || 'offline',
-          activities: m.presence ? extractActivities(m.presence) : [],
-          updatedAt: Date.now(),
-        });
+        presenceCache.set(m.id, { status: m.presence?.status || 'offline', activities: m.presence ? extractActivities(m.presence) : [], updatedAt: Date.now() });
       });
       console.log(`[presence] Загружено: ${presenceCache.size}`);
     } catch (e) { console.error('[presence] fetch error:', e.message); }
@@ -36,11 +32,7 @@ export function initPresence() {
 
   client.on('presenceUpdate', (oldP, newP) => {
     if (!newP) return;
-    presenceCache.set(newP.userId, {
-      status: newP.status || 'offline',
-      activities: extractActivities(newP),
-      updatedAt: Date.now(),
-    });
+    presenceCache.set(newP.userId, { status: newP.status || 'offline', activities: extractActivities(newP), updatedAt: Date.now() });
   });
 
   client.on('guildMemberAdd', (m) => presenceCache.set(m.id, { status: 'offline', activities: [], updatedAt: Date.now() }));
@@ -54,21 +46,12 @@ export function initPresence() {
 
 function extractActivities(presence) {
   if (!presence.activities || !presence.activities.length) return [];
-  return presence.activities.map(a => ({
-    name: a.name, type: a.type, details: a.details || '', state: a.state || '',
-    url: a.url || '', applicationId: a.applicationId || '',
-  }));
+  return presence.activities.map(a => ({ name: a.name, type: a.type, details: a.details || '', state: a.state || '', url: a.url || '', applicationId: a.applicationId || '' }));
 }
 
 export function isPresenceReady() { return ready; }
-export function getPresence(userId) {
-  return presenceCache.get(userId) || { status: 'offline', activities: [], updatedAt: Date.now() };
-}
-export function getAllPresence() {
-  const out = {};
-  presenceCache.forEach((v, k) => { out[k] = v; });
-  return out;
-}
+export function getPresence(userId) { return presenceCache.get(userId) || { status: 'offline', activities: [], updatedAt: Date.now() }; }
+export function getAllPresence() { const out = {}; presenceCache.forEach((v, k) => { out[k] = v; }); return out; }
 export function getPresenceStats() {
   let online = 0, idle = 0, dnd = 0, offline = 0;
   presenceCache.forEach(v => {
