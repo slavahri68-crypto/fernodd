@@ -5,6 +5,12 @@
 [functions]
   node_bundler = "esbuild"
   external_node_modules = [
-    "express", "serverless-http", "mongodb", "jsonwebtoken", 
-    "node-fetch", "discord.js", "dotenv", "openid-client"
+    "express",
+    "serverless-http",
+    "mongodb",
+    "jsonwebtoken",
+    "node-fetch",
+    "discord.js",
+    "dotenv",
+    "openid-client"
   ]

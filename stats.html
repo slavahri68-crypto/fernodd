@@ -62,7 +62,26 @@
   .stat-body { flex: 1; min-width: 0; }
   .stat-name { font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-  .streak-corner-badge { position: absolute; top: -6px; right: -6px; display: inline-flex; align-items: center; gap: 3px; padding: 2px 7px 2px 4px; background: linear-gradient(135deg, #ff4400, #ff8c00); border: 2px solid #fff; border-radius: 100px; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: 10px; color: #fff; box-shadow: 0 4px 14px rgba(255,68,0,0.55), 0 0 0 2px rgba(0,0,0,0.5); z-index: 3; line-height: 1; white-space: nowrap; }
+  .streak-corner-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 7px 2px 4px;
+    background: linear-gradient(135deg, #ff4400, #ff8c00);
+    border: 2px solid #fff;
+    border-radius: 100px;
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900;
+    font-size: 10px;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(255,68,0,0.55), 0 0 0 2px rgba(0,0,0,0.5);
+    z-index: 3;
+    line-height: 1;
+    white-space: nowrap;
+  }
   .streak-corner-badge .fire-icon { display: inline-flex; align-items: center; justify-content: center; width: 11px; height: 11px; }
   .streak-corner-badge .fire-icon svg { width: 11px; height: 11px; fill: #fff; }
   .streak-corner-badge.frozen { background: linear-gradient(135deg, #60a5fa, #2563eb); box-shadow: 0 4px 14px rgba(96,165,250,0.55), 0 0 0 2px rgba(0,0,0,0.5); }
@@ -120,21 +139,37 @@
     </div>
 
     <div class="stats-tabs">
-      <button class="stats-tab active" data-tab="streak" onclick="switchStatsTab('streak')">Стрик <span class="tab-count" id="streakCount">0</span></button>
-      <button class="stats-tab" data-tab="players" onclick="switchStatsTab('players')">Игроки <span class="tab-count" id="playersCount">0</span></button>
+      <button class="stats-tab active" data-tab="streak" onclick="switchStatsTab('streak')">
+        Стрик <span class="tab-count" id="streakCount">0</span>
+      </button>
+      <button class="stats-tab" data-tab="players" onclick="switchStatsTab('players')">
+        Игроки <span class="tab-count" id="playersCount">0</span>
+      </button>
     </div>
 
     <div class="stats-panel active" id="panel-streak">
-      <div class="stats-info"><div class="stats-info-icon" id="statsInfoIcon"></div><div class="stats-info-text"><b>+1 день к стрику</b> за 5 минут активности на сайте.</div></div>
-      <div class="stats-list" id="streakList"><div class="loading-state"><div class="spinner"></div> Загрузка...</div></div>
+      <div class="stats-info">
+        <div class="stats-info-icon" id="statsInfoIcon"></div>
+        <div class="stats-info-text">
+          <b>+1 день к стрику</b> за 5 минут активности на сайте.
+        </div>
+      </div>
+      <div class="stats-list" id="streakList">
+        <div class="loading-state"><div class="spinner"></div> Загрузка...</div>
+      </div>
     </div>
 
     <div class="stats-panel" id="panel-players">
       <div class="players-header">
         <div class="players-count">Всего: <span id="playersTotal">0</span></div>
-        <div class="players-search"><span class="search-icon" id="searchIcon"></span><input type="text" id="playersSearchInput" placeholder="Поиск по нику..." oninput="filterPlayers()"></div>
+        <div class="players-search">
+          <span class="search-icon" id="searchIcon"></span>
+          <input type="text" id="playersSearchInput" placeholder="Поиск по нику..." oninput="filterPlayers()">
+        </div>
       </div>
-      <div class="stats-list" id="playersList"><div class="loading-state"><div class="spinner"></div> Загрузка...</div></div>
+      <div class="stats-list" id="playersList">
+        <div class="loading-state"><div class="spinner"></div> Загрузка...</div>
+      </div>
     </div>
   </div>
 </main>
@@ -170,7 +205,8 @@ window.addEventListener('auth:changed', (e) => {
   if (!user) return;
   const av = document.getElementById('headerAvatar');
   if (av) {
-    if (user.avatar) { av.src = user.avatar; av.style.display = ''; } else { av.style.display = 'none'; }
+    if (user.avatar) { av.src = user.avatar; av.style.display = ''; }
+    else { av.style.display = 'none'; }
   }
   const menuBox = document.getElementById('profileMenuContent');
   if (menuBox) menuBox.innerHTML = renderProfileMenu('stats');
@@ -190,16 +226,35 @@ async function loadStreak() {
     const data = await api('/api/stats/activity');
     streakUsers = data.users || [];
     document.getElementById('streakCount').textContent = streakUsers.length;
-    if (!streakUsers.length) { list.innerHTML = `<div class="empty-state">Пока никого нет со стриком</div>`; return; }
+
+    if (!streakUsers.length) {
+      list.innerHTML = `<div class="empty-state">Пока никого нет со стриком</div>`;
+      return;
+    }
+
     list.innerHTML = streakUsers.map((u, i) => {
       const rank = i + 1;
       const cls = rank === 1 ? 'top-1' : rank === 2 ? 'top-2' : rank === 3 ? 'top-3' : '';
-      const avatarHTML = u.avatar ? `<img class="stat-avatar" src="${u.avatar}" alt="">` : `<div class="stat-avatar stat-avatar-empty"></div>`;
+      const avatarHTML = u.avatar
+        ? `<img class="stat-avatar" src="${u.avatar}" alt="">`
+        : `<div class="stat-avatar stat-avatar-empty"></div>`;
       const fireIcon = u.frozen ? window.ICONS.snowflake : window.ICONS.flame;
       const frozenCls = u.frozen ? 'frozen' : '';
-      return `<a class="stat-row ${cls}" href="/profile/${u.steamId}"><div class="stat-rank">${rank}</div><div class="stat-avatar-wrap">${avatarHTML}${u.activity > 0 ? `<div class="streak-corner-badge ${frozenCls}"><span class="fire-icon">${fireIcon}</span><span class="fire-count">${u.activity}</span></div>` : ''}</div><div class="stat-body"><div class="stat-name">${escapeHtml(u.name)}</div></div></a>`;
+      return `
+        <a class="stat-row ${cls}" href="/profile/${u.steamId}">
+          <div class="stat-rank">${rank}</div>
+          <div class="stat-avatar-wrap">
+            ${avatarHTML}
+            ${u.activity > 0 ? `<div class="streak-corner-badge ${frozenCls}"><span class="fire-icon">${fireIcon}</span><span class="fire-count">${u.activity}</span></div>` : ''}
+          </div>
+          <div class="stat-body">
+            <div class="stat-name">${escapeHtml(u.name)}</div>
+          </div>
+        </a>`;
     }).join('');
-  } catch (e) { list.innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${escapeHtml(e.message)}</div>`; }
+  } catch (e) {
+    list.innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${escapeHtml(e.message)}</div>`;
+  }
 }
 
 async function loadPlayers() {
@@ -210,20 +265,41 @@ async function loadPlayers() {
     document.getElementById('playersTotal').textContent = playersUsers.length;
     document.getElementById('playersCount').textContent = playersUsers.length;
     renderPlayers();
-  } catch (e) { list.innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${escapeHtml(e.message)}</div>`; }
+  } catch (e) {
+    list.innerHTML = `<div class="empty-state" style="color:var(--red);">Ошибка: ${escapeHtml(e.message)}</div>`;
+  }
 }
 
-function filterPlayers() { playersFilter = (document.getElementById('playersSearchInput').value || '').toLowerCase().trim(); renderPlayers(); }
+function filterPlayers() {
+  playersFilter = (document.getElementById('playersSearchInput').value || '').toLowerCase().trim();
+  renderPlayers();
+}
 
 function renderPlayers() {
   const list = document.getElementById('playersList');
   let arr = playersUsers;
   if (playersFilter) arr = arr.filter(u => (u.name || '').toLowerCase().includes(playersFilter));
-  if (!arr.length) { list.innerHTML = `<div class="empty-state">${playersFilter ? 'Никого не найдено' : 'Пока нет зарегистрированных игроков'}</div>`; return; }
+
+  if (!arr.length) {
+    list.innerHTML = `<div class="empty-state">${playersFilter ? 'Никого не найдено' : 'Пока нет зарегистрированных игроков'}</div>`;
+    return;
+  }
+
   list.innerHTML = arr.map(u => {
     const statusCls = u.siteStatus === 'online' ? 'online' : 'offline';
-    const avatarHTML = u.avatar ? `<img class="stat-avatar" src="${u.avatar}" alt="">` : `<div class="stat-avatar stat-avatar-empty"></div>`;
-    return `<a class="player-row" href="/profile/${u.steamId}"><div class="stat-avatar-wrap">${avatarHTML}<span class="stat-status-dot ${statusCls}"></span></div><div class="stat-body"><div class="stat-name">${escapeHtml(u.name)}</div></div></a>`;
+    const avatarHTML = u.avatar
+      ? `<img class="stat-avatar" src="${u.avatar}" alt="">`
+      : `<div class="stat-avatar stat-avatar-empty"></div>`;
+    return `
+      <a class="player-row" href="/profile/${u.steamId}">
+        <div class="stat-avatar-wrap">
+          ${avatarHTML}
+          <span class="stat-status-dot ${statusCls}"></span>
+        </div>
+        <div class="stat-body">
+          <div class="stat-name">${escapeHtml(u.name)}</div>
+        </div>
+      </a>`;
   }).join('');
 }
 </script>

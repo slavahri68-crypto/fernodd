@@ -21,10 +21,38 @@
   .my-modal h2 { font-family: 'Unbounded'; font-size: 28px; color: #fff; margin-bottom: 8px; }
   .my-modal h2 span { color: var(--red); }
 
-  .my-tabs { display: inline-flex; gap: 4px; padding: 4px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-bright); border-radius: 12px; margin-bottom: 18px; flex-wrap: wrap; }
-  .my-tab { padding: 8px 14px; border-radius: 8px; border: 1px solid transparent; background: transparent; color: var(--text-dim); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12.5px; cursor: pointer; transition: all 0.25s; display: inline-flex; align-items: center; gap: 7px; }
+  /* Прямоугольные вкладки как в админке */
+  .my-tabs {
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border-bright);
+    border-radius: 12px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  .my-tab {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-dim);
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 12.5px;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
   .my-tab:hover { color: var(--text); background: rgba(255,255,255,0.04); }
-  .my-tab.active { color: #fff; background: linear-gradient(135deg, rgba(225,6,0,0.25), rgba(139,0,0,0.15)); border-color: rgba(225,6,0,0.5); }
+  .my-tab.active {
+    color: #fff;
+    background: linear-gradient(135deg, rgba(225,6,0,0.25), rgba(139,0,0,0.15));
+    border-color: rgba(225,6,0,0.5);
+  }
   .my-tab-count { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; padding: 2px 8px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-bright); border-radius: 100px; font-size: 10px; font-weight: 700; font-family: 'Unbounded', sans-serif; }
   .my-tab.active .my-tab-count { background: rgba(225,6,0,0.25); border-color: rgba(225,6,0,0.6); color: #fff; }
 
@@ -74,12 +102,30 @@
         <p class="requirements-desc">Перед заполнением формы убедись, что ты соответствуешь всем требованиям.</p>
 
         <div class="info-list">
-          <div class="info-item"><div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#e10600" stroke-width="1.8" style="width:22px;height:22px;"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></div><div><h4>Возраст от 14 лет</h4><p>Адекватность и ответственность важнее возраста.</p></div></div>
-          <div class="info-item"><div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#e10600" stroke-width="1.8" style="width:22px;height:22px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><h4>Хороший онлайн</h4><p>Модератор должен быть активным.</p></div></div>
-          <div class="info-item"><div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#e10600" stroke-width="1.8" style="width:22px;height:22px;"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div><div><h4>Discord и микрофон</h4><p>Обязательно наличие Discord.</p></div></div>
-          <div class="info-item"><div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#e10600" stroke-width="1.8" style="width:22px;height:22px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div><div><h4>Знание правил</h4><p>Ты должен знать правила наизусть.</p></div></div>
-          <div class="info-item"><div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#e10600" stroke-width="1.8" style="width:22px;height:22px;"><path d="M12 2a5 5 0 0 0-5 5c0 1.5 1 3 2 4v6a3 3 0 0 0 6 0v-6c1-1 2-2.5 2-4a5 5 0 0 0-5-5z"/></svg></div><div><h4>Стрессоустойчивость</h4><p>Умение сохранять спокойствие в конфликтах.</p></div></div>
-          <div class="info-item"><div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#e10600" stroke-width="1.8" style="width:22px;height:22px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><div><h4>Грамотная речь</h4><p>Писать без ошибок и корректно общаться.</p></div></div>
+          <div class="info-item">
+            <div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#e10600" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+            <div><h4>Возраст от 14 лет</h4><p>Адекватность и ответственность важнее возраста.</p></div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#e10600" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+            <div><h4>Хороший онлайн</h4><p>Модератор должен быть активным.</p></div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#e10600" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div>
+            <div><h4>Discord и микрофон</h4><p>Обязательно наличие Discord.</p></div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#e10600" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+            <div><h4>Знание правил</h4><p>Ты должен знать правила наизусть.</p></div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#e10600" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><path d="M12 2a5 5 0 0 0-5 5c0 1.5 1 3 2 4v6a3 3 0 0 0 6 0v-6c1-1 2-2.5 2-4a5 5 0 0 0-5-5z"/></svg></div>
+            <div><h4>Стрессоустойчивость</h4><p>Умение сохранять спокойствие в конфликтах.</p></div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#e10600" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+            <div><h4>Грамотная речь</h4><p>Писать без ошибок и корректно общаться.</p></div>
+          </div>
         </div>
 
         <div class="apply-cta">
@@ -158,8 +204,16 @@ let myTab = 'pending';
 
 function resetApplyView() { applyIntro.classList.remove('hidden'); formContainer.classList.remove('visible'); }
 
-openFormBtn.addEventListener('click', () => { applyIntro.classList.add('hidden'); formContainer.classList.add('visible'); window.scrollTo({ top: 0, behavior: 'smooth' }); });
-backBtn.addEventListener('click', () => { formContainer.classList.remove('visible'); applyIntro.classList.remove('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+openFormBtn.addEventListener('click', () => {
+  applyIntro.classList.add('hidden');
+  formContainer.classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+backBtn.addEventListener('click', () => {
+  formContainer.classList.remove('visible');
+  applyIntro.classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
 
 window.addEventListener('auth:changed', async (e) => {
   const user = e.detail.user;
@@ -186,12 +240,23 @@ async function loadMyApplicationsCount() {
   } catch { myAppsCount.textContent = '0'; }
 }
 
-function openMyApplications() { document.getElementById('myModal').classList.add('visible'); document.body.style.overflow = 'hidden'; loadMyApplications(); }
-function closeMyApplications() { document.getElementById('myModal').classList.remove('visible'); document.body.style.overflow = ''; }
+function openMyApplications() {
+  document.getElementById('myModal').classList.add('visible');
+  document.body.style.overflow = 'hidden';
+  loadMyApplications();
+}
+function closeMyApplications() {
+  document.getElementById('myModal').classList.remove('visible');
+  document.body.style.overflow = '';
+}
 document.getElementById('myModal').addEventListener('click', (e) => { if (e.target.id === 'myModal') closeMyApplications(); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMyApplications(); });
 
-function switchMyTab(name) { myTab = name; document.querySelectorAll('.my-tab').forEach(t => { if (t.dataset.tab) t.classList.toggle('active', t.dataset.tab === name); }); renderMyList(); }
+function switchMyTab(name) {
+  myTab = name;
+  document.querySelectorAll('.my-tab').forEach(t => { if (t.dataset.tab) t.classList.toggle('active', t.dataset.tab === name); });
+  renderMyList();
+}
 
 async function loadMyApplications() {
   const list = document.getElementById('myList');
@@ -220,20 +285,50 @@ function renderMyList() {
   list.innerHTML = items.map(a => {
     const date = new Date(a.date).toLocaleString('ru-RU');
     const statusLabel = a.status === 'approved' ? 'Одобрено' : a.status === 'rejected' ? 'Отклонено' : 'На рассмотрении';
-    return `<div class="my-card ${a.status}"><div class="my-card-head"><span class="status ${a.status}">${statusLabel}</span><span style="font-size:12px;color:var(--text-dim);">${date}</span></div><div class="my-card-row"><span>Возраст: <b>${escapeHtml(a.age || '—')}</b></span><span>Онлайн: <b>${escapeHtml(a.online || '—')}</b></span><span>Опыт: <b>${escapeHtml(a.experience || '—')}</b></span></div><div class="my-card-text">${escapeHtml(a.motivation || '—')}</div></div>`;
+    return `<div class="my-card ${a.status}">
+      <div class="my-card-head"><span class="status ${a.status}">${statusLabel}</span><span style="font-size:12px;color:var(--text-dim);">${date}</span></div>
+      <div class="my-card-row">
+        <span>Возраст: <b>${escapeHtml(a.age || '—')}</b></span>
+        <span>Онлайн: <b>${escapeHtml(a.online || '—')}</b></span>
+        <span>Опыт: <b>${escapeHtml(a.experience || '—')}</b></span>
+      </div>
+      <div class="my-card-text">${escapeHtml(a.motivation || '—')}</div>
+    </div>`;
   }).join('');
 }
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const payload = { age: form.elements.age.value.trim(), online: form.elements.online.value.trim(), experience: form.elements.experience.value.trim(), telegram: form.elements.telegram.value.trim(), discord: form.elements.discord.value.trim(), motivation: form.elements.motivation.value.trim() };
-  if (!payload.age || !payload.online || !payload.experience || !payload.telegram || !payload.discord || !payload.motivation) { showToast('Заполните все поля.', 'error'); return; }
-  submitBtn.disabled = true; submitBtn.textContent = 'Отправка...';
+  const payload = {
+    age: form.elements.age.value.trim(),
+    online: form.elements.online.value.trim(),
+    experience: form.elements.experience.value.trim(),
+    telegram: form.elements.telegram.value.trim(),
+    discord: form.elements.discord.value.trim(),
+    motivation: form.elements.motivation.value.trim()
+  };
+  if (!payload.age || !payload.online || !payload.experience || !payload.telegram || !payload.discord || !payload.motivation) {
+    showToast('Заполните все поля.', 'error'); return;
+  }
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Отправка...';
   try {
-    const r = await fetch(API + '/api/apply', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() }, body: JSON.stringify(payload) });
-    if (r.ok) { showToast('Заявка успешно отправлена!', 'success'); form.reset(); await loadMyApplicationsCount(); setTimeout(() => backBtn.click(), 1500); }
-    else if (r.status === 401) { showToast('Необходимо войти через Steam.', 'error'); }
-    else { const data = await r.json().catch(() => ({})); showToast('Не удалось отправить: ' + (data.error || r.status), 'error'); }
+    const r = await fetch(API + '/api/apply', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() },
+      body: JSON.stringify(payload)
+    });
+    if (r.ok) {
+      showToast('Заявка успешно отправлена!', 'success');
+      form.reset();
+      await loadMyApplicationsCount();
+      setTimeout(() => backBtn.click(), 1500);
+    } else if (r.status === 401) {
+      showToast('Необходимо войти через Steam.', 'error');
+    } else {
+      const data = await r.json().catch(() => ({}));
+      showToast('Не удалось отправить: ' + (data.error || r.status), 'error');
+    }
   } catch { showToast('Ошибка сети.', 'error'); }
   finally { submitBtn.disabled = false; submitBtn.textContent = 'Отправить заявку →'; }
 });

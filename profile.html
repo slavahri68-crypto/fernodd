@@ -25,7 +25,6 @@
   .steam-social-corner a:hover { transform: translateY(-3px); color: #fff; border-color: var(--red); background: rgba(225,6,0,0.15); box-shadow: 0 6px 20px rgba(225,6,0,0.35); }
   .steam-social-corner svg { width: 18px; height: 18px; fill: currentColor; }
 
-  /* Ряд аватарки + огонёк слева */
   .profile-avatar-row {
     display: flex;
     align-items: center;
@@ -50,65 +49,6 @@
   .steam-avatar { width: 100%; height: 100%; object-fit: cover; display: block; }
   .steam-avatar-empty { display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.03); color: var(--text-dim); font-size: 20px; }
   .steam-avatar-empty::after { content: '—'; opacity: 0.4; }
-
-  .profile-streak-badge { display: flex; align-items: center; flex-shrink: 0; }
-  .profile-streak-badge:empty { display: none; }
-  .profile-streak-badge .streak-fire-badge {
-    position: relative;
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-    transition: transform 0.25s;
-  }
-  .profile-streak-badge .streak-fire-badge:hover { transform: scale(1.08); }
-  .profile-streak-badge .streak-fire-badge .fire-main {
-    width: 48px;
-    height: 48px;
-    color: #ff4400;
-    filter: drop-shadow(0 0 18px rgba(255,68,0,0.7));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .profile-streak-badge .streak-fire-badge .fire-main svg {
-    width: 100%;
-    height: 100%;
-    fill: currentColor;
-  }
-  .profile-streak-badge .streak-fire-badge.frozen .fire-main {
-    color: #60a5fa;
-    filter: drop-shadow(0 0 18px rgba(96,165,250,0.7));
-  }
-  .profile-streak-badge .streak-fire-badge.frozen .fire-main svg {
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.5;
-  }
-  .profile-streak-badge .streak-fire-badge .fire-count {
-    position: absolute;
-    bottom: -6px;
-    right: -14px;
-    min-width: 32px;
-    height: 26px;
-    padding: 0 8px;
-    background: linear-gradient(135deg, #ff4400, #ff8c00);
-    border: 3px solid #fff;
-    border-radius: 100px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Unbounded', sans-serif;
-    font-weight: 900;
-    font-size: 13px;
-    color: #fff;
-    box-shadow: 0 6px 20px rgba(255,68,0,0.6);
-    line-height: 1;
-  }
-  .profile-streak-badge .streak-fire-badge.frozen .fire-count {
-    background: linear-gradient(135deg, #60a5fa, #2563eb);
-    box-shadow: 0 6px 20px rgba(96,165,250,0.6);
-  }
 
   .steam-body { padding: 0 20px 22px; text-align: center; }
   .steam-role-badge { display: inline-block; padding: 5px 14px; background: rgba(96,165,250,0.12); border: 1px solid rgba(96,165,250,0.5); border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 600; color: #60a5fa; margin-bottom: 12px; }
@@ -318,7 +258,6 @@
         <div class="steam-social-corner" id="steamSocialCorner"></div>
       </div>
       <div class="profile-avatar-row">
-        <div class="profile-streak-badge" id="profileStreakBadge"></div>
         <div class="steam-avatar-wrap" id="steamAvatarWrap">
           <img class="steam-avatar" id="steamAvatar" src="" alt="" style="display:none;">
           <div class="steam-avatar steam-avatar-empty" id="steamAvatarEmpty" style="display:none;"></div>
@@ -464,8 +403,6 @@
   <a class="nav-btn" href="/stats"><svg viewBox="0 0 24 24"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg><span>Стата</span></a>
   <a class="nav-btn" href="/apply"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg><span>Заявки</span></a>
 </nav>
-
-<div class="toast-wrap" id="toastWrap"></div>
 
 <script src="/js/icons.js"></script>
 <script src="/js/common.js"></script>
@@ -654,24 +591,7 @@ function renderSteamProfile(user) {
 
   const tagBadge = tag ? `<span class="steam-badge-item tag" style="background:rgba(255,255,255,0.06);color:var(--text-dim);border:1px solid var(--border-bright);font-size:10.5px;">${escapeHtml(tag)}</span>` : '';
 
-  // Бейдж слева от аватарки (вариант B — в одном ряду с аватаром)
-  const streakBadgeEl = document.getElementById('profileStreakBadge');
-  if (streakBadgeEl) {
-    if (user.activity > 0) {
-      const frozen = user.streakFrozen;
-      const fireIconBig = frozen ? window.ICONS.snowflake : window.ICONS.flame;
-      const frozenCls = frozen ? 'frozen' : '';
-      const clickAttr = isOwnProfile ? `onclick="openStreakModal(event)"` : '';
-      streakBadgeEl.innerHTML = `
-        <div class="streak-fire-badge ${frozenCls}" ${clickAttr} title="Стрик">
-          <div class="fire-main">${fireIconBig}</div>
-          <div class="fire-count">${user.activity}</div>
-        </div>
-      `;
-    } else {
-      streakBadgeEl.innerHTML = '';
-    }
-  }
+  // УБРАЛИ БОЛЬШОЙ ОГОНЁК (он был тут, теперь его нет)
 
   document.getElementById('steamBody').innerHTML = `
     <div class="steam-role-badge" style="background:${roleColor}15;border-color:${roleColor}66;color:${roleColor};">
@@ -1033,8 +953,9 @@ async function loadSettingsDataFor(user) {
     const isOwn = mySteamId === user.steamId;
     const isStaff = window.canEditOthersProfiles && window.canEditOthersProfiles(currentUserData);
 
-    const allRoles = [...(user.roles || []), ...(user.siteRoles || [])].map(r => (r || '').toLowerCase());
-    const hasPlus = allRoles.some(r => r.startsWith('fernodd+'));
+    // ИСПРАВЛЕНА ПРОВЕРКА FERNODD+
+    const allRoles = [...(user.roles || []), ...(user.siteRoles || [])].map(r => String(r || '').toLowerCase());
+    const hasPlus = allRoles.some(r => r.includes('fernodd'));
 
     const shouldUnlock = isOwn ? hasPlus : isStaff;
     applyFernoddPlusLock(shouldUnlock, user.profileLink || '');
